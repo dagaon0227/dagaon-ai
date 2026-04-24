@@ -726,61 +726,24 @@
       <div class="eng-sidebar-title">AI 엔진</div>
       <div class="eng-dropdown" id="engDropdown">
         <div class="eng-dd-trigger" onclick="toggleEngDropdown()">
-          <div class="eng-icon" id="ddIcon">M</div>
+          <div class="eng-icon" id="ddIcon">G</div>
           <div class="eng-info">
             <div class="eng-name-row">
-              <span class="eng-name" id="ddName">Maket.ai</span>
+              <span class="eng-name" id="ddName">GPT-4o</span>
             </div>
-            <span class="eng-desc" id="ddDesc">AI 기반 건축 평면도</span>
+            <span class="eng-desc" id="ddDesc">AI CAD 도면 생성</span>
           </div>
           <i class="fa-solid fa-chevron-down eng-dd-arrow"></i>
         </div>
         <div class="eng-dd-menu">
           <div class="eng-dd-inner">
-            <div class="eng-item active" data-tier="pro" data-icon="M" data-desc="AI 기반 건축 평면도" onclick="selectEngine(this, 'Maket.ai')">
-              <div class="eng-icon">M</div>
+            <div class="eng-item active" data-tier="basic" data-icon="G" data-desc="AI CAD 도면 생성" onclick="selectEngine(this, 'GPT-4o')">
+              <div class="eng-icon">G</div>
               <div class="eng-info">
                 <div class="eng-name-row">
-                  <span class="eng-name">Maket.ai</span>
-                  <span class="badge-new-sm">NEW</span>
+                  <span class="eng-name">GPT-4o</span>
                 </div>
-                <span class="eng-desc">AI 기반 건축 평면도</span>
-              </div>
-            </div>
-            <div class="eng-item" data-tier="pro" data-icon="A" data-desc="자동 공간 배치 설계" onclick="selectEngine(this, 'Architechtures')">
-              <div class="eng-icon">A</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Architechtures</span>
-                </div>
-                <span class="eng-desc">자동 공간 배치 설계</span>
-              </div>
-            </div>
-            <div class="eng-item" data-tier="pro" data-icon="P" data-desc="인터랙티브 3D 설계" onclick="selectEngine(this, 'Planner 5D')">
-              <div class="eng-icon">P</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Planner 5D</span>
-                </div>
-                <span class="eng-desc">인터랙티브 3D 설계</span>
-              </div>
-            </div>
-            <div class="eng-item" data-tier="pro" data-icon="AC" data-desc="AI 보조 도면 작성" onclick="selectEngine(this, 'AutoCAD AI')">
-              <div class="eng-icon">AC</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">AutoCAD AI</span>
-                </div>
-                <span class="eng-desc">AI 보조 도면 작성</span>
-              </div>
-            </div>
-            <div class="eng-item" data-tier="pro" data-icon="S" data-desc="3D 모델링 자동화" onclick="selectEngine(this, 'SketchUp AI')">
-              <div class="eng-icon">S</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">SketchUp AI</span>
-                </div>
-                <span class="eng-desc">3D 모델링 자동화</span>
+                <span class="eng-desc">AI CAD 도면 생성</span>
               </div>
             </div>
           </div>
@@ -792,7 +755,7 @@
     <div id="engOptionsPanel" class="eng-options-panel" style="display:none;">
       <div class="eng-options-header" onclick="toggleEngOptions()">
         <i class="fa-solid fa-sliders" style="font-size:.58rem;color:var(--gold);"></i>
-        <span class="eng-options-title" id="engOptionsTitleText">Maket.ai 설정</span>
+        <span class="eng-options-title" id="engOptionsTitleText">GPT-4o 설정</span>
         <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
       </div>
       <div class="eng-options-body" id="engOptionsBody"></div>
@@ -802,7 +765,7 @@
     <div class="work-area">
       <div class="active-eng-bar">
         <span class="active-eng-label">현재 엔진</span>
-        <span class="active-eng-name" id="activeEngName">Maket.ai</span>
+        <span class="active-eng-name" id="activeEngName">GPT-4o</span>
       </div>
       <div class="work-body">
 
@@ -1318,40 +1281,12 @@
 
   // ─── ENGINE OPTIONS ──────────────────────────────────────────────────────
   var ENGINE_OPTIONS_CAD = {
-    'Maket.ai':       [
+    'GPT-4o': [
       { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '평면도' },
       { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:100' },
       { type: 'toggle', label: '레이어 분리', key: 'layer', default: true },
       { type: 'toggle', label: '치수 표기', key: 'dim', default: true },
       { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '솔리드' },
-    ],
-    'Architechtures': [
-      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '평면도' },
-      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:100' },
-      { type: 'toggle', label: '레이어 분리', key: 'layer', default: true },
-      { type: 'toggle', label: '치수 표기', key: 'dim', default: false },
-      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '와이어프레임' },
-    ],
-    'Planner 5D':     [
-      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '3D' },
-      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:50' },
-      { type: 'toggle', label: '레이어 분리', key: 'layer', default: false },
-      { type: 'toggle', label: '치수 표기', key: 'dim', default: true },
-      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '텍스처' },
-    ],
-    'AutoCAD AI':     [
-      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '평면도' },
-      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:100' },
-      { type: 'toggle', label: '레이어 분리', key: 'layer', default: true },
-      { type: 'toggle', label: '치수 표기', key: 'dim', default: true },
-      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '솔리드' },
-    ],
-    'SketchUp AI':    [
-      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '3D' },
-      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:50' },
-      { type: 'toggle', label: '레이어 분리', key: 'layer', default: false },
-      { type: 'toggle', label: '치수 표기', key: 'dim', default: false },
-      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '텍스처' },
     ],
   };
   var currentCadEngOpts = {};
@@ -1410,7 +1345,7 @@
   }
 
   // Init
-  renderEngineOptions('Maket.ai');
+  renderEngineOptions('GPT-4o');
 
   // ─── CAD HISTORY (localStorage) ───────────────────────────
   var CAD_HISTORY_KEY = 'dagaon_cad_history';

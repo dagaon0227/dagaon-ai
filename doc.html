@@ -320,27 +320,10 @@
           <div class="eng-info"><div class="eng-name">GPT-4o</div><div class="eng-desc">범용 고품질 글쓰기</div></div>
           <span class="excel-rec-badge">수식 추천</span>
         </div>
-        <div class="eng-item" data-eng="Claude 4 Sonnet" data-desc="정교한 문체" data-tier="standard" onclick="selectEngine(this)">
-          <div class="eng-icon" style="color:rgba(180,120,220,.9);">C4</div>
-          <div class="eng-info"><div class="eng-name">Claude 4 Sonnet</div><div class="eng-desc">정교한 문체</div></div>
-          <span class="badge-new">NEW</span>
-          <span class="excel-rec-badge">데이터 분석 추천</span>
-        </div>
-        <div class="eng-item" data-eng="Gemini 2.5 Pro" data-desc="긴 문서 특화" data-tier="basic" onclick="selectEngine(this)">
-          <div class="eng-icon" style="color:rgba(100,180,240,.9);">G2</div>
-          <div class="eng-info"><div class="eng-name">Gemini 2.5 Pro</div><div class="eng-desc">긴 문서 특화</div></div>
-          <span class="badge-new">NEW</span>
-          <span class="excel-rec-badge">재무제표 추천</span>
-        </div>
         <div class="eng-item" data-eng="GPT-4o Mini" data-desc="빠른 초안 작성" data-tier="basic" onclick="selectEngine(this)">
           <div class="eng-icon" style="color:rgba(130,210,130,.8);">GM</div>
           <div class="eng-info"><div class="eng-name">GPT-4o Mini</div><div class="eng-desc">빠른 초안 작성</div></div>
           <span class="excel-rec-badge">빠른 정리</span>
-        </div>
-        <div class="eng-item" data-eng="Llama 3.1" data-desc="오픈소스 대안" data-tier="pro" onclick="selectEngine(this)">
-          <div class="eng-icon" style="color:rgba(220,160,80,.8);">LL</div>
-          <div class="eng-info"><div class="eng-name">Llama 3.1</div><div class="eng-desc">오픈소스 대안</div></div>
-          <span class="excel-rec-badge">기본 작업</span>
         </div>
       </div>
 
@@ -501,7 +484,7 @@
 
   <script>
     const OPENAI_API_KEY = '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';
-    const ENGINE_MODEL_MAP_DOC = { 'GPT-4o': 'gpt-4o', 'Claude 4 Sonnet': 'gpt-4o', 'Gemini 2.5 Pro': 'gpt-4o', 'GPT-4o Mini': 'gpt-4o-mini', 'Llama 3.1': 'gpt-4o-mini' };
+    const ENGINE_MODEL_MAP_DOC = { 'GPT-4o': 'gpt-4o', 'GPT-4o Mini': 'gpt-4o-mini' };
     var currentFormat = 'word';
     var uploadedFileName = '';
     var isAdmin = false;
@@ -907,19 +890,6 @@
       'GPT-4o Mini': [
         { type: 'chip', label: '속도 모드', key: 'speed', values: ['빠름', '표준'], default: '빠름' },
         { type: 'toggle', label: '요약 포함', key: 'summary', default: false },
-      ],
-      'Gemini 2.5 Pro': [
-        { type: 'toggle', label: '웹 검색 참고', key: 'websearch', default: true },
-        { type: 'toggle', label: '팩트체크', key: 'factcheck', default: false },
-        { type: 'toggle', label: '출처 표기', key: 'cite', default: false },
-      ],
-      'Claude 4 Sonnet': [
-        { type: 'chip', label: '논리 구조', key: 'logic', values: ['연역', '귀납', '비교분석'], default: '연역' },
-        { type: 'slider', label: '톤 세밀 조정', key: 'tone_level', min: 1, max: 10, step: 1, default: 5 },
-      ],
-      'Llama 3.1': [
-        { type: 'slider', label: '창의성', key: 'creativity', min: 0, max: 100, step: 5, default: 50 },
-        { type: 'toggle', label: '반복 제거', key: 'dedup', default: true },
       ],
     };
     var currentDocEngOpts = {};

@@ -792,29 +792,6 @@
             </div>
             <span class="engine-new-badge">NEW</span>
           </div>
-          <div class="engine-item" data-engine="gpt-4o" data-tier="basic" data-badge-class="badge-gem" data-badge-text="G" onclick="selectEngine(this)">
-            <div class="engine-badge badge-gem">G</div>
-            <div class="engine-info">
-              <div class="engine-name">Gemini 2.5 Pro</div>
-              <div class="engine-desc">Google의 멀티모달 AI</div>
-            </div>
-            <span class="engine-new-badge">NEW</span>
-          </div>
-          <div class="engine-item" data-engine="gpt-4o" data-tier="standard" data-badge-class="badge-claude" data-badge-text="C" onclick="selectEngine(this)">
-            <div class="engine-badge badge-claude">C</div>
-            <div class="engine-info">
-              <div class="engine-name">Claude 4 Sonnet</div>
-              <div class="engine-desc">Anthropic의 정교한 추론 AI</div>
-            </div>
-            <span class="engine-new-badge">NEW</span>
-          </div>
-          <div class="engine-item" data-engine="gpt-4o" data-tier="pro" data-badge-class="badge-llama" data-badge-text="L" onclick="selectEngine(this)">
-            <div class="engine-badge badge-llama">L</div>
-            <div class="engine-info">
-              <div class="engine-name">Llama 3.1 405B</div>
-              <div class="engine-desc">Meta의 오픈소스 대형 모델</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -994,9 +971,6 @@ function refreshUsageBadge() {
 const ENGINE_MODEL_MAP = {
   'GPT-4o':          'gpt-4o',
   'GPT-4o Mini':     'gpt-4o-mini',
-  'Gemini 2.5 Pro':  'gpt-4o',
-  'Claude 4 Sonnet': 'gpt-4o',
-  'Llama 3.1 405B':  'gpt-4o',
 };
 
 function selectEngine(el) {
@@ -1431,18 +1405,6 @@ var ENGINE_OPTIONS_ASST = {
   'GPT-4o Mini': [
     { type: 'toggle', label: '속도 우선',   key: 'speedFirst',  default: true  },
     { type: 'toggle', label: '간결 모드',   key: 'concise',     default: false },
-  ],
-  'Gemini 2.5 Pro': [
-    { type: 'toggle', label: '멀티모달',    key: 'multimodal',  default: true  },
-    { type: 'chip',   label: '추론 깊이',   key: 'reasoning',   values: ['빠름', '표준', '깊은사고'], default: '표준' },
-  ],
-  'Claude 4 Sonnet': [
-    { type: 'chip',   label: '안전 모드',   key: 'safety',      values: ['표준', '관대'],             default: '표준' },
-    { type: 'toggle', label: '코딩 특화',   key: 'codingMode',  default: false },
-  ],
-  'Llama 3.1 405B': [
-    { type: 'slider', label: 'Temperature', key: 'temperature', min: 0, max: 2, step: 0.1, default: 0.7 },
-    { type: 'slider', label: 'Top P',       key: 'topP',        min: 0, max: 1, step: 0.05, default: 0.9 },
   ],
 };
 var currentAsstEngOpts = {};

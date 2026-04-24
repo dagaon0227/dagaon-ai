@@ -659,32 +659,19 @@
       <div class="eng-sidebar-title">AI 엔진</div>
       <div class="eng-dropdown" id="engDropdown">
         <div class="eng-dd-trigger" onclick="toggleEngDropdown()">
-          <div class="eng-icon" id="ddIcon">SD</div>
+          <div class="eng-icon" id="ddIcon">KL</div>
           <div class="eng-info">
             <div class="eng-name-row">
-              <span class="eng-name" id="ddName">Seedance 2.0</span>
+              <span class="eng-name" id="ddName">Kling 3.0 4K</span>
             </div>
-            <span class="eng-desc" id="ddDesc">Most advanced video model · max 15s</span>
+            <span class="eng-desc" id="ddDesc">시네마급 4K 영상 생성 · max 10s</span>
           </div>
           <i class="fa-solid fa-chevron-down eng-dd-arrow"></i>
         </div>
         <div class="eng-dd-menu">
           <div class="eng-dd-inner">
 
-            <div class="eng-group-label">영상 생성 모델</div>
-
-            <div class="eng-item active" data-tier="pro" data-icon="SD" data-desc="Most advanced video model · max 15s" onclick="selectEngine(this, 'Seedance 2.0')">
-              <div class="eng-icon">SD</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Seedance 2.0</span>
-                  <span class="badge-top">TOP</span>
-                </div>
-                <span class="eng-desc">Most advanced video model · max 15s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="KL" data-desc="시네마급 4K 영상 생성 · max 10s" onclick="selectEngine(this, 'Kling 3.0 4K')">
+            <div class="eng-item active" data-tier="pro" data-icon="KL" data-desc="시네마급 4K 영상 생성 · max 10s" onclick="selectEngine(this, 'Kling 3.0 4K')">
               <div class="eng-icon">KL</div>
               <div class="eng-info">
                 <div class="eng-name-row">
@@ -706,49 +693,6 @@
               </div>
             </div>
 
-            <div class="eng-item" data-tier="pro" data-icon="V3" data-desc="Google 영상 모델 · max 8s" onclick="selectEngine(this, 'Veo 3.1')">
-              <div class="eng-icon">V3</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Veo 3.1</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">Google 영상 모델 · max 8s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="WN" data-desc="고품질 AI 영상 · max 5s" onclick="selectEngine(this, 'WAN 2.6')">
-              <div class="eng-icon">WN</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">WAN 2.6</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">고품질 AI 영상 · max 5s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="MX" data-desc="긴 영상 생성 특화 · max 5s" onclick="selectEngine(this, 'Minimax Video')">
-              <div class="eng-icon">MX</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Minimax Video</span>
-                </div>
-                <span class="eng-desc">긴 영상 생성 특화 · max 5s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="CS" data-desc="Higgsfield 시네마틱 · max 10s" onclick="selectEngine(this, 'Cinema Studio 3.5')">
-              <div class="eng-icon">CS</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Cinema Studio 3.5</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">Higgsfield 시네마틱 · max 10s</span>
-              </div>
-            </div>
-
             <div class="eng-item" data-tier="pro" data-icon="RW" data-desc="크리에이티브 영상 · max 10s" onclick="selectEngine(this, 'Runway Gen-3 Alpha')">
               <div class="eng-icon">RW</div>
               <div class="eng-info">
@@ -756,85 +700,6 @@
                   <span class="eng-name">Runway Gen-3 Alpha</span>
                 </div>
                 <span class="eng-desc">크리에이티브 영상 · max 10s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="PK" data-desc="크리에이티브 편집 · max 5s" onclick="selectEngine(this, 'Pika 2.0')">
-              <div class="eng-icon">PK</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Pika 2.0</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">크리에이티브 편집 · max 5s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="LM" data-desc="3D 시네마틱 · max 5s" onclick="selectEngine(this, 'Luma Dream Machine')">
-              <div class="eng-icon">LM</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Luma Dream Machine</span>
-                </div>
-                <span class="eng-desc">3D 시네마틱 · max 5s</span>
-              </div>
-            </div>
-
-            <div class="eng-divider"></div>
-            <div class="eng-group-label">영상 도구</div>
-
-            <div class="eng-item" data-tier="pro" data-icon="LS" data-desc="AI 립싱크 · max 15s" onclick="selectEngine(this, 'Lipsync Studio')">
-              <div class="eng-icon">LS</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Lipsync Studio</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">AI 립싱크 · max 15s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="TA" data-desc="AI 아바타 · max 15s" onclick="selectEngine(this, 'Talking Avatar')">
-              <div class="eng-icon">TA</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Talking Avatar</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">AI 아바타 · max 15s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="DV" data-desc="그림→영상 · max 10s" onclick="selectEngine(this, 'Draw to Video')">
-              <div class="eng-icon">DV</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Draw to Video</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">그림→영상 · max 10s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="UP" data-desc="해상도 업스케일 · max 15s" onclick="selectEngine(this, 'Video Upscale')">
-              <div class="eng-icon">UP</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Video Upscale</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">해상도 업스케일 · max 15s</span>
-              </div>
-            </div>
-
-            <div class="eng-item" data-tier="pro" data-icon="MC" data-desc="동작/표정 정밀 제어 · max 10s" onclick="selectEngine(this, 'Motion Control')">
-              <div class="eng-icon">MC</div>
-              <div class="eng-info">
-                <div class="eng-name-row">
-                  <span class="eng-name">Motion Control</span>
-                  <span class="badge-new-sm">NEW</span>
-                </div>
-                <span class="eng-desc">동작/표정 정밀 제어 · max 10s</span>
               </div>
             </div>
 
@@ -847,7 +712,7 @@
     <div id="engOptionsPanel" class="eng-options-panel" style="display:none;">
       <div class="eng-options-header" onclick="toggleEngOptions()">
         <i class="fa-solid fa-sliders" style="font-size:.58rem;color:var(--gold);"></i>
-        <span class="eng-options-title" id="engOptionsTitleText">Seedance 2.0 설정</span>
+        <span class="eng-options-title" id="engOptionsTitleText">Kling 3.0 4K 설정</span>
         <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
       </div>
       <div class="eng-options-body" id="engOptionsBody"></div>
@@ -857,7 +722,7 @@
     <div class="work-area">
       <div class="active-eng-bar">
         <span class="active-eng-label">현재 엔진</span>
-        <span class="active-eng-name" id="active-eng-name">Seedance 2.0</span>
+        <span class="active-eng-name" id="active-eng-name">Kling 3.0 4K</span>
       </div>
       <div class="work-body">
 
@@ -1021,7 +886,7 @@
     })();
 
     window.addEventListener('DOMContentLoaded', function() {
-      updateLengthChips('Seedance 2.0');
+      updateLengthChips('Kling 3.0 4K');
     });
 
     function renderHeaderRight(mode) {
@@ -1049,21 +914,9 @@
     }
 
     const ENGINE_MAX_LENGTH_V = {
-      'Seedance 2.0':       15,
       'Kling 3.0 4K':       10,
       'Sora 2':             15,
-      'Veo 3.1':             8,
-      'WAN 2.6':             5,
-      'Minimax Video':       5,
-      'Cinema Studio 3.5':  10,
       'Runway Gen-3 Alpha': 10,
-      'Pika 2.0':            5,
-      'Luma Dream Machine':  5,
-      'Lipsync Studio':     15,
-      'Talking Avatar':     15,
-      'Draw to Video':      10,
-      'Video Upscale':      15,
-      'Motion Control':     10
     };
     const LENGTH_VALS_V = { '5초': 5, '7초': 7, '10초': 10, '15초': 15 };
 
@@ -1416,10 +1269,6 @@
 
   // ─── ENGINE OPTIONS ──────────────────────────────────────────────────────
   var ENGINE_OPTIONS_VID = {
-    'Seedance 2.0': [
-      { type: 'chip', label: '모션 강도', key: 'motion', values: ['낮음', '중간', '높음'], default: '중간' },
-      { type: 'chip', label: '카메라 무브', key: 'camera', values: ['고정', '팬', '줌', '오빗'], default: '고정' },
-    ],
     'Kling 3.0 4K': [
       { type: 'chip', label: '프레임레이트', key: 'fps', values: ['24', '30', '60'], default: '24' },
       { type: 'toggle', label: '모션 브러시', key: 'brush', default: false },
@@ -1428,53 +1277,9 @@
       { type: 'toggle', label: '스토리보드', key: 'storyboard', default: false },
       { type: 'chip', label: '장면 전환', key: 'transition', values: ['컷', '페이드', '디졸브'], default: '컷' },
     ],
-    'Veo 3.1': [
-      { type: 'toggle', label: '오디오 동기화', key: 'audio_sync', default: true },
-      { type: 'toggle', label: '물리 시뮬레이션', key: 'physics', default: false },
-    ],
-    'Runway Gen-3': [
+    'Runway Gen-3 Alpha': [
       { type: 'slider', label: '모션 스코어', key: 'motion_score', min: 1, max: 10, step: 1, default: 5 },
       { type: 'toggle', label: '스타일 전이', key: 'style_transfer', default: false },
-    ],
-    'Pika 2.0': [
-      { type: 'chip', label: '모션 방향', key: 'direction', values: ['상', '하', '좌', '우', '확대', '축소'], default: '상' },
-      { type: 'toggle', label: '루프', key: 'loop', default: false },
-    ],
-    'Luma Dream Machine': [
-      { type: 'chip', label: '카메라 궤적', key: 'trajectory', values: ['선형', '곡선', '원형'], default: '선형' },
-      { type: 'toggle', label: '안정화', key: 'stabilize', default: true },
-    ],
-    'Minimax Video': [
-      { type: 'chip', label: '해상도', key: 'res', values: ['720p', '1080p', '4K'], default: '1080p' },
-      { type: 'toggle', label: '노이즈 제거', key: 'denoise', default: true },
-    ],
-    'Wan 2.1': [
-      { type: 'chip', label: '스타일', key: 'style', values: ['실사', '애니메이션', '추상'], default: '실사' },
-      { type: 'toggle', label: '색보정', key: 'colorgrade', default: false },
-    ],
-    'CogVideoX': [
-      { type: 'chip', label: '길이', key: 'length', values: ['5초', '10초', '15초'], default: '10초' },
-      { type: 'toggle', label: '텍스트 오버레이', key: 'text_overlay', default: false },
-    ],
-    'HunyuanVideo': [
-      { type: 'chip', label: '화질', key: 'quality', values: ['보통', '고화질', '최고화질'], default: '고화질' },
-      { type: 'toggle', label: '자동 자막', key: 'auto_caption', default: false },
-    ],
-    'AnimateDiff': [
-      { type: 'chip', label: '애니메이션 속도', key: 'anim_speed', values: ['느림', '보통', '빠름'], default: '보통' },
-      { type: 'toggle', label: '루프 효과', key: 'loop_fx', default: true },
-    ],
-    'ModelScope': [
-      { type: 'chip', label: '장르', key: 'genre', values: ['자연', '도시', '인물', '추상'], default: '자연' },
-      { type: 'toggle', label: '배경 분리', key: 'bg_sep', default: false },
-    ],
-    'ZeroScope': [
-      { type: 'chip', label: '색조', key: 'tone', values: ['따뜻', '차가운', '중립'], default: '중립' },
-      { type: 'toggle', label: '흑백 모드', key: 'bw', default: false },
-    ],
-    'Stable Video Diffusion': [
-      { type: 'slider', label: 'Motion Bucket', key: 'motion_bucket', min: 1, max: 255, step: 1, default: 127 },
-      { type: 'toggle', label: '증강 노이즈', key: 'aug_noise', default: false },
     ],
   };
   var currentVidEngOpts = {};
@@ -1539,7 +1344,7 @@
   }
 
   // Init with default engine
-  renderEngineOptions('Seedance 2.0');
+  renderEngineOptions('Kling 3.0 4K');
 
   // ─── VIDEO HISTORY (localStorage) ─────────────────────────
   var VIDEO_HISTORY_KEY = 'dagaon_video_history';

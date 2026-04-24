@@ -16,6 +16,9 @@
   <!-- Marked (markdown parser) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
   <style>
     /* ─────────────────────────────────────────
        ROOT & RESET
@@ -892,6 +895,111 @@
     .opt-select:focus { border-color: rgba(184,151,90,.55); }
 
     /* ─────────────────────────────────────────
+       FILE ATTACH
+    ───────────────────────────────────────── */
+    .attach-btn {
+      width: 34px; height: 34px;
+      background: transparent;
+      border: 1px solid rgba(184,151,90,.35);
+      border-radius: 7px;
+      color: var(--gold);
+      cursor: pointer;
+      display: grid; place-items: center;
+      font-size: .9rem;
+      flex-shrink: 0;
+      transition: background .2s, border-color .2s;
+    }
+    .attach-btn:hover { background: rgba(184,151,90,.08); border-color: var(--gold); }
+
+    .attach-preview-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 0 4px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .attach-preview-area:empty { display: none; }
+
+    .attach-thumb {
+      position: relative;
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(184,151,90,.25);
+      border-radius: 8px;
+      padding: 5px 8px 5px 5px;
+      max-width: 180px;
+    }
+    .attach-thumb-img {
+      width: 60px; height: 60px;
+      object-fit: cover;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .attach-thumb-icon {
+      width: 44px; height: 44px;
+      border-radius: 5px;
+      background: rgba(184,151,90,.1);
+      border: 1px solid rgba(184,151,90,.25);
+      display: grid; place-items: center;
+      font-size: 1.1rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .attach-thumb-info {
+      flex: 1; min-width: 0;
+    }
+    .attach-thumb-name {
+      font-size: .68rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+    .attach-thumb-size {
+      font-size: .58rem;
+      color: rgba(208,208,208,.4);
+      margin-top: 2px;
+    }
+    .attach-thumb-del {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #cc4444;
+      border: none;
+      color: #fff;
+      font-size: .55rem;
+      cursor: pointer;
+      display: grid; place-items: center;
+      line-height: 1;
+      transition: background .15s;
+    }
+    .attach-thumb-del:hover { background: #e05555; }
+
+    /* Attached file display in chat bubble */
+    .msg-attach-files {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 8px;
+    }
+    .msg-attach-img {
+      width: 80px; height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid rgba(184,151,90,.25);
+    }
+    .msg-attach-doc {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(184,151,90,.07);
+      border: 1px solid rgba(184,151,90,.2);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: .72rem;
+      color: var(--gold);
+    }
+    .msg-attach-doc i { font-size: .8rem; }
+
+    /* ─────────────────────────────────────────
        RESPONSIVE
     ───────────────────────────────────────── */
     @media (max-width: 768px) {
@@ -955,27 +1063,7 @@
               <div class="engine-desc">최고 품질 슬라이드 생성</div>
             </div>
           </div>
-          <div class="engine-item" data-engine="gpt-4o" data-tier="basic" data-badge-class="badge-claude" data-badge-text="C4" onclick="selectEngine(this)">
-            <div class="engine-badge badge-claude">C4</div>
-            <div class="engine-info">
-              <div class="engine-name">Claude Opus 4.5</div>
-              <div class="engine-desc">정교한 구조화 · 분석 특화</div>
-            </div>
-          </div>
-          <div class="engine-item" data-engine="gpt-4o" data-tier="basic" data-badge-class="badge-gem" data-badge-text="G3" onclick="selectEngine(this)">
-            <div class="engine-badge badge-gem">G3</div>
-            <div class="engine-info">
-              <div class="engine-name">Gemini 3 Pro</div>
-              <div class="engine-desc">데이터 분석 · 차트 생성</div>
-            </div>
-          </div>
-          <div class="engine-item" data-engine="gpt-4o" data-tier="pro" data-badge-class="badge-mini" data-badge-text="NB" onclick="selectEngine(this)">
-            <div class="engine-badge badge-mini">NB</div>
-            <div class="engine-info">
-              <div class="engine-name">Nano Banana Pro</div>
-              <div class="engine-desc">비주얼 디자인 · 이미지 특화</div>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
@@ -1056,20 +1144,31 @@
 
     <!-- Input Area -->
     <div id="input-area">
+      <!-- Hidden file input -->
+      <input type="file" id="file-input" style="display:none" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.txt,.doc,.docx" />
+
       <div class="input-wrapper">
+        <!-- File preview area (shown when files attached) -->
+        <div class="attach-preview-area" id="attach-preview-area"></div>
+
         <textarea
           id="msg-input"
           placeholder="'강남 카페 인테리어 제안서 만들어줘' 처럼 대화하듯 입력하세요..."
           rows="1"
         ></textarea>
         <div class="input-actions">
-          <span class="input-credit-hint" id="creditHint">메시지당 10 크레딧</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="attach-btn" id="attach-btn" title="파일 첨부 (이미지, PDF, 문서)">
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+            <span class="input-credit-hint" id="creditHint">메시지당 10 크레딧</span>
+          </div>
           <button id="send-btn" title="전송">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
         </div>
       </div>
-      <div class="input-hint">Enter로 전송 · Shift+Enter로 줄바꿈</div>
+      <div class="input-hint">Enter로 전송 · Shift+Enter로 줄바꿈 · 📎 파일 첨부 가능</div>
     </div>
   </div>
 </div>
@@ -1093,21 +1192,6 @@ const ENGINE_OPTIONS = {
   'GPT-5.2': [
     { type: 'chip', label: '디자인 톤', key: 'tone', values: ['모던', '클래식', '미니멀', '컬러풀'], default: '모던' },
     { type: 'toggle', label: '차트 포함', key: 'chart', default: true },
-  ],
-  'Claude Opus 4.5': [
-    { type: 'chip', label: '분석 깊이', key: 'depth', values: ['간략', '표준', '심층'], default: '표준' },
-    { type: 'toggle', label: '데이터 시각화', key: 'viz', default: true },
-    { type: 'chip', label: '레퍼런스 스타일', key: 'ref', values: ['학술', '비즈니스', '크리에이티브'], default: '비즈니스' },
-  ],
-  'Gemini 3 Pro': [
-    { type: 'chip', label: '데이터 소스', key: 'source', values: ['웹검색', '직접입력'], default: '웹검색' },
-    { type: 'chip', label: '차트 유형', key: 'chart', values: ['바', '파이', '라인', '테이블'], default: '바' },
-    { type: 'chip', label: '언어', key: 'lang', values: ['한국어', '영어', '일본어'], default: '한국어' },
-  ],
-  'Nano Banana Pro': [
-    { type: 'chip', label: '비주얼 스타일', key: 'visual', values: ['포토리얼', '일러스트', '3D', '플랫'], default: '플랫' },
-    { type: 'chip', label: '컬러 테마', key: 'color', values: ['다크', '라이트', '골드', '블루'], default: '골드' },
-    { type: 'chip', label: '레이아웃', key: 'layout', values: ['와이드', '표준', '컴팩트'], default: '표준' },
   ],
 };
 
@@ -1260,10 +1344,7 @@ function refreshUsageBadge() {
 //  ENGINE SELECTION
 // ═══════════════════════════════════════════════
 const ENGINE_MODEL_MAP = {
-  'GPT-5.2':          'gpt-4o',
-  'Claude Opus 4.5':  'gpt-4o',
-  'Gemini 3 Pro':     'gpt-4o',
-  'Nano Banana Pro':  'gpt-4o',
+  'GPT-5.2': 'gpt-4o',
 };
 
 function selectEngine(el) {
@@ -1483,17 +1564,175 @@ function sendSuggestion(text) {
 }
 
 // ═══════════════════════════════════════════════
+//  FILE ATTACH — STATE
+// ═══════════════════════════════════════════════
+// Each entry: { file, name, size, type, dataUrl, text }
+// type: 'image' | 'pdf' | 'text'
+let attachedFiles = [];
+const MAX_FILES = 5;
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+const MAX_DOC_BYTES   = 10 * 1024 * 1024;
+
+// ═══════════════════════════════════════════════
+//  FILE ATTACH — INIT
+// ═══════════════════════════════════════════════
+(function initFileAttach() {
+  const attachBtn  = document.getElementById('attach-btn');
+  const fileInput  = document.getElementById('file-input');
+
+  // pdf.js worker
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  attachBtn.addEventListener('click', () => {
+    fileInput.value = '';          // allow re-selecting same file
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    const remaining = MAX_FILES - attachedFiles.length;
+    if (remaining <= 0) { showToast(`최대 ${MAX_FILES}개 파일까지 첨부할 수 있습니다.`); return; }
+
+    files.slice(0, remaining).forEach(f => processFile(f));
+  });
+})();
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+}
+
+function getFileType(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (['jpg','jpeg','png','webp','gif'].includes(ext) || file.type.startsWith('image/')) return 'image';
+  if (ext === 'pdf' || file.type === 'application/pdf') return 'pdf';
+  return 'text'; // txt, doc, docx treated as text (best-effort)
+}
+
+function processFile(file) {
+  const ftype = getFileType(file);
+  const limit = (ftype === 'image') ? MAX_IMAGE_BYTES : MAX_DOC_BYTES;
+  if (file.size > limit) {
+    showToast(`${file.name}: 파일 크기 초과 (${formatBytes(limit)} 제한)`);
+    return;
+  }
+
+  if (ftype === 'image') {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const entry = { file, name: file.name, size: file.size, type: 'image', dataUrl: e.target.result, text: null };
+      attachedFiles.push(entry);
+      renderAttachPreview();
+    };
+    reader.readAsDataURL(file);
+
+  } else if (ftype === 'pdf') {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      let extractedText = '';
+      try {
+        if (window.pdfjsLib) {
+          const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) });
+          const pdf = await loadingTask.promise;
+          const maxPages = Math.min(pdf.numPages, 20); // 최대 20페이지
+          for (let i = 1; i <= maxPages; i++) {
+            const page = await pdf.getPage(i);
+            const tc = await page.getTextContent();
+            extractedText += tc.items.map(item => item.str).join(' ') + '\n';
+          }
+        } else {
+          extractedText = '[PDF 텍스트 추출 불가 - pdf.js 로드 실패]';
+        }
+      } catch (err) {
+        extractedText = '[PDF 텍스트 추출 오류: ' + err.message + ']';
+      }
+      const entry = { file, name: file.name, size: file.size, type: 'pdf', dataUrl: null, text: extractedText.trim() };
+      attachedFiles.push(entry);
+      renderAttachPreview();
+    };
+    reader.readAsArrayBuffer(file);
+
+  } else {
+    // txt / doc / docx — best-effort text read
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const entry = { file, name: file.name, size: file.size, type: 'text', dataUrl: null, text: e.target.result };
+      attachedFiles.push(entry);
+      renderAttachPreview();
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+}
+
+function renderAttachPreview() {
+  const area = document.getElementById('attach-preview-area');
+  area.innerHTML = '';
+  attachedFiles.forEach((entry, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'attach-thumb';
+
+    if (entry.type === 'image') {
+      const img = document.createElement('img');
+      img.className = 'attach-thumb-img';
+      img.src = entry.dataUrl;
+      img.alt = entry.name;
+      thumb.appendChild(img);
+    } else {
+      const icon = document.createElement('div');
+      icon.className = 'attach-thumb-icon';
+      icon.innerHTML = entry.type === 'pdf'
+        ? '<i class="fa-regular fa-file-pdf"></i>'
+        : '<i class="fa-regular fa-file-lines"></i>';
+      thumb.appendChild(icon);
+    }
+
+    const info = document.createElement('div');
+    info.className = 'attach-thumb-info';
+    info.innerHTML = `<div class="attach-thumb-name">${escapeHtml(entry.name)}</div><div class="attach-thumb-size">${formatBytes(entry.size)}</div>`;
+    thumb.appendChild(info);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'attach-thumb-del';
+    delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    delBtn.title = '삭제';
+    delBtn.onclick = () => removeAttachedFile(idx);
+    thumb.appendChild(delBtn);
+
+    area.appendChild(thumb);
+  });
+}
+
+function removeAttachedFile(idx) {
+  attachedFiles.splice(idx, 1);
+  renderAttachPreview();
+}
+
+function clearAttachedFiles() {
+  attachedFiles = [];
+  const area = document.getElementById('attach-preview-area');
+  if (area) area.innerHTML = '';
+}
+
+// ═══════════════════════════════════════════════
 //  SEND MESSAGE
 // ═══════════════════════════════════════════════
 async function sendMessage() {
   if (isStreaming) return;
 
   const text = textarea.value.trim();
-  if (!text) return;
+  const hasFiles = attachedFiles.length > 0;
+  if (!text && !hasFiles) return;
 
   // Append engine options to user message
   const optPrompt = getEngineOptionsPrompt();
-  const finalText = text + (optPrompt ? '\n' + optPrompt : '');
+  const baseText = text || '';
+  const finalText = baseText + (optPrompt ? '\n' + optPrompt : '');
 
   // Credit check for members
   if (isMember && !isAdmin) {
@@ -1513,12 +1752,42 @@ async function sendMessage() {
   // Hide empty state
   document.getElementById('emptyState').style.display = 'none';
 
-  const userMsg = { role: 'user', content: finalText };
+  // ── Build API message content ──
+  // Snapshot files before clearing
+  const filesToSend = attachedFiles.slice();
+
+  // Build text context from documents/PDFs
+  let docContext = '';
+  filesToSend.forEach(entry => {
+    if ((entry.type === 'pdf' || entry.type === 'text') && entry.text) {
+      docContext += `[참고 자료: ${entry.name}]\n${entry.text}\n[/참고 자료]\n\n`;
+    }
+  });
+
+  const combinedText = docContext ? docContext + finalText : finalText;
+
+  // Build content array for API (multimodal if images present)
+  const imageEntries = filesToSend.filter(e => e.type === 'image');
+  let apiContent;
+  if (imageEntries.length > 0) {
+    const parts = [];
+    if (combinedText) parts.push({ type: 'text', text: combinedText });
+    imageEntries.forEach(entry => {
+      parts.push({ type: 'image_url', image_url: { url: entry.dataUrl } });
+    });
+    apiContent = parts;
+  } else {
+    apiContent = combinedText;
+  }
+
+  const userMsg = { role: 'user', content: apiContent };
   messages.push(userMsg);
 
-  appendUserBubble(text, null);
+  // Show user bubble with display text + file thumbnails
+  appendUserBubble(baseText, filesToSend);
   textarea.value = '';
   autoResize();
+  clearAttachedFiles();
 
   // Deduct credits
   if (isMember && !isAdmin) {
@@ -1668,7 +1937,7 @@ function renderSlideCards(slides) {
 // ═══════════════════════════════════════════════
 //  DOM HELPERS
 // ═══════════════════════════════════════════════
-function appendUserBubble(text, file) {
+function appendUserBubble(text, files) {
   const container = document.getElementById('messages');
   const row = document.createElement('div');
   row.className = 'msg-row user';
@@ -1679,6 +1948,30 @@ function appendUserBubble(text, file) {
 
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble user';
+
+  // Show attached file previews in bubble
+  if (files && files.length > 0) {
+    const filesDiv = document.createElement('div');
+    filesDiv.className = 'msg-attach-files';
+    files.forEach(entry => {
+      if (entry.type === 'image') {
+        const img = document.createElement('img');
+        img.className = 'msg-attach-img';
+        img.src = entry.dataUrl;
+        img.alt = entry.name;
+        filesDiv.appendChild(img);
+      } else {
+        const docEl = document.createElement('div');
+        docEl.className = 'msg-attach-doc';
+        const icon = entry.type === 'pdf'
+          ? '<i class="fa-regular fa-file-pdf"></i>'
+          : '<i class="fa-regular fa-file-lines"></i>';
+        docEl.innerHTML = icon + ' ' + escapeHtml(entry.name);
+        filesDiv.appendChild(docEl);
+      }
+    });
+    bubble.appendChild(filesDiv);
+  }
 
   if (text) {
     const p = document.createElement('p');

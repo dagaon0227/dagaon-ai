@@ -1080,121 +1080,186 @@
     }
 
     /* ═══════════════════════════════════════
-       VIBE3D EDITOR
+       VIBE3D EDITOR — vibe3d.ai 스타일 레이아웃
     ═══════════════════════════════════════ */
+    :root {
+      --v3d-gold:    #c9a84c;
+      --v3d-purple:  #8b5cf6;
+      --v3d-purple2: #a78bfa;
+      --v3d-grad:    linear-gradient(135deg, #c9a84c 0%, #8b5cf6 100%);
+    }
+
     #vibe3d-editor {
       display: none;
       flex: 1;
       overflow: hidden;
+      flex-direction: column;
     }
     #vibe3d-editor.visible {
       display: flex;
     }
 
-    /* Vibe3D main canvas area */
-    #v3d-canvas {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: var(--black);
-    }
-
-    /* Canvas header bar */
-    #v3d-canvas-bar {
+    /* Top bar */
+    #v3d-topbar {
       flex-shrink: 0;
-      padding: 10px 18px;
+      padding: 10px 20px;
       background: var(--deep);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(201,168,76,.18);
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-    .v3d-bar-label {
-      font-size: .6rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.22);
-    }
-    .v3d-bar-label span {
-      color: var(--gold);
-      font-weight: 600;
-    }
-
-    /* Vibe3D upload & preview area */
-    #v3d-preview-area {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      gap: 16px;
-    }
-
-    #v3d-drop-zone {
-      width: 100%;
-      max-width: 540px;
-      aspect-ratio: 16/10;
-      border: 2px dashed rgba(184,151,90,.25);
-      border-radius: 12px;
-      background: rgba(184,151,90,.02);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       gap: 12px;
+    }
+    .v3d-topbar-logo {
+      font-family: var(--serif);
+      font-size: .82rem;
+      font-weight: 700;
+      background: var(--v3d-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: .06em;
+    }
+    .v3d-topbar-sep {
+      width: 1px;
+      height: 16px;
+      background: rgba(255,255,255,.1);
+    }
+    .v3d-topbar-sub {
+      font-size: .68rem;
+      color: rgba(255,255,255,.35);
+    }
+    #v3d-file-label {
+      margin-left: auto;
+      font-size: .64rem;
+      color: rgba(201,168,76,.55);
+      letter-spacing: .04em;
+    }
+
+    /* Main 3-column layout */
+    #v3d-main-layout {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ── Left: Upload Panel ── */
+    #v3d-upload-panel {
+      width: 260px;
+      min-width: 260px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-right: 1px solid rgba(201,168,76,.12);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .v3d-panel-title {
+      padding: 14px 16px 10px;
+      font-size: .58rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.2);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .v3d-panel-title-icon {
+      font-size: .7rem;
+      background: var(--v3d-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Upload drop zone */
+    #v3d-drop-zone {
+      margin: 14px;
+      border: 2px dashed rgba(201,168,76,.3);
+      border-radius: 10px;
+      background: rgba(201,168,76,.02);
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       cursor: pointer;
       transition: border-color .2s, background .2s;
       position: relative;
       overflow: hidden;
+      flex-shrink: 0;
     }
     #v3d-drop-zone:hover {
-      border-color: rgba(184,151,90,.5);
-      background: rgba(184,151,90,.04);
+      border-color: rgba(201,168,76,.6);
+      background: rgba(201,168,76,.04);
     }
     #v3d-drop-zone.drag-over {
-      border-color: var(--gold);
-      background: rgba(184,151,90,.06);
+      border-color: var(--v3d-gold);
+      background: rgba(201,168,76,.07);
     }
     #v3d-drop-zone.has-file {
       border-style: solid;
-      border-color: rgba(184,151,90,.4);
+      border-color: rgba(201,168,76,.45);
+      min-height: auto;
     }
     .v3d-drop-icon {
       font-size: 2.4rem;
-      color: rgba(184,151,90,.3);
+      background: var(--v3d-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      pointer-events: none;
     }
     .v3d-drop-title {
       font-family: var(--serif);
-      font-size: .88rem;
+      font-size: .82rem;
       font-weight: 400;
-      color: rgba(255,255,255,.45);
-      letter-spacing: .04em;
+      color: rgba(255,255,255,.5);
+      letter-spacing: .03em;
+      pointer-events: none;
     }
     .v3d-drop-hint {
-      font-size: .66rem;
-      color: rgba(255,255,255,.2);
+      font-size: .65rem;
+      color: rgba(255,255,255,.22);
       text-align: center;
-      line-height: 1.65;
+      line-height: 1.7;
+      pointer-events: none;
+    }
+    .v3d-drop-formats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .v3d-fmt-badge {
+      font-size: .55rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,.6);
+      border: 1px solid rgba(201,168,76,.25);
+      padding: 2px 7px;
+      border-radius: 20px;
     }
     .v3d-drop-btn {
-      padding: 7px 20px;
-      border: 1px solid rgba(184,151,90,.35);
+      padding: 6px 18px;
+      border: 1px solid rgba(201,168,76,.4);
       border-radius: 5px;
-      background: rgba(184,151,90,.07);
-      color: var(--gold-lt);
+      background: rgba(201,168,76,.08);
+      color: var(--v3d-gold);
       font-size: .72rem;
       cursor: pointer;
       transition: background .18s, border-color .18s;
       font-family: var(--sans);
     }
     .v3d-drop-btn:hover {
-      background: rgba(184,151,90,.14);
-      border-color: rgba(184,151,90,.55);
+      background: rgba(201,168,76,.16);
+      border-color: rgba(201,168,76,.6);
     }
 
     /* Preview image inside drop zone */
@@ -1204,7 +1269,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 10px;
+      border-radius: 8px;
       display: none;
     }
     #v3d-preview-img.visible { display: block; }
@@ -1212,20 +1277,20 @@
     /* Preview overlay controls */
     #v3d-preview-controls {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 8px;
+      right: 8px;
       display: none;
-      gap: 6px;
+      gap: 5px;
     }
     #v3d-preview-controls.visible { display: flex; }
     .v3d-ctrl-btn {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 5px;
-      background: rgba(0,0,0,.6);
-      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.65);
+      border: 1px solid rgba(255,255,255,.18);
       color: rgba(255,255,255,.7);
-      font-size: .72rem;
+      font-size: .68rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1233,162 +1298,93 @@
       transition: background .18s;
     }
     .v3d-ctrl-btn:hover {
-      background: rgba(184,151,90,.35);
-      border-color: rgba(184,151,90,.5);
+      background: rgba(201,168,76,.35);
+      border-color: rgba(201,168,76,.55);
     }
 
-    /* Rendered result overlay */
-    #v3d-result-overlay {
-      position: absolute;
-      inset: 0;
-      background: var(--black);
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    #v3d-result-overlay.visible { display: flex; }
-    #v3d-result-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-    .v3d-result-actions {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      display: flex;
-      gap: 6px;
-    }
-    .v3d-result-btn {
-      height: 28px;
-      padding: 0 12px;
-      border-radius: 5px;
-      background: rgba(0,0,0,.65);
-      border: 1px solid rgba(184,151,90,.3);
-      color: rgba(184,151,90,.9);
-      font-size: .68rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: background .18s;
-      font-family: var(--sans);
-    }
-    .v3d-result-btn:hover { background: rgba(184,151,90,.2); }
-
-    /* Loading overlay for Vibe3D */
-    #v3d-loading-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(5,5,5,.82);
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      z-index: 10;
-    }
-    #v3d-loading-overlay.visible { display: flex; }
-    .v3d-spinner {
-      width: 42px;
-      height: 42px;
-      border: 3px solid rgba(184,151,90,.15);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-    .v3d-loading-label {
-      font-size: .74rem;
-      color: rgba(184,151,90,.7);
-      letter-spacing: .1em;
-    }
-    .v3d-loading-sub {
-      font-size: .64rem;
-      color: rgba(255,255,255,.22);
-      letter-spacing: .06em;
-    }
-
-    /* AI Edit input area */
-    #v3d-ai-edit-bar {
+    /* Upload info section */
+    #v3d-upload-info {
+      padding: 0 14px 14px;
       flex-shrink: 0;
-      padding: 10px 18px;
-      border-top: 1px solid var(--border);
-      background: var(--deep);
+    }
+    .v3d-upload-info-row {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-    #v3d-ai-edit-input {
-      flex: 1;
-      height: 34px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,.08);
+      padding: 8px 10px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
       border-radius: 6px;
-      color: var(--silver);
-      font-family: var(--sans);
-      font-size: .78rem;
-      padding: 0 12px;
-      outline: none;
-      transition: border-color .2s;
+      display: none;
     }
-    #v3d-ai-edit-input::placeholder { color: rgba(255,255,255,.2); }
-    #v3d-ai-edit-input:focus { border-color: rgba(184,151,90,.4); }
-
-    /* Right control panel */
-    #v3d-right-panel {
-      width: 240px;
-      min-width: 240px;
-      background: var(--deep);
-      border-left: 1px solid var(--border);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
+    .v3d-upload-info-row.visible { display: flex; }
+    .v3d-upload-icon {
+      font-size: .9rem;
+      color: rgba(201,168,76,.6);
       flex-shrink: 0;
     }
-
-    .v3d-panel-header {
-      padding: 14px 14px 10px;
-      font-size: .58rem;
-      font-weight: 600;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.22);
-      border-bottom: 1px solid var(--border2);
+    .v3d-upload-name {
+      flex: 1;
+      min-width: 0;
+      font-size: .68rem;
+      color: rgba(255,255,255,.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .v3d-upload-del {
       flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.4);
       display: flex;
       align-items: center;
-      gap: 7px;
+      justify-content: center;
+      cursor: pointer;
+      font-size: .6rem;
     }
-    .v3d-panel-header-icon {
-      font-size: .75rem;
-      color: rgba(184,151,90,.5);
+    .v3d-upload-del:hover { background: rgba(220,80,80,.15); color: rgba(220,120,120,.9); }
+
+    /* ── Center: Before/After Compare + Settings ── */
+    #v3d-center-panel {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--black);
     }
 
-    .v3d-panel-section {
-      padding: 14px 14px 12px;
-      border-bottom: 1px solid var(--border2);
+    /* Settings bar */
+    #v3d-settings-bar {
+      flex-shrink: 0;
+      padding: 10px 16px;
+      background: var(--deep);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
     }
-    .v3d-section-label {
-      font-size: .58rem;
+    .v3d-setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .v3d-setting-label {
+      font-size: .55rem;
       letter-spacing: .18em;
       text-transform: uppercase;
       color: rgba(255,255,255,.28);
-      margin-bottom: 9px;
-      display: block;
+      white-space: nowrap;
     }
-
-    /* Chip group for Vibe3D */
     .v3d-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 4px;
     }
     .v3d-chip {
       padding: 4px 10px;
@@ -1396,82 +1392,290 @@
       border: 1px solid rgba(255,255,255,.09);
       background: transparent;
       color: rgba(255,255,255,.38);
-      font-size: .68rem;
+      font-size: .66rem;
       cursor: pointer;
-      transition: border-color .18s, color .18s, background .18s;
+      transition: all .18s;
       font-family: var(--sans);
       white-space: nowrap;
     }
     .v3d-chip:hover {
-      border-color: rgba(184,151,90,.3);
+      border-color: rgba(201,168,76,.4);
       color: rgba(255,255,255,.65);
     }
     .v3d-chip.sel {
-      border-color: var(--gold);
-      color: var(--gold-lt);
-      background: rgba(184,151,90,.09);
+      border-color: var(--v3d-gold);
+      color: var(--v3d-gold);
+      background: rgba(201,168,76,.1);
+    }
+    .v3d-chip.purple-sel {
+      border-color: var(--v3d-purple2);
+      color: var(--v3d-purple2);
+      background: rgba(139,92,246,.1);
     }
 
-    /* Dropdown for Vibe3D */
-    .v3d-select {
-      width: 100%;
-      height: 32px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: 6px;
-      color: rgba(255,255,255,.6);
-      font-family: var(--sans);
-      font-size: .74rem;
-      padding: 0 10px;
-      outline: none;
-      cursor: pointer;
-      transition: border-color .18s;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 28px;
+    /* Before/After compare area */
+    #v3d-compare-area {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #030303;
     }
-    .v3d-select:focus { border-color: rgba(184,151,90,.4); }
-    .v3d-select option { background: #111; }
+
+    /* Before / After side by side when both exist */
+    #v3d-before-after {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: stretch;
+      position: relative;
+    }
+    .v3d-ba-side {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .v3d-ba-side img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .v3d-ba-label {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      font-size: .58rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      background: rgba(0,0,0,.55);
+      padding: 3px 9px;
+      border-radius: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Slider divider handle */
+    #v3d-slider-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: linear-gradient(180deg, var(--v3d-gold), var(--v3d-purple));
+      cursor: ew-resize;
+      z-index: 10;
+      transform: translateX(-50%);
+      display: none;
+    }
+    #v3d-slider-handle.visible { display: block; }
+    #v3d-slider-knob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--v3d-gold), var(--v3d-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.6);
+    }
+    #v3d-slider-knob i {
+      font-size: .6rem;
+      color: #fff;
+    }
+
+    /* Empty state placeholder */
+    #v3d-empty-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      pointer-events: none;
+    }
+    .v3d-empty-icon {
+      font-size: 3.2rem;
+      background: var(--v3d-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: .25;
+    }
+    .v3d-empty-text {
+      font-family: var(--serif);
+      font-size: .88rem;
+      font-weight: 400;
+      color: rgba(255,255,255,.18);
+      letter-spacing: .04em;
+    }
+    .v3d-empty-hint {
+      font-size: .66rem;
+      color: rgba(255,255,255,.1);
+    }
+
+    /* Loading overlay for Vibe3D */
+    #v3d-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3,3,3,.88);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 20;
+    }
+    #v3d-loading-overlay.visible { display: flex; }
+    .v3d-spinner-wrap {
+      position: relative;
+      width: 52px;
+      height: 52px;
+    }
+    .v3d-spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(201,168,76,.12);
+      border-top-color: var(--v3d-gold);
+      border-right-color: var(--v3d-purple);
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+    .v3d-loading-label {
+      font-size: .78rem;
+      font-family: var(--serif);
+      background: var(--v3d-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: .08em;
+    }
+    .v3d-loading-sub {
+      font-size: .64rem;
+      color: rgba(255,255,255,.25);
+      letter-spacing: .06em;
+    }
+    .v3d-loading-progress {
+      width: 200px;
+      height: 2px;
+      background: rgba(255,255,255,.07);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .v3d-loading-bar {
+      height: 100%;
+      background: var(--v3d-grad);
+      border-radius: 1px;
+      width: 0%;
+      animation: v3dProgress 12s ease-out forwards;
+    }
+    @keyframes v3dProgress {
+      0% { width: 0%; }
+      50% { width: 70%; }
+      90% { width: 92%; }
+      100% { width: 92%; }
+    }
+
+    /* Bottom render bar */
+    #v3d-render-bar {
+      flex-shrink: 0;
+      padding: 10px 16px;
+      background: var(--deep);
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #v3d-render-btn {
+      flex: 1;
+      height: 40px;
+      background: var(--v3d-grad);
+      border: none;
+      border-radius: 8px;
+      color: #0a0800;
+      font-family: var(--serif);
+      font-size: .88rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity .2s, transform .1s;
+    }
+    #v3d-render-btn:hover { opacity: .88; }
+    #v3d-render-btn:active { transform: scale(.98); }
+    #v3d-render-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+    .v3d-credit-note {
+      font-size: .64rem;
+      color: rgba(255,255,255,.22);
+      white-space: nowrap;
+    }
+    .v3d-credit-note strong {
+      background: var(--v3d-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Right: Result Panel ── */
+    #v3d-result-panel {
+      width: 230px;
+      min-width: 230px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-left: 1px solid rgba(139,92,246,.15);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
 
     /* Render style cards */
     .v3d-style-cards {
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
     .v3d-style-card {
-      padding: 9px 12px;
+      padding: 9px 11px;
       border: 1px solid rgba(255,255,255,.07);
       border-radius: 7px;
       background: transparent;
       cursor: pointer;
-      transition: border-color .18s, background .18s;
+      transition: all .18s;
       text-align: left;
     }
     .v3d-style-card:hover {
-      border-color: rgba(184,151,90,.25);
-      background: rgba(184,151,90,.03);
+      border-color: rgba(201,168,76,.25);
+      background: rgba(201,168,76,.03);
     }
     .v3d-style-card.sel {
-      border-color: rgba(184,151,90,.5);
-      background: rgba(184,151,90,.07);
+      border-color: rgba(201,168,76,.5);
+      background: rgba(201,168,76,.07);
     }
     .v3d-style-card-name {
-      font-size: .76rem;
+      font-size: .74rem;
       font-weight: 500;
-      color: rgba(255,255,255,.6);
-      letter-spacing: .02em;
+      color: rgba(255,255,255,.55);
       display: flex;
       align-items: center;
       gap: 7px;
     }
-    .v3d-style-card.sel .v3d-style-card-name { color: var(--gold-lt); }
+    .v3d-style-card.sel .v3d-style-card-name { color: var(--v3d-gold); }
     .v3d-style-card-desc {
-      font-size: .62rem;
-      color: rgba(255,255,255,.28);
+      font-size: .6rem;
+      color: rgba(255,255,255,.25);
       margin-top: 2px;
       line-height: 1.5;
     }
@@ -1482,46 +1686,101 @@
       flex-shrink: 0;
     }
 
-    /* Render button */
-    #v3d-render-btn {
-      margin: 14px;
-      padding: 11px;
-      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%);
-      border: none;
-      border-radius: 7px;
-      color: #0a0800;
-      font-family: var(--serif);
-      font-size: .84rem;
-      font-weight: 700;
-      letter-spacing: .05em;
+    /* Result image area */
+    #v3d-result-wrap {
+      margin: 12px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(139,92,246,.2);
+      background: #0a0a0f;
+      position: relative;
+      display: none;
+      aspect-ratio: 4/3;
+    }
+    #v3d-result-wrap.visible { display: block; }
+    #v3d-result-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .v3d-result-actions {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      display: flex;
+      gap: 5px;
+    }
+    .v3d-result-btn {
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 5px;
+      background: rgba(0,0,0,.65);
+      border: 1px solid rgba(201,168,76,.35);
+      color: rgba(201,168,76,.9);
+      font-size: .64rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: opacity .2s, transform .1s;
-      flex-shrink: 0;
+      gap: 4px;
+      transition: background .18s;
+      font-family: var(--sans);
     }
-    #v3d-render-btn:hover { opacity: .88; }
-    #v3d-render-btn:active { transform: scale(.97); }
-    #v3d-render-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+    .v3d-result-btn:hover { background: rgba(201,168,76,.18); }
 
-    /* Credit note */
-    .v3d-credit-note {
-      text-align: center;
-      font-size: .62rem;
-      color: rgba(255,255,255,.2);
-      margin: 0 14px 14px;
-      line-height: 1.6;
+    /* AI Edit hints */
+    .v3d-edit-hints {
+      padding: 0 12px 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
     }
-    .v3d-credit-note strong { color: rgba(184,151,90,.55); }
 
-    @media (max-width: 1100px) {
-      #v3d-right-panel { display: none; }
+    /* Dropdown for Vibe3D */
+    .v3d-select {
+      width: 100%;
+      height: 30px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 6px;
+      color: rgba(255,255,255,.55);
+      font-family: var(--sans);
+      font-size: .72rem;
+      padding: 0 28px 0 10px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .18s;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
     }
-    @media (max-width: 800px) {
-      #v3d-right-panel { display: none; }
-      #v3d-drop-zone { aspect-ratio: 4/3; }
+    .v3d-select:focus { border-color: rgba(201,168,76,.4); }
+    .v3d-select option { background: #111; }
+
+    /* Panel section */
+    .v3d-panel-section {
+      padding: 12px 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .v3d-section-label {
+      font-size: .56rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    @media (max-width: 1200px) {
+      #v3d-result-panel { display: none; }
+    }
+    @media (max-width: 900px) {
+      #v3d-upload-panel { width: 200px; min-width: 200px; }
+    }
+    @media (max-width: 700px) {
+      #v3d-upload-panel { display: none; }
     }
 
     /* ── Large Reference Image Upload Zone ── */
@@ -2197,81 +2456,21 @@
       <div class="sidebar-header">AI 이미지 엔진</div>
       <div class="model-dropdown" id="modelDropdown">
         <div class="model-dd-trigger" onclick="toggleModelDropdown()">
-          <div class="model-icon" id="ddModelIcon">NB</div>
+          <div class="model-icon" id="ddModelIcon" style="color:rgba(100,210,120,.7);">DE</div>
           <div class="model-info">
-            <div class="model-name" id="ddModelName">Nano Banana 2</div>
-            <div class="model-desc" id="ddModelDesc">차세대 초현실적 이미지 생성</div>
+            <div class="model-name" id="ddModelName">DALL-E 3</div>
+            <div class="model-desc" id="ddModelDesc">OpenAI 범용 이미지 생성</div>
           </div>
           <i class="fa-solid fa-chevron-down model-dd-arrow"></i>
         </div>
         <div class="model-dd-menu">
           <div class="model-dd-inner">
 
-            <!-- NEW 모델들 -->
-            <div class="model-divider">신규 출시</div>
-
-            <div class="model-item active" data-model="dall-e-3" data-name="DALL-E 3" data-desc="OpenAI 범용 이미지 생성" data-tier="basic">
-              <div class="model-icon">NB</div>
+            <div class="model-item active" data-model="dalle" data-name="DALL-E 3" data-desc="OpenAI 범용 이미지 생성" data-tier="basic">
+              <div class="model-icon" style="color:rgba(100,210,120,.7);">DE</div>
               <div class="model-info">
-                <div class="model-name">Nano Banana 2</div>
-                <div class="model-desc">차세대 초현실적 이미지 생성</div>
-              </div>
-              <span class="badge-new">NEW</span>
-            </div>
-
-            <div class="model-item" data-model="nano-banana-pro" data-name="Nano Banana Pro" data-desc="4K 네이티브, 추론 기반 합성" data-tier="pro">
-              <div class="model-icon">NB<span style="font-size:.48rem;vertical-align:super;">P</span></div>
-              <div class="model-info">
-                <div class="model-name">Nano Banana Pro</div>
-                <div class="model-desc">4K 네이티브, 추론 기반 합성</div>
-              </div>
-              <span class="badge-new">NEW</span>
-            </div>
-
-            <div class="model-item" data-model="gpt-image-2" data-name="GPT Image 2" data-desc="OpenAI의 최신 이미지 생성 모델" data-tier="pro">
-              <div class="model-icon" style="color:rgba(100,210,120,.8);">GP</div>
-              <div class="model-info">
-                <div class="model-name">GPT Image 2</div>
-                <div class="model-desc">OpenAI의 최신 이미지 생성 모델</div>
-              </div>
-              <span class="badge-new">NEW</span>
-            </div>
-
-            <div class="model-item" data-model="ideogram-3" data-name="Ideogram 3.0" data-desc="텍스트 렌더링 특화 이미지 생성" data-tier="standard">
-              <div class="model-icon" style="color:rgba(180,120,220,.8);">ID</div>
-              <div class="model-info">
-                <div class="model-name">Ideogram 3.0</div>
-                <div class="model-desc">텍스트 렌더링 특화 이미지 생성</div>
-              </div>
-              <span class="badge-new">NEW</span>
-            </div>
-
-            <div class="model-item" data-model="higgsfield-soul-2" data-name="Higgsfield Soul 2.0" data-desc="울트라 리얼리스틱 패션 비주얼" data-tier="pro">
-              <div class="model-icon" style="color:rgba(220,160,100,.8);">HS</div>
-              <div class="model-info">
-                <div class="model-name">Higgsfield Soul 2.0</div>
-                <div class="model-desc">울트라 리얼리스틱 패션 비주얼</div>
-              </div>
-              <span class="badge-new">NEW</span>
-            </div>
-
-            <div class="model-item" data-model="higgsfield-cinema" data-name="Higgsfield Soul Cinema" data-desc="시네마틱 비주얼 생성" data-tier="pro">
-              <div class="model-icon" style="color:rgba(180,120,80,.8);">HC</div>
-              <div class="model-info">
-                <div class="model-name">Higgsfield Soul Cinema</div>
-                <div class="model-desc">시네마틱 비주얼 생성</div>
-              </div>
-              <span class="badge-new">NEW</span>
-            </div>
-
-            <!-- 기존 모델들 -->
-            <div class="model-divider" style="margin-top:4px;">주요 모델</div>
-
-            <div class="model-item" data-model="flux-1-1-pro" data-name="Flux 1.1 Pro" data-desc="고품질 사실적 사진 생성" data-tier="standard">
-              <div class="model-icon" style="color:rgba(100,180,220,.8);">FX</div>
-              <div class="model-info">
-                <div class="model-name">Flux 1.1 Pro</div>
-                <div class="model-desc">고품질 사실적 사진 생성</div>
+                <div class="model-name">DALL-E 3</div>
+                <div class="model-desc">OpenAI 범용 이미지 생성</div>
               </div>
             </div>
 
@@ -2283,43 +2482,12 @@
               </div>
             </div>
 
-            <div class="model-item" data-model="dalle" data-name="DALL-E 3" data-desc="OpenAI 범용 이미지 생성" data-tier="basic">
-              <div class="model-icon" style="color:rgba(100,210,120,.7);">DE</div>
+            <div class="model-item" data-model="flux-1-1-pro" data-name="Flux 1.1 Pro" data-desc="고품질 사실적 사진 생성" data-tier="standard">
+              <div class="model-icon" style="color:rgba(100,180,220,.8);">FX</div>
               <div class="model-info">
-                <div class="model-name">DALL-E 3</div>
-                <div class="model-desc">OpenAI 범용 이미지 생성</div>
+                <div class="model-name">Flux 1.1 Pro</div>
+                <div class="model-desc">고품질 사실적 사진 생성</div>
               </div>
-            </div>
-
-            <div class="model-item" data-model="sdxl" data-name="Stable Diffusion XL" data-desc="오픈소스 고해상도 생성" data-tier="standard">
-              <div class="model-icon" style="color:rgba(220,180,100,.7);">SD</div>
-              <div class="model-info">
-                <div class="model-name">Stable Diffusion XL</div>
-                <div class="model-desc">오픈소스 고해상도 생성</div>
-              </div>
-            </div>
-
-            <!-- 이미지 업로드 편집 -->
-            <div class="model-divider" style="margin-top:4px;">편집</div>
-
-            <div class="model-item upload-mode" data-model="upload-edit" data-name="이미지 업로드 편집" data-desc="기존 사진을 AI로 수정/변환" data-tier="basic">
-              <div class="model-icon"><i class="fa-solid fa-image" style="font-size:.8rem;"></i></div>
-              <div class="model-info">
-                <div class="model-name">이미지 업로드 편집</div>
-                <div class="model-desc">기존 사진을 AI로 수정/변환</div>
-              </div>
-            </div>
-
-            <!-- 3D 렌더링 -->
-            <div class="model-divider" style="margin-top:4px;">3D 렌더링</div>
-
-            <div class="model-item vibe3d-mode" data-model="vibe3d" data-name="Vibe3D" data-desc="건축/인테리어 AI 3D 렌더링 엔진" data-tier="standard">
-              <div class="model-icon" style="background:rgba(184,151,90,.1);border-color:rgba(184,151,90,.35);color:var(--gold);font-size:.62rem;letter-spacing:-.02em;">V3D</div>
-              <div class="model-info">
-                <div class="model-name">Vibe3D</div>
-                <div class="model-desc">건축/인테리어 AI 3D 렌더링</div>
-              </div>
-              <span class="badge-new">NEW</span>
             </div>
 
             <!-- 3D 변환 -->
@@ -2345,8 +2513,8 @@
       <!-- Active model bar -->
       <div id="active-model-bar">
         <div>
-          <div id="active-model-name">Nano Banana 2</div>
-          <div id="active-model-desc">차세대 초현실적 이미지 생성</div>
+          <div id="active-model-name">DALL-E 3</div>
+          <div id="active-model-desc">OpenAI 범용 이미지 생성</div>
         </div>
       </div>
 
@@ -2538,183 +2706,273 @@
     <!-- ══════════ VIBE3D EDITOR ══════════ -->
     <div id="vibe3d-editor">
 
-      <!-- Canvas / Preview area -->
-      <div id="v3d-canvas">
+      <!-- Top bar -->
+      <div id="v3d-topbar">
+        <span class="v3d-topbar-logo"><i class="fa-solid fa-cube" style="font-size:.7rem;margin-right:4px;"></i>Vibe3D</span>
+        <span class="v3d-topbar-sep"></span>
+        <span class="v3d-topbar-sub">3D 건축 · 인테리어 AI 렌더링</span>
+        <span id="v3d-file-label">파일 미선택</span>
+      </div>
 
-        <!-- Canvas top bar -->
-        <div id="v3d-canvas-bar">
-          <span class="v3d-bar-label"><span>Vibe3D</span> — 3D 렌더링 에디터</span>
-          <div style="flex:1;"></div>
-          <span class="v3d-bar-label" id="v3d-file-label">파일 미선택</span>
-        </div>
+      <!-- Main 3-column layout -->
+      <div id="v3d-main-layout">
 
-        <!-- Upload drop zone + result preview -->
-        <div id="v3d-preview-area">
+        <!-- ── Left: Upload Panel ── -->
+        <div id="v3d-upload-panel">
+
+          <div class="v3d-panel-title">
+            <i class="fa-solid fa-upload v3d-panel-title-icon"></i>
+            3D 파일 업로드
+          </div>
+
+          <!-- Drop zone -->
           <div id="v3d-drop-zone" onclick="v3dHandleDropClick()">
-            <!-- Drop content (hidden when file loaded) -->
             <div id="v3d-drop-content">
               <div class="v3d-drop-icon"><i class="fa-solid fa-cube"></i></div>
-              <div class="v3d-drop-title">3D 모델 또는 이미지 업로드</div>
-              <div class="v3d-drop-hint">OBJ, FBX, GLB, JPG, PNG 등<br>드래그 앤 드롭 또는 클릭하여 선택</div>
+              <div class="v3d-drop-title">3D 모델 또는 이미지</div>
+              <div class="v3d-drop-hint">드래그 앤 드롭 또는 클릭</div>
+              <div class="v3d-drop-formats">
+                <span class="v3d-fmt-badge">SKP</span>
+                <span class="v3d-fmt-badge">OBJ</span>
+                <span class="v3d-fmt-badge">GLB</span>
+                <span class="v3d-fmt-badge">FBX</span>
+                <span class="v3d-fmt-badge">JPG</span>
+                <span class="v3d-fmt-badge">PNG</span>
+              </div>
               <button class="v3d-drop-btn" onclick="event.stopPropagation(); v3dHandleDropClick()">
                 <i class="fa-solid fa-folder-open"></i> 파일 선택
               </button>
             </div>
-            <!-- Uploaded preview -->
-            <img id="v3d-preview-img" src="" alt="업로드 이미지" />
-            <!-- Preview overlay controls -->
+            <img id="v3d-preview-img" src="" alt="업로드 미리보기" />
             <div id="v3d-preview-controls">
               <button class="v3d-ctrl-btn" title="파일 교체" onclick="event.stopPropagation(); v3dHandleDropClick()"><i class="fa-solid fa-arrows-rotate"></i></button>
               <button class="v3d-ctrl-btn" title="파일 제거" onclick="event.stopPropagation(); v3dClearFile()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <!-- Render result overlay -->
-            <div id="v3d-result-overlay">
-              <img id="v3d-result-img" src="" alt="렌더링 결과" />
-              <div class="v3d-result-actions">
-                <button class="v3d-result-btn" onclick="event.stopPropagation(); v3dDownloadResult()"><i class="fa-solid fa-download"></i> 다운로드</button>
-                <button class="v3d-result-btn" onclick="event.stopPropagation(); v3dClearResult()"><i class="fa-solid fa-rotate-left"></i> 다시</button>
-              </div>
-            </div>
-            <!-- Loading overlay -->
-            <div id="v3d-loading-overlay">
-              <div class="v3d-spinner"></div>
-              <div class="v3d-loading-label" id="v3d-loading-label">3D 렌더링 중...</div>
-              <div class="v3d-loading-sub">Vibe3D AI가 렌더링 처리 중입니다</div>
+          </div>
+
+          <!-- Upload info row -->
+          <div id="v3d-upload-info">
+            <div class="v3d-upload-info-row" id="v3d-upload-info-row">
+              <i class="fa-solid fa-file-image v3d-upload-icon"></i>
+              <span class="v3d-upload-name" id="v3d-upload-name-label">파일명</span>
+              <div class="v3d-upload-del" onclick="v3dClearFile()" title="삭제"><i class="fa-solid fa-xmark"></i></div>
             </div>
           </div>
-        </div>
 
-        <!-- AI Edit bar (comment-based editing) -->
-        <div id="v3d-ai-edit-bar">
-          <i class="fa-solid fa-comment-dots" style="color:rgba(184,151,90,.4);font-size:.82rem;flex-shrink:0;"></i>
-          <input id="v3d-ai-edit-input" type="text" placeholder="AI 수정 명령... 예: make it sunset, change flooring to marble, add fog" />
-          <button class="v3d-drop-btn" style="padding:0 12px;height:34px;" onclick="v3dApplyAIEdit()"><i class="fa-solid fa-wand-magic-sparkles"></i> 적용</button>
-        </div>
-
-      </div>
-
-      <!-- Right control panel -->
-      <div id="v3d-right-panel">
-
-        <div class="v3d-panel-header">
-          <i class="fa-solid fa-sliders v3d-panel-header-icon"></i>
-          렌더 설정
-        </div>
-
-        <!-- Time of Day -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">Time of Day</span>
-          <div class="v3d-chips" id="v3d-time-chips">
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Morning</button>
-            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-time-chips')">Noon</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Afternoon</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Golden Hour</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Sunset</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Night</button>
+          <!-- Render Style -->
+          <div class="v3d-panel-title" style="border-top:1px solid rgba(255,255,255,.05);">
+            <i class="fa-solid fa-palette v3d-panel-title-icon"></i>
+            렌더 스타일
           </div>
-        </div>
-
-        <!-- Lighting -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">Lighting</span>
-          <div class="v3d-chips" id="v3d-light-chips">
-            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-light-chips')">Natural</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">Studio</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">Dramatic</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">Warm</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">Cool</button>
-          </div>
-        </div>
-
-        <!-- Material / Flooring -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">Material / Flooring</span>
-          <select class="v3d-select" id="v3d-material-select">
-            <option value="Wood">Wood</option>
-            <option value="Marble" selected>Marble</option>
-            <option value="Concrete">Concrete</option>
-            <option value="Tile">Tile</option>
-            <option value="Glass">Glass</option>
-            <option value="Metal">Metal</option>
-            <option value="Fabric">Fabric</option>
-            <option value="Carpet">Carpet</option>
-          </select>
-        </div>
-
-        <!-- Weather -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">Weather</span>
-          <div class="v3d-chips" id="v3d-weather-chips">
-            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-weather-chips')">Clear</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-weather-chips')">Cloudy</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-weather-chips')">Rainy</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-weather-chips')">Foggy</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-weather-chips')">Snowy</button>
-          </div>
-        </div>
-
-        <!-- Environment / Landscape -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">Environment</span>
-          <div class="v3d-chips" id="v3d-env-chips">
-            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-env-chips')">Urban</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Suburban</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Garden</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Mountain</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Beach</button>
-            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Forest</button>
-          </div>
-        </div>
-
-        <!-- Render Style -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">Render Style</span>
           <div class="v3d-style-cards" id="v3d-style-cards">
             <button class="v3d-style-card sel" onclick="v3dSelectStyleCard(this)">
               <div class="v3d-style-card-name">
                 <span class="v3d-style-dot" style="background:#5ca8e0;"></span>
-                Fidelity
+                Photorealistic
               </div>
-              <div class="v3d-style-card-desc">정확한 물리 기반 렌더링. 건축 도면 충실 재현.</div>
+              <div class="v3d-style-card-desc">사실적 사진 수준 렌더링. PBR 기반.</div>
             </button>
             <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
               <div class="v3d-style-card-name">
-                <span class="v3d-style-dot" style="background:var(--gold);"></span>
-                HyperReal
+                <span class="v3d-style-dot" style="background:#c9a84c;"></span>
+                Watercolor
               </div>
-              <div class="v3d-style-card-desc">초현실적 포토리얼 렌더링. 잡지급 비주얼.</div>
+              <div class="v3d-style-card-desc">수채화 스타일. 부드러운 워터컬러 감성.</div>
+            </button>
+            <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
+              <div class="v3d-style-card-name">
+                <span class="v3d-style-dot" style="background:#a0a0a0;"></span>
+                Sketch
+              </div>
+              <div class="v3d-style-card-desc">건축 스케치 스타일. 라인 드로잉.</div>
+            </button>
+            <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
+              <div class="v3d-style-card-name">
+                <span class="v3d-style-dot" style="background:#8b5cf6;"></span>
+                Modern
+              </div>
+              <div class="v3d-style-card-desc">모던 미니멀. 깔끔한 현대 건축 비주얼.</div>
             </button>
             <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
               <div class="v3d-style-card-name">
                 <span class="v3d-style-dot" style="background:#c06090;"></span>
-                Artistic
+                Classic
               </div>
-              <div class="v3d-style-card-desc">아티스틱 감성. 수채화 또는 스케치 느낌.</div>
+              <div class="v3d-style-card-desc">클래식 유럽풍. 고급스러운 전통 양식.</div>
             </button>
           </div>
-        </div>
 
-        <!-- AI Edit section in panel -->
-        <div class="v3d-panel-section">
-          <span class="v3d-section-label">AI Edit (Comment)</span>
-          <div style="font-size:.62rem;color:rgba(255,255,255,.22);line-height:1.65;margin-bottom:7px;">
-            하단 텍스트 입력으로 AI 수정 명령을 입력하세요.
+        </div><!-- /v3d-upload-panel -->
+
+        <!-- ── Center: Compare + Settings ── -->
+        <div id="v3d-center-panel">
+
+          <!-- Settings bar -->
+          <div id="v3d-settings-bar">
+            <!-- 조명 -->
+            <div class="v3d-setting-group">
+              <span class="v3d-setting-label">조명</span>
+              <div class="v3d-chips" id="v3d-light-chips">
+                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-light-chips')">자연광</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">스튜디오</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">석양</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">야간</button>
+              </div>
+            </div>
+            <!-- 각도 -->
+            <div class="v3d-setting-group">
+              <span class="v3d-setting-label">각도</span>
+              <div class="v3d-chips" id="v3d-angle-chips">
+                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-angle-chips')">정면</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-angle-chips')">45도</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-angle-chips')">조감도</button>
+              </div>
+            </div>
+            <!-- 해상도 -->
+            <div class="v3d-setting-group">
+              <span class="v3d-setting-label">해상도</span>
+              <div class="v3d-chips" id="v3d-res-chips">
+                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-res-chips')">2K</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-res-chips')">4K</button>
+              </div>
+            </div>
+            <!-- 환경 -->
+            <div class="v3d-setting-group">
+              <span class="v3d-setting-label">환경</span>
+              <div class="v3d-chips" id="v3d-env-chips">
+                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-env-chips')">Urban</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Garden</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Mountain</button>
+                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Beach</button>
+              </div>
+            </div>
+          </div><!-- /settings-bar -->
+
+          <!-- Before / After Compare area -->
+          <div id="v3d-compare-area">
+
+            <!-- Empty state -->
+            <div id="v3d-empty-state">
+              <div class="v3d-empty-icon"><i class="fa-solid fa-cube"></i></div>
+              <div class="v3d-empty-text">3D 파일을 업로드하고 렌더링하세요</div>
+              <div class="v3d-empty-hint">좌측에서 파일 업로드 → 설정 선택 → Render 버튼</div>
+            </div>
+
+            <!-- Before / After slider -->
+            <div id="v3d-before-after" style="display:none;">
+              <!-- Before side -->
+              <div class="v3d-ba-side" id="v3d-before-side">
+                <img id="v3d-before-img" src="" alt="원본" />
+                <span class="v3d-ba-label">BEFORE</span>
+              </div>
+              <!-- After side -->
+              <div class="v3d-ba-side" id="v3d-after-side">
+                <img id="v3d-after-img" src="" alt="렌더링" />
+                <span class="v3d-ba-label">AFTER</span>
+                <div class="v3d-result-actions">
+                  <button class="v3d-result-btn" onclick="v3dDownloadResult('png')"><i class="fa-solid fa-download"></i> PNG</button>
+                  <button class="v3d-result-btn" onclick="v3dDownloadResult('jpg')"><i class="fa-solid fa-download"></i> JPG</button>
+                  <button class="v3d-result-btn" onclick="v3dClearResult()"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+              </div>
+              <!-- Slider handle -->
+              <div id="v3d-slider-handle">
+                <div id="v3d-slider-knob"><i class="fa-solid fa-arrows-left-right"></i></div>
+              </div>
+            </div>
+
+            <!-- Loading overlay -->
+            <div id="v3d-loading-overlay">
+              <div class="v3d-spinner-wrap">
+                <div class="v3d-spinner"></div>
+              </div>
+              <div class="v3d-loading-label" id="v3d-loading-label">AI 렌더링 중...</div>
+              <div class="v3d-loading-sub">Vibe3D가 사실적 이미지를 생성하고 있습니다</div>
+              <div class="v3d-loading-progress">
+                <div class="v3d-loading-bar" id="v3d-loading-bar-fill"></div>
+              </div>
+            </div>
+          </div><!-- /compare-area -->
+
+          <!-- Render bar -->
+          <div id="v3d-render-bar">
+            <!-- AI Edit input -->
+            <i class="fa-solid fa-comment-dots" style="color:rgba(201,168,76,.4);font-size:.82rem;flex-shrink:0;"></i>
+            <input id="v3d-ai-edit-input" type="text"
+              style="flex:1;height:36px;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--silver);font-family:var(--sans);font-size:.76rem;padding:0 12px;outline:none;"
+              placeholder="AI 수정 명령... 예: make it sunset, change flooring to marble" />
+            <button id="v3d-render-btn" onclick="v3dRender()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Render
+            </button>
+            <span class="v3d-credit-note">2K <strong>5크레딧</strong> · 4K <strong>25크레딧</strong></span>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;">
-            <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('make it sunset')">make it sunset</button>
-            <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('add fog atmosphere')">add fog</button>
-            <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('change flooring to wood')">wood floor</button>
-            <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('dramatic lighting')">dramatic light</button>
+
+        </div><!-- /v3d-center-panel -->
+
+        <!-- ── Right: Style & Result Panel ── -->
+        <div id="v3d-result-panel">
+
+          <div class="v3d-panel-title">
+            <i class="fa-solid fa-image v3d-panel-title-icon"></i>
+            렌더링 결과
           </div>
-        </div>
 
-        <!-- Render button + credit note -->
-        <button id="v3d-render-btn" onclick="v3dRender()">
-          <i class="fa-solid fa-rotate-right"></i> Render
-        </button>
-        <div class="v3d-credit-note">이미지 1장 렌더링 시 <strong>5 크레딧</strong> 소모</div>
+          <!-- Result thumbnail -->
+          <div id="v3d-result-wrap">
+            <img id="v3d-result-img" src="" alt="렌더링 결과" />
+            <div class="v3d-result-actions">
+              <button class="v3d-result-btn" onclick="v3dDownloadResult('png')"><i class="fa-solid fa-download"></i> PNG</button>
+              <button class="v3d-result-btn" onclick="v3dDownloadResult('jpg')"><i class="fa-solid fa-download"></i> JPG</button>
+            </div>
+          </div>
 
-      </div><!-- /v3d-right-panel -->
+          <!-- Re-render hint -->
+          <div style="padding:8px 12px 0;font-size:.62rem;color:rgba(255,255,255,.2);line-height:1.6;" id="v3d-result-hint" style="display:none;">
+            렌더링이 완료되었습니다. 설정을 변경하고 다시 Render를 누르면 추가 생성됩니다.
+          </div>
+
+          <!-- Material / Flooring -->
+          <div class="v3d-panel-section" style="margin-top:10px;">
+            <span class="v3d-section-label">재질 / 바닥재</span>
+            <select class="v3d-select" id="v3d-material-select">
+              <option value="Wood">Wood (나무)</option>
+              <option value="Marble" selected>Marble (대리석)</option>
+              <option value="Concrete">Concrete (콘크리트)</option>
+              <option value="Tile">Tile (타일)</option>
+              <option value="Glass">Glass (유리)</option>
+              <option value="Metal">Metal (금속)</option>
+              <option value="Carpet">Carpet (카펫)</option>
+            </select>
+          </div>
+
+          <!-- Time of Day -->
+          <div class="v3d-panel-section">
+            <span class="v3d-section-label">Time of Day</span>
+            <div class="v3d-chips" id="v3d-time-chips">
+              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Morning</button>
+              <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-time-chips')">Noon</button>
+              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Golden Hour</button>
+              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Sunset</button>
+              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Night</button>
+            </div>
+          </div>
+
+          <!-- AI Edit quick hints -->
+          <div class="v3d-panel-section">
+            <span class="v3d-section-label">빠른 수정 명령</span>
+            <div class="v3d-edit-hints">
+              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('make it sunset')">석양 분위기</button>
+              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('add fog atmosphere')">안개 효과</button>
+              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('change flooring to wood')">나무 바닥</button>
+              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('dramatic lighting')">드라마틱 조명</button>
+              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('add greenery and plants')">식물 추가</button>
+              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('make it night scene')">야간 씬</button>
+            </div>
+          </div>
+
+        </div><!-- /v3d-result-panel -->
+
+      </div><!-- /v3d-main-layout -->
 
     </div><!-- /vibe3d-editor -->
 
@@ -3301,60 +3559,28 @@
       clearSlots();
       startLoading();
 
+      // 크레딧 차감량 기억 (오류 시 환불용)
+      const creditCost = getCreditCost();
+
       try {
-        // 이미지 업로드 편집 모드
+        // ── 이미지 업로드 편집 모드 ──
+        // DALL-E 2 edit API는 마스크 필요 + CORS 이슈로 인해
+        // 업로드 이미지를 참고 컨텍스트로 DALL-E 3 generation으로 대체 처리
         if (isUploadMode) {
           if (!uploadedFile) {
             showToast('편집할 이미지를 먼저 업로드해주세요.');
             stopLoading();
             btn.disabled = false;
+            if (!isAdmin) { saveCredits(getCredits() + creditCost); renderHeaderBadge(); }
             return;
           }
+
           const editChips = Array.from(document.querySelectorAll('.edit-chip.sel')).map(c => c.textContent.trim()).join(', ');
-          const editPrompt = editChips ? editChips + ' 처리를 적용해주세요.' : '이미지를 편집해주세요.';
+          const basePrompt = document.getElementById('prompt-textarea')?.value?.trim() || '';
+          const editDesc = editChips ? editChips : (basePrompt || '이미지를 고품질로 편집해주세요');
+          const editPrompt = `Professional photo editing, ${editDesc}, ultra high quality, photorealistic, 4K, detailed, professional result. Based on the uploaded reference image style and content.`;
 
-          const formData = new FormData();
-          formData.append('image', uploadedFile, 'image.png');
-          formData.append('prompt', editPrompt);
-          formData.append('model', 'dall-e-2');
-          formData.append('n', '1');
-          formData.append('size', '1024x1024');
-
-          const response = await fetch('https://api.openai.com/v1/images/edits', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + OPENAI_API_KEY },
-            body: formData
-          });
-          if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.error?.message || 'API 오류 (' + response.status + ')');
-          }
-          const data = await response.json();
-          const imageUrl = data.data[0].url;
-          stopLoading();
-          const slot = document.querySelector('.img-slot[data-slot="1"]');
-          await fillSlotWithImage(slot, imageUrl);
-          showToast('AI 이미지 편집이 완료되었습니다.');
-          btn.disabled = false;
-          return;
-        }
-
-        // 일반 이미지 생성
-        const promptText = document.getElementById('prompt-textarea').value.trim() || '모던 미니멀 인테리어 공간';
-        const fullPrompt = promptText + ', high quality, detailed';
-        const size = getSelectedRatio();
-        const count = getSelectedCount();
-        const displayModelName = document.getElementById('active-model-name').textContent;
-
-        // DALL-E 3만 실제 API 호출 (다른 엔진도 내부적으로 DALL-E 3 사용, 사용자에게는 선택 엔진명 표시)
-        const slots = document.querySelectorAll('.img-slot');
-        const activeSlots = Array.from(slots).slice(0, count);
-
-        stopLoading();
-
-        for (let i = 0; i < activeSlots.length; i++) {
-          startLoading();
-          document.getElementById('loading-msg').textContent = `이미지 ${i + 1}/${activeSlots.length} 생성 중...`;
+          document.getElementById('loading-msg').textContent = 'AI 편집 생성 중...';
 
           const response = await fetch('https://api.openai.com/v1/images/generations', {
             method: 'POST',
@@ -3364,23 +3590,99 @@
             },
             body: JSON.stringify({
               model: 'dall-e-3',
-              prompt: fullPrompt,
-              size: size,
+              prompt: editPrompt,
+              size: '1024x1024',
               quality: 'hd',
               n: 1
             })
           });
 
           if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.error?.message || 'API 오류 (' + response.status + ')');
+            let errBody = {};
+            try { errBody = await response.json(); } catch(_) {}
+            const errMsg = errBody?.error?.message || '';
+            if (response.status === 401) throw new Error('OPENAI_401');
+            if (response.status === 429) throw new Error('OPENAI_429');
+            if (response.status === 400 && errMsg.includes('content_policy')) throw new Error('OPENAI_CONTENT');
+            if (response.status === 400 && errMsg.includes('billing')) throw new Error('OPENAI_BILLING');
+            throw new Error(errMsg || 'API 오류 (' + response.status + ')');
           }
 
           const data = await response.json();
+          if (!data.data || !data.data[0] || !data.data[0].url) throw new Error('응답 데이터가 올바르지 않습니다.');
           const imageUrl = data.data[0].url;
           stopLoading();
+          const slot = document.querySelector('.img-slot[data-slot="1"]');
+          if (slot) await fillSlotWithImage(slot, imageUrl);
+          showToast('AI 이미지 편집이 완료되었습니다.');
+          saveImageHistory();
+          btn.disabled = false;
+          if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
+          return;
+        }
+
+        // ── 일반 이미지 생성 ──
+        const promptText = (document.getElementById('prompt-textarea')?.value || '').trim() || '모던 미니멀 인테리어 공간, 자연광, 고품질';
+        const styleHint = getSelectedStyle ? getSelectedStyle() : '';
+        const fullPrompt = [promptText, styleHint, 'ultra high quality, photorealistic, 4K, detailed, professional'].filter(Boolean).join(', ');
+
+        // DALL-E 3 지원 사이즈만 허용
+        const size = getSelectedRatio(); // '1024x1024' | '1792x1024' | '1024x1792'
+
+        // DALL-E 3 quality: 'standard' or 'hd'
+        const qualityRaw = getSelectedQuality(); // '2k' or '4k'
+        const dalleQuality = qualityRaw === '4k' ? 'hd' : 'standard';
+
+        const count = getSelectedCount();
+        const displayModelName = document.getElementById('active-model-name')?.textContent || 'DAGAON AI';
+        const slots = document.querySelectorAll('.img-slot');
+        const activeSlots = Array.from(slots).slice(0, count);
+
+        // DALL-E 3은 n=1만 지원 → for 루프로 개별 호출
+        for (let i = 0; i < activeSlots.length; i++) {
+          document.getElementById('loading-msg').textContent = `이미지 ${i + 1}/${activeSlots.length} 생성 중...`;
+
+          let response;
+          try {
+            response = await fetch('https://api.openai.com/v1/images/generations', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + OPENAI_API_KEY
+              },
+              body: JSON.stringify({
+                model: 'dall-e-3',
+                prompt: fullPrompt,
+                size: size,
+                quality: dalleQuality,
+                n: 1
+              })
+            });
+          } catch(fetchErr) {
+            // fetch 자체 실패 (CORS, 네트워크 등)
+            throw new Error('NETWORK_ERROR: ' + (fetchErr.message || 'fetch failed'));
+          }
+
+          if (!response.ok) {
+            let errBody = {};
+            try { errBody = await response.json(); } catch(_) {}
+            const errMsg = errBody?.error?.message || '';
+            if (response.status === 401) throw new Error('OPENAI_401');
+            if (response.status === 429) throw new Error('OPENAI_429');
+            if (response.status === 400 && errMsg.toLowerCase().includes('content_policy')) throw new Error('OPENAI_CONTENT');
+            if (response.status === 400 && errMsg.toLowerCase().includes('billing')) throw new Error('OPENAI_BILLING');
+            if (response.status === 400 && errMsg.toLowerCase().includes('invalid_size')) throw new Error('OPENAI_SIZE: ' + errMsg);
+            throw new Error(errMsg || 'API 오류 (' + response.status + ')');
+          }
+
+          const data = await response.json();
+          if (!data.data || !data.data[0] || !data.data[0].url) throw new Error('응답 데이터가 올바르지 않습니다. (' + JSON.stringify(data).slice(0,120) + ')');
+
+          const imageUrl = data.data[0].url;
           await fillSlotWithImage(activeSlots[i], imageUrl);
         }
+
+        stopLoading();
 
         if (isAdmin) {
           const grid = document.getElementById('image-grid');
@@ -3393,25 +3695,40 @@
           }
         }
 
-        showToast('✨ ' + displayModelName + ' 이미지 생성이 완료되었습니다.');
+        showToast(displayModelName + ' 이미지 생성이 완료되었습니다.');
         saveImageHistory();
         btn.disabled = false;
 
-        if (!isAdmin) {
-          if (getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
-        }
+        if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
 
       } catch(err) {
         stopLoading();
         btn.disabled = false;
+        // 크레딧 환불
+        if (!isAdmin) { saveCredits(getCredits() + creditCost); renderHeaderBadge(); }
+
         let msg = 'API 호출 중 오류가 발생했습니다.';
-        if (err.message && err.message.includes('401')) msg = 'API 키가 유효하지 않습니다.';
-        else if (err.message && err.message.includes('429')) msg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요.';
-        else if (err.message && err.message.includes('content_policy')) msg = '프롬프트가 콘텐츠 정책에 위반됩니다. 다른 내용을 입력해주세요.';
-        else if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('network'))) msg = '네트워크 오류가 발생했습니다.';
-        else if (err.message) msg = err.message;
+        const em = err.message || '';
+        if (em === 'OPENAI_401' || em.includes('401')) {
+          msg = 'API 키가 유효하지 않거나 만료되었습니다. (401 Unauthorized)';
+        } else if (em === 'OPENAI_429' || em.includes('429')) {
+          msg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요. (Rate Limit)';
+        } else if (em === 'OPENAI_CONTENT' || em.includes('content_policy')) {
+          msg = '프롬프트가 콘텐츠 정책에 위반됩니다. 다른 내용을 입력해주세요.';
+        } else if (em === 'OPENAI_BILLING' || em.includes('billing')) {
+          msg = 'OpenAI 계정 결제 문제가 발생했습니다. API 키 잔액을 확인해주세요.';
+        } else if (em.startsWith('OPENAI_SIZE')) {
+          msg = 'DALL-E 3 지원 사이즈: 1024x1024, 1792x1024, 1024x1792 만 가능합니다.';
+        } else if (em.startsWith('NETWORK_ERROR') || em.includes('Failed to fetch') || em.includes('network') || em.includes('fetch')) {
+          msg = '네트워크 오류가 발생했습니다. CORS 정책 또는 인터넷 연결을 확인해주세요.\n' +
+                '브라우저에서 직접 API 호출 시 CORS 오류가 발생할 수 있습니다.';
+        } else if (em.includes('응답 데이터')) {
+          msg = em;
+        } else if (em) {
+          msg = em;
+        }
         showToast('오류: ' + msg);
-        if (!isAdmin) { saveCredits(getCredits()+getCreditCost()); renderHeaderBadge(); }
+        console.error('[runGenerate] Error:', err);
       }
     }
 
@@ -3533,23 +3850,35 @@
           const content = document.getElementById('v3d-drop-content');
           const img = document.getElementById('v3d-preview-img');
           const controls = document.getElementById('v3d-preview-controls');
+          const infoRow = document.getElementById('v3d-upload-info-row');
+          const nameLabel = document.getElementById('v3d-upload-name-label');
           content.style.display = 'none';
           img.src = ev.target.result;
           img.classList.add('visible');
           controls.classList.add('visible');
           zone.classList.add('has-file');
+          // Show file info row
+          if (infoRow) infoRow.classList.add('visible');
+          if (nameLabel) nameLabel.textContent = file.name;
+          // Set before image for Before/After compare
+          const beforeImg = document.getElementById('v3d-before-img');
+          if (beforeImg) beforeImg.src = ev.target.result;
         };
         reader.readAsDataURL(file);
       } else {
-        // 3D file — show placeholder
+        // 3D file
         const zone = document.getElementById('v3d-drop-zone');
         const content = document.getElementById('v3d-drop-content');
         const controls = document.getElementById('v3d-preview-controls');
-        content.innerHTML = `<div class="v3d-drop-icon" style="color:rgba(184,151,90,.5);"><i class="fa-solid fa-cube"></i></div>
-          <div class="v3d-drop-title" style="color:rgba(184,151,90,.8);">${file.name}</div>
-          <div class="v3d-drop-hint">3D 모델 파일 로드됨<br>Render 버튼을 눌러 AI 렌더링 시작</div>`;
+        const infoRow = document.getElementById('v3d-upload-info-row');
+        const nameLabel = document.getElementById('v3d-upload-name-label');
+        content.innerHTML = `<div class="v3d-drop-icon"><i class="fa-solid fa-cube"></i></div>
+          <div class="v3d-drop-title">${file.name}</div>
+          <div class="v3d-drop-hint">3D 파일 로드됨<br>Render 버튼을 눌러 AI 렌더링 시작</div>`;
         controls.classList.add('visible');
         zone.classList.add('has-file');
+        if (infoRow) infoRow.classList.add('visible');
+        if (nameLabel) nameLabel.textContent = file.name;
       }
     }
 
@@ -3561,28 +3890,43 @@
       const content = document.getElementById('v3d-drop-content');
       content.style.display = '';
       content.innerHTML = `<div class="v3d-drop-icon"><i class="fa-solid fa-cube"></i></div>
-        <div class="v3d-drop-title">3D 모델 또는 이미지 업로드</div>
-        <div class="v3d-drop-hint">OBJ, FBX, GLB, JPG, PNG 등<br>드래그 앤 드롭 또는 클릭하여 선택</div>
+        <div class="v3d-drop-title">3D 모델 또는 이미지</div>
+        <div class="v3d-drop-hint">드래그 앤 드롭 또는 클릭</div>
+        <div class="v3d-drop-formats">
+          <span class="v3d-fmt-badge">SKP</span><span class="v3d-fmt-badge">OBJ</span>
+          <span class="v3d-fmt-badge">GLB</span><span class="v3d-fmt-badge">FBX</span>
+          <span class="v3d-fmt-badge">JPG</span><span class="v3d-fmt-badge">PNG</span>
+        </div>
         <button class="v3d-drop-btn" onclick="event.stopPropagation(); v3dHandleDropClick()"><i class="fa-solid fa-folder-open"></i> 파일 선택</button>`;
       const img = document.getElementById('v3d-preview-img');
       img.src = '';
       img.classList.remove('visible');
       document.getElementById('v3d-preview-controls').classList.remove('visible');
-      document.getElementById('v3d-result-overlay').classList.remove('visible');
-      document.getElementById('v3d-result-img').src = '';
+      const infoRow = document.getElementById('v3d-upload-info-row');
+      if (infoRow) infoRow.classList.remove('visible');
+      // Hide Before/After
+      v3dClearResult();
     }
 
     function v3dClearResult() {
       v3dResultUrl = null;
-      document.getElementById('v3d-result-overlay').classList.remove('visible');
-      document.getElementById('v3d-result-img').src = '';
+      const baEl = document.getElementById('v3d-before-after');
+      const emptyEl = document.getElementById('v3d-empty-state');
+      const sliderHandle = document.getElementById('v3d-slider-handle');
+      const resultWrap = document.getElementById('v3d-result-wrap');
+      const afterImg = document.getElementById('v3d-after-img');
+      if (baEl) baEl.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = '';
+      if (sliderHandle) sliderHandle.classList.remove('visible');
+      if (resultWrap) resultWrap.classList.remove('visible');
+      if (afterImg) afterImg.src = '';
     }
 
-    function v3dDownloadResult() {
-      if (!v3dResultUrl) return;
+    function v3dDownloadResult(format) {
+      if (!v3dResultUrl) { showToast('다운로드할 렌더링 결과가 없습니다.'); return; }
       const a = document.createElement('a');
       a.href = v3dResultUrl;
-      a.download = 'vibe3d-render.png';
+      a.download = 'vibe3d-render.' + (format || 'png');
       a.target = '_blank';
       a.click();
     }
@@ -3613,32 +3957,41 @@
 
     /* ── Collect current Vibe3D settings ── */
     function v3dGetSettings() {
-      const time    = document.querySelector('#v3d-time-chips .v3d-chip.sel')?.textContent || 'Noon';
-      const light   = document.querySelector('#v3d-light-chips .v3d-chip.sel')?.textContent || 'Natural';
+      const light   = document.querySelector('#v3d-light-chips .v3d-chip.sel')?.textContent?.trim() || '자연광';
+      const angle   = document.querySelector('#v3d-angle-chips .v3d-chip.sel')?.textContent?.trim() || '정면';
+      const resSel  = document.querySelector('#v3d-res-chips .v3d-chip.sel')?.textContent?.trim() || '2K';
+      const env     = document.querySelector('#v3d-env-chips .v3d-chip.sel')?.textContent?.trim() || 'Urban';
       const material = document.getElementById('v3d-material-select')?.value || 'Marble';
-      const weather  = document.querySelector('#v3d-weather-chips .v3d-chip.sel')?.textContent || 'Clear';
-      const env      = document.querySelector('#v3d-env-chips .v3d-chip.sel')?.textContent || 'Urban';
-      const styleCardName = document.querySelector('#v3d-style-cards .v3d-style-card.sel .v3d-style-card-name')?.textContent?.trim() || 'Fidelity';
-      return { time, light, material, weather, env, renderStyle: styleCardName };
+      const time     = document.querySelector('#v3d-time-chips .v3d-chip.sel')?.textContent?.trim() || 'Noon';
+      const styleCardName = document.querySelector('#v3d-style-cards .v3d-style-card.sel .v3d-style-card-name')?.textContent?.trim() || 'Photorealistic';
+      return { light, angle, resolution: resSel, env, material, time, renderStyle: styleCardName };
     }
 
     function v3dBuildPrompt(settings, aiEditHint) {
       const styleDescMap = {
-        'Fidelity': 'physically based rendering, architectural visualization, accurate materials',
-        'HyperReal': 'hyperrealistic photorealistic rendering, magazine quality, ultra-detailed textures',
-        'Artistic': 'artistic architectural illustration, watercolor sketch style, expressive rendering'
+        'Photorealistic': 'photorealistic architectural visualization, physically based rendering, ultra-detailed, professional photography quality',
+        'Watercolor': 'watercolor architectural illustration, soft brush strokes, artistic rendering, hand-painted style',
+        'Sketch': 'architectural pencil sketch, line drawing style, technical illustration, clean lines',
+        'Modern': 'modern minimalist architectural rendering, clean contemporary design, sleek surfaces',
+        'Classic': 'classical European architectural style, ornate details, traditional design elements'
       };
-      const styleDesc = styleDescMap[settings.renderStyle] || styleDescMap['Fidelity'];
+      const lightMap = { '자연광': 'natural daylight', '스튜디오': 'studio lighting', '석양': 'golden sunset light', '야간': 'night scene with artificial lighting' };
+      const angleMap = { '정면': 'front facade view', '45도': '3/4 isometric view, 45 degree angle', '조감도': 'aerial bird\'s-eye view, drone perspective' };
 
-      let prompt = `Architectural 3D rendering, interior design visualization. `;
-      prompt += `Time of day: ${settings.time} lighting atmosphere. `;
-      prompt += `Lighting: ${settings.light} illumination. `;
-      prompt += `Flooring and materials: ${settings.material} surfaces. `;
-      prompt += `Weather condition: ${settings.weather} sky. `;
-      prompt += `Environment setting: ${settings.env} surroundings. `;
-      prompt += `Render style: ${styleDesc}. `;
-      if (aiEditHint) prompt += `Additional edit: ${aiEditHint}. `;
-      prompt += `High quality, photorealistic, detailed, professional architectural visualization, 4K resolution.`;
+      const styleDesc = styleDescMap[settings.renderStyle] || styleDescMap['Photorealistic'];
+      const lightDesc = lightMap[settings.light] || settings.light;
+      const angleDesc = angleMap[settings.angle] || settings.angle;
+      const resDesc = settings.resolution === '4K' ? 'ultra high resolution 4K' : 'high resolution 2K';
+
+      let prompt = `${styleDesc}. `;
+      prompt += `Architectural visualization. `;
+      prompt += `Camera angle: ${angleDesc}. `;
+      prompt += `Lighting: ${lightDesc}. `;
+      prompt += `Materials: ${settings.material} flooring and surfaces. `;
+      prompt += `Environment: ${settings.env} surroundings. `;
+      prompt += `Time: ${settings.time}. `;
+      if (aiEditHint) prompt += `Additional: ${aiEditHint}. `;
+      prompt += `${resDesc}, professional architectural render, highly detailed, cinematic composition.`;
       return prompt;
     }
 
@@ -3646,13 +3999,20 @@
     function v3dStartLoading() {
       const overlay = document.getElementById('v3d-loading-overlay');
       const label   = document.getElementById('v3d-loading-label');
+      const barFill = document.getElementById('v3d-loading-bar-fill');
       overlay.classList.add('visible');
       label.textContent = v3dLoadingMsgs[0];
+      // Reset progress bar animation by re-creating element
+      if (barFill) {
+        barFill.style.animation = 'none';
+        barFill.offsetHeight; // reflow
+        barFill.style.animation = '';
+      }
       let step = 0;
       v3dLoadInterval = setInterval(() => {
         step = Math.min(step + 1, v3dLoadingMsgs.length - 1);
         label.textContent = v3dLoadingMsgs[step];
-      }, 900);
+      }, 2200);
     }
 
     function v3dStopLoading() {
@@ -3663,79 +4023,163 @@
     /* ── Main render function ── */
     async function v3dRender(aiEditHint) {
       const settings = v3dGetSettings();
-      const hint = aiEditHint || '';
+      const hint = (typeof aiEditHint === 'string') ? aiEditHint : (document.getElementById('v3d-ai-edit-input')?.value?.trim() || '');
 
-      // Credit check
+      // Credit check (2K=5, 4K=25)
+      const renderCost = settings.resolution === '4K' ? 25 : 5;
       if (!isAdmin) {
-        const cost = 5;
         const credits = getCredits();
-        if (credits < cost) {
-          showToast(`크레딧이 부족합니다. 5 크레딧이 필요합니다. (보유: ${credits})`);
+        if (credits < renderCost) {
+          showToast(`크레딧이 부족합니다. ${renderCost} 크레딧이 필요합니다. (보유: ${credits})`);
           showUpgrade();
           return;
         }
-        saveCredits(credits - cost);
+        saveCredits(credits - renderCost);
         renderHeaderBadge();
       }
 
       const btn = document.getElementById('v3d-render-btn');
       btn.disabled = true;
-      document.getElementById('v3d-result-overlay').classList.remove('visible');
+
+      // Hide previous result / show empty loading
+      const baEl = document.getElementById('v3d-before-after');
+      const emptyEl = document.getElementById('v3d-empty-state');
+      if (baEl) baEl.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = 'none';
       v3dStartLoading();
 
       try {
         const prompt = v3dBuildPrompt(settings, hint);
 
-        const response = await fetch('https://api.openai.com/v1/images/generations', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + OPENAI_API_KEY
-          },
-          body: JSON.stringify({
-            model: 'dall-e-3',
-            prompt: prompt,
-            size: '1792x1024',
-            quality: 'hd',
-            n: 1
-          })
-        });
+        // DALL-E 3 사이즈: 1792x1024 (와이드 렌더링에 적합)
+        const dalleSize = settings.resolution === '4K' ? '1792x1024' : '1024x1024';
+        const dalleQuality = settings.resolution === '4K' ? 'hd' : 'standard';
+
+        let response;
+        try {
+          response = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + OPENAI_API_KEY
+            },
+            body: JSON.stringify({
+              model: 'dall-e-3',
+              prompt: prompt,
+              size: dalleSize,
+              quality: dalleQuality,
+              n: 1
+            })
+          });
+        } catch(fetchErr) {
+          throw new Error('NETWORK_ERROR: ' + (fetchErr.message || 'fetch failed'));
+        }
 
         if (!response.ok) {
-          const err = await response.json().catch(() => ({}));
-          throw new Error(err.error?.message || 'API 오류 (' + response.status + ')');
+          let errBody = {};
+          try { errBody = await response.json(); } catch(_) {}
+          const errMsg = errBody?.error?.message || '';
+          if (response.status === 401) throw new Error('OPENAI_401');
+          if (response.status === 429) throw new Error('OPENAI_429');
+          if (response.status === 400 && errMsg.toLowerCase().includes('content_policy')) throw new Error('OPENAI_CONTENT');
+          if (response.status === 400 && errMsg.toLowerCase().includes('billing')) throw new Error('OPENAI_BILLING');
+          throw new Error(errMsg || 'API 오류 (' + response.status + ')');
         }
 
         const data = await response.json();
+        if (!data.data || !data.data[0] || !data.data[0].url) throw new Error('응답 데이터가 올바르지 않습니다.');
         v3dResultUrl = data.data[0].url;
 
         v3dStopLoading();
 
-        // Show result overlay
-        const resultImg = document.getElementById('v3d-result-img');
-        resultImg.src = v3dResultUrl;
-        resultImg.onload = () => {
-          document.getElementById('v3d-result-overlay').classList.add('visible');
-        };
+        // Show Before/After compare
+        const afterImg = document.getElementById('v3d-after-img');
+        const beforeImg = document.getElementById('v3d-before-img');
+        const sliderHandle = document.getElementById('v3d-slider-handle');
+        const resultWrap = document.getElementById('v3d-result-wrap');
+        const resultImgRight = document.getElementById('v3d-result-img');
+
+        if (afterImg) afterImg.src = v3dResultUrl;
+        if (resultImgRight) resultImgRight.src = v3dResultUrl;
+
+        // If no before image (no upload), show single result centered
+        const hasBeforeImage = beforeImg && beforeImg.src && beforeImg.src !== window.location.href;
+        if (hasBeforeImage) {
+          if (baEl) { baEl.style.display = 'flex'; }
+          if (sliderHandle) sliderHandle.classList.add('visible');
+          v3dInitSlider();
+        } else {
+          // No before image: show after side only
+          const beforeSide = document.getElementById('v3d-before-side');
+          if (beforeSide) beforeSide.style.display = 'none';
+          if (baEl) { baEl.style.display = 'flex'; }
+        }
+        if (emptyEl) emptyEl.style.display = 'none';
+
+        // Right panel result thumbnail
+        if (resultWrap) resultWrap.classList.add('visible');
+        const resultHint = document.getElementById('v3d-result-hint');
+        if (resultHint) resultHint.style.display = '';
 
         showToast('Vibe3D 렌더링이 완료되었습니다.');
-        if (hint) document.getElementById('v3d-ai-edit-input').value = '';
+        if (hint) {
+          const aiInput = document.getElementById('v3d-ai-edit-input');
+          if (aiInput) aiInput.value = '';
+        }
 
         if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
 
       } catch(err) {
         v3dStopLoading();
-        if (!isAdmin) { saveCredits(getCredits() + 5); renderHeaderBadge(); }
+        if (!isAdmin) { saveCredits(getCredits() + renderCost); renderHeaderBadge(); }
+        if (emptyEl) emptyEl.style.display = '';
+
         let msg = 'API 호출 중 오류가 발생했습니다.';
-        if (err.message && err.message.includes('401')) msg = 'API 키가 유효하지 않습니다.';
-        else if (err.message && err.message.includes('429')) msg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요.';
-        else if (err.message && err.message.includes('content_policy')) msg = '프롬프트가 콘텐츠 정책에 위반됩니다.';
-        else if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('network'))) msg = '네트워크 오류가 발생했습니다.';
-        else if (err.message) msg = err.message;
+        const em = err.message || '';
+        if (em === 'OPENAI_401' || em.includes('401')) msg = 'API 키가 유효하지 않거나 만료되었습니다. (401)';
+        else if (em === 'OPENAI_429' || em.includes('429')) msg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요.';
+        else if (em === 'OPENAI_CONTENT') msg = '프롬프트가 콘텐츠 정책에 위반됩니다.';
+        else if (em === 'OPENAI_BILLING') msg = 'OpenAI 계정 결제 문제가 발생했습니다. API 키 잔액을 확인해주세요.';
+        else if (em.startsWith('NETWORK_ERROR') || em.includes('Failed to fetch')) msg = '네트워크 오류가 발생했습니다. CORS 또는 인터넷 연결을 확인해주세요.';
+        else if (em) msg = em;
         showToast('오류: ' + msg);
+        console.error('[v3dRender] Error:', err);
       } finally {
         btn.disabled = false;
       }
+    }
+
+    /* ── Before/After slider interaction ── */
+    function v3dInitSlider() {
+      const handle = document.getElementById('v3d-slider-handle');
+      const baContainer = document.getElementById('v3d-before-after');
+      const beforeSide = document.getElementById('v3d-before-side');
+      const afterSide = document.getElementById('v3d-after-side');
+      if (!handle || !baContainer) return;
+
+      // Reset to 50%
+      handle.style.left = '50%';
+      if (beforeSide) beforeSide.style.flex = '1';
+      if (afterSide) afterSide.style.flex = '1';
+
+      let isDragging = false;
+
+      function onMove(clientX) {
+        const rect = baContainer.getBoundingClientRect();
+        let pct = (clientX - rect.left) / rect.width;
+        pct = Math.max(0.05, Math.min(0.95, pct));
+        handle.style.left = (pct * 100) + '%';
+        if (beforeSide) beforeSide.style.flex = String(pct);
+        if (afterSide) afterSide.style.flex = String(1 - pct);
+      }
+
+      handle.onmousedown = (e) => { e.preventDefault(); isDragging = true; };
+      handle.ontouchstart = (e) => { isDragging = true; };
+
+      document.onmousemove = (e) => { if (isDragging) onMove(e.clientX); };
+      document.ontouchmove = (e) => { if (isDragging && e.touches[0]) onMove(e.touches[0].clientX); };
+      document.onmouseup = () => { isDragging = false; };
+      document.ontouchend = () => { isDragging = false; };
     }
 
     /* ── Drag & drop for Vibe3D drop zone ── */
@@ -4410,65 +4854,6 @@
           { id: 'flux-seed', label: '시드 (선택)', type: 'input', placeholder: '랜덤 시드 (비워두면 자동)' }
         ]
       },
-      'sdxl': {
-        label: 'Stable Diffusion XL 설정',
-        options: [
-          { id: 'sdxl-sampler', label: '샘플러', type: 'chips', items: ['Euler', 'DPM++', 'DDIM'], default: 'Euler' },
-          { id: 'sdxl-steps', label: '스텝수', type: 'slider', min: 20, max: 50, default: 30, param: 'steps' },
-          { id: 'sdxl-cfg', label: 'CFG 스케일', type: 'slider', min: 1, max: 20, default: 7, param: 'cfg_scale' },
-          { id: 'sdxl-neg', label: '네거티브 프롬프트', type: 'input', placeholder: '제외할 요소 입력... (예: blurry, low quality)' }
-        ]
-      },
-      'ideogram-3': {
-        label: 'Ideogram 3.0 설정',
-        options: [
-          { id: 'ideogram-text', label: '텍스트 렌더링', type: 'toggle', default: true },
-          { id: 'ideogram-magic', label: '매직 프롬프트', type: 'toggle', default: true },
-          { id: 'ideogram-palette', label: '컬러 팔레트', type: 'chips', items: ['Auto', 'Warm', 'Cool', 'Monochrome', 'Vibrant'], default: 'Auto' }
-        ]
-      },
-      'nano-banana-2': {
-        label: 'Nano Banana 2 설정',
-        options: [
-          { id: 'nb-preset', label: '스타일 프리셋', type: 'chips', items: ['Cinematic', 'Anime', 'Fantasy', 'Minimal'], default: 'Cinematic' }
-        ]
-      },
-      'nano-banana-pro': {
-        label: 'Nano Banana Pro 설정',
-        options: [
-          { id: 'nbp-preset', label: '스타일 프리셋', type: 'chips', items: ['Cinematic', 'Anime', 'Fantasy', 'Minimal', 'HyperReal'], default: 'Cinematic' }
-        ]
-      },
-      'gpt-image-2': {
-        label: 'GPT Image 2 설정',
-        options: [
-          { id: 'gpt2-style', label: '스타일', type: 'chips', items: ['포토리얼', '일러스트', '비비드', '내추럴'], default: '포토리얼' }
-        ]
-      },
-      'higgsfield-soul-2': {
-        label: 'Higgsfield Soul 2.0 설정',
-        options: [
-          { id: 'hf-style', label: '스타일', type: 'chips', items: ['Fashion', 'Portrait', 'Editorial', 'Cinematic'], default: 'Fashion' }
-        ]
-      },
-      'higgsfield-cinema': {
-        label: 'Higgsfield Cinema 설정',
-        options: [
-          { id: 'hfc-style', label: '시네마 스타일', type: 'chips', items: ['Noir', 'Epic', 'Indie', 'Blockbuster'], default: 'Epic' }
-        ]
-      },
-      'tripo3d': {
-        label: 'Tripo 3D 설정',
-        options: []
-      },
-      'furnimesh': {
-        label: 'FurniMesh 설정',
-        options: []
-      },
-      'spacely3d': {
-        label: 'Spacely 3D 설정',
-        options: []
-      }
     };
 
     function renderEngineOptions(model) {
