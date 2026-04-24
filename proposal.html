@@ -19,6 +19,12 @@
   <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
+  <!-- PptxGenJS (PPT export) -->
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS/dist/pptxgen.bundle.js"></script>
+
+  <!-- html2pdf (PDF export) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     /* ─────────────────────────────────────────
        ROOT & RESET
@@ -977,6 +983,68 @@
     }
     .attach-thumb-del:hover { background: #e05555; }
 
+    /* ─────────────────────────────────────────
+       DROP ZONE
+    ───────────────────────────────────────── */
+    #drop-zone {
+      margin: 0 0 10px 0;
+      border: 1.5px dashed rgba(184,151,90,0.3);
+      border-radius: 10px;
+      background: rgba(184,151,90,0.03);
+      min-height: 88px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      overflow: hidden;
+      padding: 10px 14px;
+      gap: 0;
+    }
+    #drop-zone:hover,
+    #drop-zone.drag-over {
+      border-color: var(--gold);
+      background: rgba(184,151,90,0.07);
+    }
+    #drop-zone.drag-over {
+      border-color: var(--gold-lt);
+    }
+    #drop-zone.has-files {
+      justify-content: flex-start;
+      padding: 10px 12px;
+      min-height: 0;
+    }
+    .drop-zone-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      pointer-events: none;
+      user-select: none;
+    }
+    .drop-zone-icon {
+      font-size: 1.5rem;
+      color: rgba(184,151,90,0.45);
+    }
+    .drop-zone-text {
+      font-size: .72rem;
+      color: rgba(208,208,208,0.4);
+      text-align: center;
+      line-height: 1.6;
+      letter-spacing: .02em;
+    }
+    .drop-zone-text strong {
+      color: rgba(184,151,90,0.7);
+    }
+    .drop-zone-thumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+    }
+
     /* Attached file display in chat bubble */
     .msg-attach-files {
       display: flex; flex-wrap: wrap; gap: 6px;
@@ -1266,7 +1334,18 @@ function getEngineOptionsPrompt() {
 //  CONFIG
 // ═══════════════════════════════════════════════
 const OPENAI_API_KEY = atob('c2stcHJvai10MXV3Qm9JOTMtS2JCRHhJajdCQ1VMcnVYNFdreWtobVVtN245UzlQZ2wtTGRDcV8wczBCNmdETjRzWHhwZnVyNVJUek5JTEotVVQzQmxia0ZKdjk4cVFYU3pvNlJjMEtMTUVBS3lyUlRqYzhfMm5fVFJYTzB2TFZWa21UMmNwUmhlRmNxNnliQlhjTG5FWVQ2OEtvemdMdk1DRUE=');
-const SYSTEM_PROMPT = '당신은 전문 프로젝트 제안서/슬라이드 작성 AI입니다. 공간 디자인, 인테리어, 건축, 비즈니스 분야의 프로젝트 제안서를 대화를 통해 작성합니다. 사용자의 요구에 맞게 슬라이드 구조(제목 슬라이드, 프로젝트 개요, 디자인 컨셉, 공간 배치, 마감재, 예산, 일정 등)로 제안서를 작성하세요. 한국어로 작성하세요. 응답 시 슬라이드별로 구분하여 [슬라이드 1: 제목], [슬라이드 2: 개요] 형식으로 작성하세요. 사용자 메시지에 [Tone: 모던], [Tone: 클래식], [Tone: 미니멀], [Tone: 컬러풀] 등 디자인 톤 지시가 포함된 경우, 해당 톤의 시각적 언어와 분위기를 제안서 텍스트에 반영하세요. [Chart: true]가 포함된 경우 제안서에 데이터 차트나 비교표를 포함하세요.';
+const SYSTEM_PROMPT = `당신은 세계 최고 수준의 전문 건축·인테리어 컨설턴트이자 프레젠테이션 전문가입니다. 공간 디자인, 인테리어, 건축, 비즈니스 분야의 프로젝트 제안서를 대화를 통해 작성합니다.
+
+[핵심 규칙]
+1. 반드시 최소 8~12개의 슬라이드로 구성하세요.
+2. 각 슬라이드는 [슬라이드 N: 제목] 형식으로 시작하세요 (예: [슬라이드 1: 표지], [슬라이드 2: 프로젝트 개요]).
+3. 고급스럽고 전문적인 컨설턴트 톤으로 작성하세요. 일반적인 표현 대신 업계 전문 용어와 통찰력 있는 표현을 사용하세요.
+4. 각 슬라이드에 반드시 포함할 것: 명확한 제목, 3~5개의 핵심 포인트(불릿), 상세 설명 문장.
+5. 슬라이드 구성 예시: 표지 → 프로젝트 개요 → 시장 분석/배경 → 디자인 컨셉 → 공간 계획 → 마감재·자재 → 색채·조명 계획 → 예산 계획 → 공정 일정 → 기대 효과 → 포트폴리오/레퍼런스 → 결론 및 제안.
+6. 한국어로 작성하세요.
+7. 사용자 메시지에 [Tone: 모던], [Tone: 클래식], [Tone: 미니멀], [Tone: 컬러풀] 등 디자인 톤 지시가 포함된 경우, 해당 톤의 시각적 언어와 분위기를 제안서 텍스트에 반영하세요.
+8. [Chart: true]가 포함된 경우 예산 비교표, 공정표, 공간 면적 분석표 등 구체적인 데이터 표를 마크다운 테이블로 포함하세요.
+9. 절대 짧게 요약하지 마세요. 각 슬라이드는 충분한 내용으로 채워야 합니다.`;
 const CREDIT_PER_MSG = 10;
 const CONV_STORAGE_KEY = 'dagaon_proposal_history';
 
@@ -1527,8 +1606,430 @@ function startNewChat() {
 // ═══════════════════════════════════════════════
 //  EXPORT
 // ═══════════════════════════════════════════════
+
+/* ── helpers ─────────────────────────────────── */
+function getDateStr() {
+  const d = new Date();
+  return d.getFullYear().toString()
+    + String(d.getMonth() + 1).padStart(2, '0')
+    + String(d.getDate()).padStart(2, '0');
+}
+
+// Strip markdown to plain text for PPT
+function stripMd(str) {
+  return str
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    .replace(/_(.+?)_/g, '$1')
+    .replace(/~~(.+?)~~/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^[-*+]\s+/gm, '• ')
+    .replace(/^\d+\.\s+/gm, '')
+    .replace(/\|[^\n]+\|/g, '')        // table rows
+    .replace(/^[-:| ]+$/gm, '')        // table separators
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+// Collect current proposal slides from the last AI message slide cards
+function collectSlides() {
+  // Prefer in-memory messages data
+  const lastAI = [...messages].reverse().find(m => m.role === 'assistant');
+  if (lastAI && lastAI.content) {
+    const parsed = parseSlides(lastAI.content);
+    if (parsed && parsed.length > 0) return parsed;
+  }
+  // Fallback: scrape DOM slide cards
+  const cards = document.querySelectorAll('.slide-card');
+  if (cards.length === 0) return null;
+  return Array.from(cards).map((card, i) => {
+    const num = card.querySelector('.slide-card-num')?.textContent?.trim() || String(i + 1);
+    const title = card.querySelector('.slide-card-title')?.textContent?.trim() || '';
+    const body = card.querySelector('.slide-card-body')?.innerText?.trim() || '';
+    return { num, title, body };
+  });
+}
+
+/* ── PPT export ───────────────────────────────── */
+function doExportPPT() {
+  const slides = collectSlides();
+  if (!slides || slides.length === 0) {
+    showToast('먼저 제안서를 생성해 주세요.');
+    return;
+  }
+
+  if (typeof PptxGenJS === 'undefined') {
+    showToast('PPT 라이브러리 로딩 중입니다. 잠시 후 다시 시도해 주세요.');
+    return;
+  }
+
+  showToast('PPT 생성 중...');
+
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_WIDE'; // 16:9
+
+  const BG      = '1a1a1a';
+  const GOLD    = 'b8975a';
+  const GOLD_LT = 'd4af70';
+  const WHITE   = 'ffffff';
+  const SILVER  = 'c8c8c8';
+  const DARK2   = '111111';
+
+  // Get project title from first slide or first user message
+  const firstUser = messages.find(m => m.role === 'user');
+  let projectTitle = '';
+  if (firstUser) {
+    const raw = typeof firstUser.content === 'string'
+      ? firstUser.content
+      : (Array.isArray(firstUser.content) ? (firstUser.content.find(p => p.type === 'text')?.text || '') : '');
+    projectTitle = raw.split('\n')[0].replace(/\[.*?\]/g, '').trim().slice(0, 50);
+  }
+  if (!projectTitle) projectTitle = slides[0].title;
+
+  // ── Cover slide ──────────────────────────────
+  const cover = pptx.addSlide();
+  cover.background = { color: BG };
+
+  // Top gold bar
+  cover.addShape(pptx.ShapeType.rect, {
+    x: 0, y: 0, w: '100%', h: 0.06,
+    fill: { color: GOLD },
+    line: { color: GOLD, width: 0 }
+  });
+  // Bottom gold bar
+  cover.addShape(pptx.ShapeType.rect, {
+    x: 0, y: 7.44, w: '100%', h: 0.06,
+    fill: { color: GOLD },
+    line: { color: GOLD, width: 0 }
+  });
+
+  // DAGAON AI label
+  cover.addText('DAGAON AI', {
+    x: 0, y: 1.2, w: '100%', h: 0.4,
+    fontSize: 13,
+    color: GOLD,
+    bold: false,
+    align: 'center',
+    fontFace: 'Malgun Gothic',
+    charSpacing: 8,
+  });
+
+  // Divider line
+  cover.addShape(pptx.ShapeType.line, {
+    x: 3.5, y: 1.75, w: 6.5, h: 0,
+    line: { color: GOLD, width: 1 }
+  });
+
+  // Main title
+  cover.addText('제안서', {
+    x: 0, y: 1.9, w: '100%', h: 0.6,
+    fontSize: 32,
+    color: WHITE,
+    bold: true,
+    align: 'center',
+    fontFace: 'Malgun Gothic',
+  });
+
+  // Project title
+  cover.addText(projectTitle, {
+    x: 0.5, y: 2.65, w: 12.5, h: 0.7,
+    fontSize: 20,
+    color: GOLD_LT,
+    bold: false,
+    align: 'center',
+    fontFace: 'Malgun Gothic',
+    charSpacing: 1,
+  });
+
+  // Divider line 2
+  cover.addShape(pptx.ShapeType.line, {
+    x: 3.5, y: 3.5, w: 6.5, h: 0,
+    line: { color: GOLD, width: 0.5, dashType: 'dash' }
+  });
+
+  // DAGAON branding footer
+  cover.addText('Presented by DAGAON AI  |  ' + new Date().getFullYear(), {
+    x: 0, y: 6.9, w: '100%', h: 0.35,
+    fontSize: 9,
+    color: '666666',
+    align: 'center',
+    fontFace: 'Malgun Gothic',
+    charSpacing: 2,
+  });
+
+  // ── Content slides ────────────────────────────
+  slides.forEach((slide, idx) => {
+    const sld = pptx.addSlide();
+    sld.background = { color: BG };
+
+    // Top accent bar
+    sld.addShape(pptx.ShapeType.rect, {
+      x: 0, y: 0, w: '100%', h: 0.055,
+      fill: { color: GOLD },
+      line: { color: GOLD, width: 0 }
+    });
+
+    // Slide number badge (left sidebar)
+    sld.addShape(pptx.ShapeType.rect, {
+      x: 0, y: 0, w: 0.55, h: '100%',
+      fill: { color: DARK2 },
+      line: { color: DARK2, width: 0 }
+    });
+    sld.addText(String(slide.num).padStart(2, '0'), {
+      x: 0, y: 3.4, w: 0.55, h: 0.5,
+      fontSize: 11,
+      color: GOLD,
+      bold: true,
+      align: 'center',
+      fontFace: 'Malgun Gothic',
+      rotate: 0,
+    });
+
+    // Header background
+    sld.addShape(pptx.ShapeType.rect, {
+      x: 0.55, y: 0.055, w: 12.95, h: 1.1,
+      fill: { color: '111111' },
+      line: { color: '111111', width: 0 }
+    });
+
+    // Slide title
+    sld.addText(slide.title, {
+      x: 0.75, y: 0.18, w: 12.5, h: 0.8,
+      fontSize: 22,
+      color: WHITE,
+      bold: true,
+      align: 'left',
+      fontFace: 'Malgun Gothic',
+    });
+
+    // Gold underline under title
+    sld.addShape(pptx.ShapeType.line, {
+      x: 0.75, y: 1.08, w: 3.5, h: 0,
+      line: { color: GOLD, width: 2 }
+    });
+
+    // Body text
+    const rawBody = stripMd(slide.body);
+    const lines = rawBody.split('\n').filter(l => l.trim());
+
+    // Build rich text array for body
+    const textItems = [];
+    lines.forEach((line, li) => {
+      const isBullet = line.startsWith('•');
+      const clean = line.replace(/^•\s*/, '').trim();
+      if (!clean) return;
+      textItems.push({
+        text: (isBullet ? '  •  ' : '') + clean,
+        options: {
+          fontSize: isBullet ? 13 : 14,
+          color: isBullet ? SILVER : WHITE,
+          bold: !isBullet && li === 0,
+          breakLine: true,
+          paraSpaceAfter: isBullet ? 4 : 8,
+          fontFace: 'Malgun Gothic',
+          bullet: false,
+          indentLevel: isBullet ? 1 : 0,
+        }
+      });
+    });
+
+    if (textItems.length > 0) {
+      sld.addText(textItems, {
+        x: 0.75, y: 1.25, w: 12.2, h: 5.9,
+        valign: 'top',
+        wrap: true,
+        fontFace: 'Malgun Gothic',
+      });
+    }
+
+    // Bottom strip
+    sld.addShape(pptx.ShapeType.rect, {
+      x: 0, y: 7.3, w: '100%', h: 0.2,
+      fill: { color: '0a0a0a' },
+      line: { color: '0a0a0a', width: 0 }
+    });
+    sld.addText('DAGAON AI  |  ' + projectTitle, {
+      x: 0.75, y: 7.3, w: 11, h: 0.2,
+      fontSize: 7.5,
+      color: '444444',
+      align: 'left',
+      fontFace: 'Malgun Gothic',
+      charSpacing: 1,
+    });
+    sld.addText(String(idx + 1) + ' / ' + slides.length, {
+      x: 0.75, y: 7.3, w: 12.2, h: 0.2,
+      fontSize: 7.5,
+      color: '444444',
+      align: 'right',
+      fontFace: 'Malgun Gothic',
+    });
+  });
+
+  const filename = 'DAGAON_AI_제안서_' + getDateStr() + '.pptx';
+  pptx.writeFile({ fileName: filename })
+    .then(() => showToast('PPT 저장 완료: ' + filename))
+    .catch(err => {
+      console.error('PPT export error:', err);
+      showToast('PPT 저장 중 오류가 발생했습니다.');
+    });
+}
+
+/* ── PDF export ───────────────────────────────── */
+function doExportPDF() {
+  const slides = collectSlides();
+  if (!slides || slides.length === 0) {
+    showToast('먼저 제안서를 생성해 주세요.');
+    return;
+  }
+
+  if (typeof html2pdf === 'undefined') {
+    showToast('PDF 라이브러리 로딩 중입니다. 잠시 후 다시 시도해 주세요.');
+    return;
+  }
+
+  showToast('PDF 생성 중...');
+
+  // Get project title
+  const firstUser = messages.find(m => m.role === 'user');
+  let projectTitle = '';
+  if (firstUser) {
+    const raw = typeof firstUser.content === 'string'
+      ? firstUser.content
+      : (Array.isArray(firstUser.content) ? (firstUser.content.find(p => p.type === 'text')?.text || '') : '');
+    projectTitle = raw.split('\n')[0].replace(/\[.*?\]/g, '').trim().slice(0, 60);
+  }
+  if (!projectTitle) projectTitle = slides[0].title;
+
+  // Build PDF HTML
+  const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+  let html = `
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #1a1a1a; color: #d0d0d0; }
+  .cover {
+    width: 210mm; min-height: 297mm;
+    background: #1a1a1a;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40mm 20mm;
+    page-break-after: always;
+    position: relative;
+  }
+  .cover-top-bar { position: absolute; top: 0; left: 0; right: 0; height: 6px; background: #b8975a; }
+  .cover-bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 6px; background: #b8975a; }
+  .cover-brand { font-family: 'Noto Serif KR', serif; font-size: 13px; letter-spacing: 0.3em; color: #b8975a; margin-bottom: 16px; text-transform: uppercase; }
+  .cover-divider { width: 80px; height: 1px; background: #b8975a; margin: 0 auto 16px; }
+  .cover-label { font-size: 40px; font-weight: 700; color: #ffffff; margin-bottom: 14px; font-family: 'Noto Serif KR', serif; }
+  .cover-title { font-size: 22px; color: #d4af70; font-weight: 300; letter-spacing: 0.05em; margin-bottom: 32px; text-align: center; }
+  .cover-date { font-size: 10px; color: #555555; letter-spacing: 0.15em; }
+  .slide {
+    width: 210mm;
+    background: #1a1a1a;
+    padding: 14mm 16mm 12mm;
+    page-break-after: always;
+    border-top: 4px solid #b8975a;
+    min-height: 100mm;
+  }
+  .slide-header {
+    display: flex; align-items: flex-start; gap: 12px;
+    border-bottom: 1px solid rgba(184,151,90,0.3);
+    padding-bottom: 8px; margin-bottom: 14px;
+  }
+  .slide-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(184,151,90,0.15); border: 1px solid rgba(184,151,90,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #b8975a;
+    flex-shrink: 0; margin-top: 2px;
+    font-family: 'Noto Serif KR', serif;
+  }
+  .slide-title {
+    font-size: 18px; font-weight: 700; color: #ffffff;
+    font-family: 'Noto Serif KR', serif; letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  .slide-body { font-size: 11px; color: #c8c8c8; line-height: 1.9; }
+  .slide-body p { margin-bottom: 6px; }
+  .slide-body ul { padding-left: 16px; margin: 6px 0; }
+  .slide-body li { margin-bottom: 4px; color: #c8c8c8; }
+  .slide-body li::marker { color: #b8975a; }
+  .slide-body strong { color: #ffffff; font-weight: 600; }
+  .slide-body em { color: #d4af70; }
+  .slide-body h1, .slide-body h2, .slide-body h3 {
+    color: #d4af70; font-family: 'Noto Serif KR', serif;
+    margin: 10px 0 5px; font-size: 13px;
+  }
+  .slide-body table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
+  .slide-body th { background: rgba(184,151,90,0.15); color: #b8975a; padding: 5px 8px; border: 1px solid rgba(184,151,90,0.25); text-align: left; }
+  .slide-body td { padding: 5px 8px; border: 1px solid rgba(255,255,255,0.08); color: #c8c8c8; }
+  .slide-body tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .slide-footer { margin-top: 12px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+  .slide-footer-text { font-size: 8px; color: #444444; letter-spacing: 0.08em; }
+</style>
+<div class="cover">
+  <div class="cover-top-bar"></div>
+  <div class="cover-brand">DAGAON AI</div>
+  <div class="cover-divider"></div>
+  <div class="cover-label">제안서</div>
+  <div class="cover-title">${projectTitle}</div>
+  <div class="cover-date">${dateStr}</div>
+  <div class="cover-bottom-bar"></div>
+</div>`;
+
+  slides.forEach((slide, idx) => {
+    const bodyHtml = typeof marked !== 'undefined'
+      ? marked.parse(slide.body || '')
+      : slide.body.replace(/\n/g, '<br>');
+
+    html += `
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-num">${slide.num}</div>
+    <div class="slide-title">${slide.title}</div>
+  </div>
+  <div class="slide-body">${bodyHtml}</div>
+  <div class="slide-footer">
+    <span class="slide-footer-text">DAGAON AI  |  ${projectTitle}</span>
+    <span class="slide-footer-text">${idx + 1} / ${slides.length}</span>
+  </div>
+</div>`;
+  });
+
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  container.style.cssText = 'position:absolute;left:-9999px;top:0;';
+  document.body.appendChild(container);
+
+  const filename = 'DAGAON_AI_제안서_' + getDateStr() + '.pdf';
+  const opt = {
+    margin: 0,
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#1a1a1a' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+  };
+
+  html2pdf().set(opt).from(container).save()
+    .then(() => {
+      document.body.removeChild(container);
+      showToast('PDF 저장 완료: ' + filename);
+    })
+    .catch(err => {
+      if (container.parentNode) document.body.removeChild(container);
+      console.error('PDF export error:', err);
+      showToast('PDF 저장 중 오류가 발생했습니다.');
+    });
+}
+
+/* ── dispatch ─────────────────────────────────── */
 function doExport(type) {
-  showToast('내보내기 기능은 곧 오픈됩니다.');
+  if (type === 'PPT') doExportPPT();
+  else if (type === 'PDF') doExportPDF();
 }
 
 // ═══════════════════════════════════════════════
@@ -1848,7 +2349,7 @@ async function streamOpenAI(msgs) {
       messages: apiMessages,
       stream: true,
       temperature: 0.7,
-      max_tokens: 3000,
+      max_tokens: 4096,
     }),
   });
 
