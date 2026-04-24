@@ -3234,31 +3234,87 @@
       if (existing) existing.remove();
     }
 
-    async function fillSlotWithImage(slotEl, imageUrl) {
+    // DALL-E URL을 fetch → blob URL로 변환 (CORS 우회 + 다운로드/canvas 접근 가능)
+    async function fetchImageAsBlobUrl(imageUrl) {
+      try {
+        const resp = await fetch(imageUrl);
+        if (!resp.ok) throw new Error('fetch failed');
+        const blob = await resp.blob();
+        return URL.createObjectURL(blob);
+      } catch(e) {
+        return imageUrl; // fallback: 원본 URL 그대로 사용
+      }
+    }
+
+    // canvas를 이용해 이미지를 base64 data URL로 변환 (CORS-safe)
+    function imageToBase64(imgEl, maxW, maxH) {
       return new Promise(resolve => {
-        slotEl.classList.add('filling');
+        try {
+          const canvas = document.createElement('canvas');
+          const w = imgEl.naturalWidth || imgEl.width || maxW;
+          const h = imgEl.naturalHeight || imgEl.height || maxH;
+          const scale = Math.min(maxW / w, maxH / h, 1);
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        } catch(e) {
+          resolve(null);
+        }
+      });
+    }
+
+    async function fillSlotWithImage(slotEl, imageUrl) {
+      slotEl.classList.add('filling');
+
+      // DALL-E URL → blob URL로 변환 (CORS 우회)
+      const blobUrl = await fetchImageAsBlobUrl(imageUrl);
+
+      return new Promise(resolve => {
         const img = document.createElement('img');
         img.className = 'generated-img';
         img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;';
+        img.crossOrigin = 'anonymous';
         img.onload = () => {
           slotEl.classList.remove('filling');
           slotEl.classList.add('filled');
           const ph = slotEl.querySelector('.slot-ph');
           if (ph) ph.style.display = 'none';
+          // 원본 URL 참조 저장 (히스토리 저장 시 사용)
+          slotEl.dataset.blobUrl = blobUrl;
+          slotEl.dataset.origUrl = imageUrl;
           resolve();
         };
         img.onerror = () => { slotEl.classList.remove('filling'); resolve(); };
-        img.src = imageUrl;
+        img.src = blobUrl;
         slotEl.appendChild(img);
-        // 다운로드 버튼 기능 업데이트
-        const dlBtn = slotEl.querySelector('.slot-btn');
+
+        // 다운로드 버튼: canvas → toDataURL → 로컬 저장 (CORS-safe)
+        const dlBtns = slotEl.querySelectorAll('.slot-btn');
+        const dlBtn = dlBtns[0]; // 첫 번째가 다운로드
         if (dlBtn) {
-          dlBtn.onclick = () => {
-            const a = document.createElement('a');
-            a.href = imageUrl;
-            a.download = 'dagaon-ai-image.png';
-            a.target = '_blank';
-            a.click();
+          dlBtn.onclick = async () => {
+            try {
+              const base64 = await imageToBase64(img, 2048, 2048);
+              if (base64) {
+                const a = document.createElement('a');
+                a.href = base64;
+                a.download = 'dagaon-ai-' + Date.now() + '.jpg';
+                a.click();
+              } else {
+                // fallback: blob URL 직접 다운로드
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'dagaon-ai-' + Date.now() + '.jpg';
+                a.click();
+              }
+            } catch(e) {
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.download = 'dagaon-ai-' + Date.now() + '.jpg';
+              a.click();
+            }
           };
         }
       });
@@ -3320,6 +3376,7 @@
               prompt: editPrompt,
               size: '1024x1024',
               quality: 'hd',
+              style: 'vivid',
               n: 1
             })
           });
@@ -3351,14 +3408,15 @@
         // ── 일반 이미지 생성 ──
         const promptText = (document.getElementById('prompt-textarea')?.value || '').trim() || '모던 미니멀 인테리어 공간, 자연광, 고품질';
         const styleHint = getSelectedStyle ? getSelectedStyle() : '';
-        const fullPrompt = [promptText, styleHint, 'ultra high quality, photorealistic, 4K, detailed, professional'].filter(Boolean).join(', ');
+        const qualityBoost = 'ultra high quality, photorealistic, 4K, detailed, professional, architectural photography quality, natural lighting, fine texture detail';
+        const fullPrompt = [promptText, styleHint, qualityBoost].filter(Boolean).join(', ');
 
         // DALL-E 3 지원 사이즈만 허용
         const size = getSelectedRatio(); // '1024x1024' | '1792x1024' | '1024x1792'
 
-        // DALL-E 3 quality: 'standard' or 'hd'
+        // DALL-E 3 quality: 항상 'hd' 사용 (최고 품질)
         const qualityRaw = getSelectedQuality(); // '2k' or '4k'
-        const dalleQuality = qualityRaw === '4k' ? 'hd' : 'standard';
+        const dalleQuality = 'hd'; // standard 대신 항상 hd 강제
 
         const count = getSelectedCount();
         const displayModelName = document.getElementById('active-model-name')?.textContent || 'DAGAON AI';
@@ -3382,6 +3440,7 @@
                 prompt: fullPrompt,
                 size: size,
                 quality: dalleQuality,
+                style: 'vivid',
                 n: 1
               })
             });
@@ -4714,24 +4773,56 @@
     function loadImageHistory() {
       try { return JSON.parse(localStorage.getItem(IMAGE_HISTORY_KEY) || '[]'); } catch(e) { return []; }
     }
-    function saveImageHistory() {
+    async function saveImageHistory() {
       var history = loadImageHistory();
       var slots = document.querySelectorAll('.img-slot');
-      var urls = [];
-      slots.forEach(function(slot) {
-        var img = slot.querySelector('img');
-        if (img && img.src && !img.src.startsWith('data:') && img.src.indexOf('blob:') === -1) {
-          var src = img.src;
-          if (src.startsWith('http')) urls.push(src);
+      var thumbs = [];
+
+      for (var i = 0; i < slots.length; i++) {
+        var slot = slots[i];
+        var img = slot.querySelector('img.generated-img');
+        if (!img) continue;
+
+        // canvas로 200x200 썸네일 base64 생성
+        var thumb = null;
+        try {
+          var canvas = document.createElement('canvas');
+          canvas.width = 200;
+          canvas.height = 200;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, 200, 200);
+          thumb = canvas.toDataURL('image/jpeg', 0.72);
+        } catch(e) {
+          // crossOrigin 미지정 등으로 canvas 오염 시 blob URL fallback
+          var blobUrl = slot.dataset.blobUrl || img.src;
+          if (blobUrl && (blobUrl.startsWith('blob:') || blobUrl.startsWith('data:'))) {
+            thumb = blobUrl;
+          }
         }
-      });
-      if (urls.length === 0) return;
+
+        if (thumb) thumbs.push(thumb);
+      }
+
+      if (thumbs.length === 0) return;
+
       var engine = getActiveEngName();
       var prompt = getActivePrompt();
-      var entry = { id: 'img_' + Date.now(), timestamp: Date.now(), engine: engine, prompt: prompt, urls: urls };
+      var entry = { id: 'img_' + Date.now(), timestamp: Date.now(), engine: engine, prompt: prompt, thumbs: thumbs };
       history.unshift(entry);
-      if (history.length > 30) history = history.slice(0, 30);
-      localStorage.setItem(IMAGE_HISTORY_KEY, JSON.stringify(history));
+      // 최대 20개, localStorage 용량 초과 시 오래된 것 제거
+      if (history.length > 20) history = history.slice(0, 20);
+
+      // localStorage 저장 시 용량 초과 방지
+      var saved = false;
+      while (history.length > 0 && !saved) {
+        try {
+          localStorage.setItem(IMAGE_HISTORY_KEY, JSON.stringify(history));
+          saved = true;
+        } catch(e) {
+          history.pop(); // 가장 오래된 항목 제거 후 재시도
+        }
+      }
+
       renderImageHistory();
     }
     function deleteImageHistoryItem(id) {
@@ -4776,12 +4867,41 @@
         }
         var thumbRow = document.createElement('div');
         thumbRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
-        entry.urls.forEach(function(url) {
+        // thumbs: base64 (새 형식) / urls: 이전 형식 호환
+        var displayList = entry.thumbs || entry.urls || [];
+        displayList.forEach(function(src) {
+          var wrapper = document.createElement('div');
+          wrapper.style.cssText = 'position:relative;width:52px;height:52px;';
           var th = document.createElement('img');
-          th.src = url;
-          th.style.cssText = 'width:52px;height:52px;object-fit:cover;border-radius:3px;border:1px solid rgba(184,151,90,.15);cursor:pointer;';
-          th.onclick = function() { window.open(url, '_blank'); };
-          thumbRow.appendChild(th);
+          th.src = src;
+          th.style.cssText = 'width:52px;height:52px;object-fit:cover;border-radius:3px;border:1px solid rgba(184,151,90,.15);cursor:pointer;display:block;';
+          th.title = '클릭하여 원본 크기로 보기';
+          // base64 이미지는 새 탭에서 직접 열기
+          th.onclick = function() {
+            var w = window.open();
+            if (w) {
+              w.document.write('<style>body{margin:0;background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;}</style><img src="' + src + '" style="max-width:100%;max-height:100vh;object-fit:contain;">');
+            }
+          };
+          // 다운로드 버튼 오버레이
+          var dlOv = document.createElement('button');
+          dlOv.innerHTML = '<i class="fa-solid fa-download"></i>';
+          dlOv.style.cssText = 'position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,.65);border:none;border-radius:3px;color:#fff;font-size:.5rem;padding:2px 4px;cursor:pointer;opacity:0;transition:opacity .15s;';
+          dlOv.title = '다운로드';
+          (function(imgSrc) {
+            dlOv.onclick = function(e) {
+              e.stopPropagation();
+              var a = document.createElement('a');
+              a.href = imgSrc;
+              a.download = 'dagaon-ai-' + Date.now() + '.jpg';
+              a.click();
+            };
+          })(src);
+          wrapper.onmouseenter = function() { dlOv.style.opacity = '1'; };
+          wrapper.onmouseleave = function() { dlOv.style.opacity = '0'; };
+          wrapper.appendChild(th);
+          wrapper.appendChild(dlOv);
+          thumbRow.appendChild(wrapper);
         });
         card.appendChild(thumbRow);
         list.appendChild(card);
