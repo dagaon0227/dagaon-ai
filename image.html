@@ -2456,21 +2456,81 @@
       <div class="sidebar-header">AI 이미지 엔진</div>
       <div class="model-dropdown" id="modelDropdown">
         <div class="model-dd-trigger" onclick="toggleModelDropdown()">
-          <div class="model-icon" id="ddModelIcon" style="color:rgba(100,210,120,.7);">DE</div>
+          <div class="model-icon" id="ddModelIcon">NB</div>
           <div class="model-info">
-            <div class="model-name" id="ddModelName">DALL-E 3</div>
-            <div class="model-desc" id="ddModelDesc">OpenAI 범용 이미지 생성</div>
+            <div class="model-name" id="ddModelName">Nano Banana 2</div>
+            <div class="model-desc" id="ddModelDesc">차세대 초현실적 이미지 생성</div>
           </div>
           <i class="fa-solid fa-chevron-down model-dd-arrow"></i>
         </div>
         <div class="model-dd-menu">
           <div class="model-dd-inner">
 
-            <div class="model-item active" data-model="dalle" data-name="DALL-E 3" data-desc="OpenAI 범용 이미지 생성" data-tier="basic">
-              <div class="model-icon" style="color:rgba(100,210,120,.7);">DE</div>
+            <!-- NEW 모델들 -->
+            <div class="model-divider">신규 출시</div>
+
+            <div class="model-item active" data-model="nano-banana-2" data-name="Nano Banana 2" data-desc="차세대 초현실적 이미지 생성" data-tier="standard">
+              <div class="model-icon">NB</div>
               <div class="model-info">
-                <div class="model-name">DALL-E 3</div>
-                <div class="model-desc">OpenAI 범용 이미지 생성</div>
+                <div class="model-name">Nano Banana 2</div>
+                <div class="model-desc">차세대 초현실적 이미지 생성</div>
+              </div>
+              <span class="badge-new">NEW</span>
+            </div>
+
+            <div class="model-item" data-model="nano-banana-pro" data-name="Nano Banana Pro" data-desc="4K 네이티브, 추론 기반 합성" data-tier="pro">
+              <div class="model-icon">NB<span style="font-size:.48rem;vertical-align:super;">P</span></div>
+              <div class="model-info">
+                <div class="model-name">Nano Banana Pro</div>
+                <div class="model-desc">4K 네이티브, 추론 기반 합성</div>
+              </div>
+              <span class="badge-new">NEW</span>
+            </div>
+
+            <div class="model-item" data-model="gpt-image-2" data-name="GPT Image 2" data-desc="OpenAI의 최신 이미지 생성 모델" data-tier="pro">
+              <div class="model-icon" style="color:rgba(100,210,120,.8);">GP</div>
+              <div class="model-info">
+                <div class="model-name">GPT Image 2</div>
+                <div class="model-desc">OpenAI의 최신 이미지 생성 모델</div>
+              </div>
+              <span class="badge-new">NEW</span>
+            </div>
+
+            <div class="model-item" data-model="ideogram-3" data-name="Ideogram 3.0" data-desc="텍스트 렌더링 특화 이미지 생성" data-tier="standard">
+              <div class="model-icon" style="color:rgba(180,120,220,.8);">ID</div>
+              <div class="model-info">
+                <div class="model-name">Ideogram 3.0</div>
+                <div class="model-desc">텍스트 렌더링 특화 이미지 생성</div>
+              </div>
+              <span class="badge-new">NEW</span>
+            </div>
+
+            <div class="model-item" data-model="higgsfield-soul-2" data-name="Higgsfield Soul 2.0" data-desc="울트라 리얼리스틱 패션 비주얼" data-tier="pro">
+              <div class="model-icon" style="color:rgba(220,160,100,.8);">HS</div>
+              <div class="model-info">
+                <div class="model-name">Higgsfield Soul 2.0</div>
+                <div class="model-desc">울트라 리얼리스틱 패션 비주얼</div>
+              </div>
+              <span class="badge-new">NEW</span>
+            </div>
+
+            <div class="model-item" data-model="higgsfield-cinema" data-name="Higgsfield Soul Cinema" data-desc="시네마틱 비주얼 생성" data-tier="pro">
+              <div class="model-icon" style="color:rgba(180,120,80,.8);">HC</div>
+              <div class="model-info">
+                <div class="model-name">Higgsfield Soul Cinema</div>
+                <div class="model-desc">시네마틱 비주얼 생성</div>
+              </div>
+              <span class="badge-new">NEW</span>
+            </div>
+
+            <!-- 기존 모델들 -->
+            <div class="model-divider" style="margin-top:4px;">주요 모델</div>
+
+            <div class="model-item" data-model="flux-1-1-pro" data-name="Flux 1.1 Pro" data-desc="고품질 사실적 사진 생성" data-tier="standard">
+              <div class="model-icon" style="color:rgba(100,180,220,.8);">FX</div>
+              <div class="model-info">
+                <div class="model-name">Flux 1.1 Pro</div>
+                <div class="model-desc">고품질 사실적 사진 생성</div>
               </div>
             </div>
 
@@ -2482,12 +2542,43 @@
               </div>
             </div>
 
-            <div class="model-item" data-model="flux-1-1-pro" data-name="Flux 1.1 Pro" data-desc="고품질 사실적 사진 생성" data-tier="standard">
-              <div class="model-icon" style="color:rgba(100,180,220,.8);">FX</div>
+            <div class="model-item" data-model="dalle" data-name="DALL-E 3" data-desc="OpenAI 범용 이미지 생성" data-tier="basic">
+              <div class="model-icon" style="color:rgba(100,210,120,.7);">DE</div>
               <div class="model-info">
-                <div class="model-name">Flux 1.1 Pro</div>
-                <div class="model-desc">고품질 사실적 사진 생성</div>
+                <div class="model-name">DALL-E 3</div>
+                <div class="model-desc">OpenAI 범용 이미지 생성</div>
               </div>
+            </div>
+
+            <div class="model-item" data-model="sdxl" data-name="Stable Diffusion XL" data-desc="오픈소스 고해상도 생성" data-tier="standard">
+              <div class="model-icon" style="color:rgba(220,180,100,.7);">SD</div>
+              <div class="model-info">
+                <div class="model-name">Stable Diffusion XL</div>
+                <div class="model-desc">오픈소스 고해상도 생성</div>
+              </div>
+            </div>
+
+            <!-- 이미지 업로드 편집 -->
+            <div class="model-divider" style="margin-top:4px;">편집</div>
+
+            <div class="model-item upload-mode" data-model="upload-edit" data-name="이미지 업로드 편집" data-desc="기존 사진을 AI로 수정/변환" data-tier="basic">
+              <div class="model-icon"><i class="fa-solid fa-image" style="font-size:.8rem;"></i></div>
+              <div class="model-info">
+                <div class="model-name">이미지 업로드 편집</div>
+                <div class="model-desc">기존 사진을 AI로 수정/변환</div>
+              </div>
+            </div>
+
+            <!-- 3D 렌더링 -->
+            <div class="model-divider" style="margin-top:4px;">3D 렌더링</div>
+
+            <div class="model-item vibe3d-mode" data-model="vibe3d" data-name="Vibe3D" data-desc="건축/인테리어 AI 3D 렌더링 엔진" data-tier="standard">
+              <div class="model-icon" style="background:rgba(184,151,90,.1);border-color:rgba(184,151,90,.35);color:var(--gold);font-size:.62rem;letter-spacing:-.02em;">V3D</div>
+              <div class="model-info">
+                <div class="model-name">Vibe3D</div>
+                <div class="model-desc">건축/인테리어 AI 3D 렌더링</div>
+              </div>
+              <span class="badge-new">NEW</span>
             </div>
 
             <!-- 3D 변환 -->
@@ -4854,6 +4945,65 @@
           { id: 'flux-seed', label: '시드 (선택)', type: 'input', placeholder: '랜덤 시드 (비워두면 자동)' }
         ]
       },
+      'sdxl': {
+        label: 'Stable Diffusion XL 설정',
+        options: [
+          { id: 'sdxl-sampler', label: '샘플러', type: 'chips', items: ['Euler', 'DPM++', 'DDIM'], default: 'Euler' },
+          { id: 'sdxl-steps', label: '스텝수', type: 'slider', min: 20, max: 50, default: 30, param: 'steps' },
+          { id: 'sdxl-cfg', label: 'CFG 스케일', type: 'slider', min: 1, max: 20, default: 7, param: 'cfg_scale' },
+          { id: 'sdxl-neg', label: '네거티브 프롬프트', type: 'input', placeholder: '제외할 요소 입력... (예: blurry, low quality)' }
+        ]
+      },
+      'ideogram-3': {
+        label: 'Ideogram 3.0 설정',
+        options: [
+          { id: 'ideogram-text', label: '텍스트 렌더링', type: 'toggle', default: true },
+          { id: 'ideogram-magic', label: '매직 프롬프트', type: 'toggle', default: true },
+          { id: 'ideogram-palette', label: '컬러 팔레트', type: 'chips', items: ['Auto', 'Warm', 'Cool', 'Monochrome', 'Vibrant'], default: 'Auto' }
+        ]
+      },
+      'nano-banana-2': {
+        label: 'Nano Banana 2 설정',
+        options: [
+          { id: 'nb-preset', label: '스타일 프리셋', type: 'chips', items: ['Cinematic', 'Anime', 'Fantasy', 'Minimal'], default: 'Cinematic' }
+        ]
+      },
+      'nano-banana-pro': {
+        label: 'Nano Banana Pro 설정',
+        options: [
+          { id: 'nbp-preset', label: '스타일 프리셋', type: 'chips', items: ['Cinematic', 'Anime', 'Fantasy', 'Minimal', 'HyperReal'], default: 'Cinematic' }
+        ]
+      },
+      'gpt-image-2': {
+        label: 'GPT Image 2 설정',
+        options: [
+          { id: 'gpt2-style', label: '스타일', type: 'chips', items: ['포토리얼', '일러스트', '비비드', '내추럴'], default: '포토리얼' }
+        ]
+      },
+      'higgsfield-soul-2': {
+        label: 'Higgsfield Soul 2.0 설정',
+        options: [
+          { id: 'hf-style', label: '스타일', type: 'chips', items: ['Fashion', 'Portrait', 'Editorial', 'Cinematic'], default: 'Fashion' }
+        ]
+      },
+      'higgsfield-cinema': {
+        label: 'Higgsfield Cinema 설정',
+        options: [
+          { id: 'hfc-style', label: '시네마 스타일', type: 'chips', items: ['Noir', 'Epic', 'Indie', 'Blockbuster'], default: 'Epic' }
+        ]
+      },
+      'tripo3d': {
+        label: 'Tripo 3D 설정',
+        options: []
+      },
+      'furnimesh': {
+        label: 'FurniMesh 설정',
+        options: []
+      },
+      'spacely3d': {
+        label: 'Spacely 3D 설정',
+        options: []
+      }
     };
 
     function renderEngineOptions(model) {
