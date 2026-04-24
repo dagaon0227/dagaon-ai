@@ -1091,100 +1091,58 @@
       --v3d-grad:    linear-gradient(135deg, #c9a84c 0%, #8b5cf6 100%);
     }
 
+    /* ══════════ Vibe3D — single-column redesign ══════════ */
     #vibe3d-editor {
       display: none;
       flex: 1;
       overflow: hidden;
       flex-direction: column;
+      background: #050505;
+      position: relative;
     }
     #vibe3d-editor.visible {
       display: flex;
     }
 
-    /* Top bar */
-    #v3d-topbar {
-      flex-shrink: 0;
-      padding: 10px 20px;
-      background: var(--deep);
-      border-bottom: 1px solid rgba(201,168,76,.18);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .v3d-topbar-logo {
-      font-family: var(--serif);
-      font-size: .82rem;
-      font-weight: 700;
-      background: var(--v3d-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: .06em;
-    }
-    .v3d-topbar-sep {
-      width: 1px;
-      height: 16px;
-      background: rgba(255,255,255,.1);
-    }
-    .v3d-topbar-sub {
-      font-size: .68rem;
-      color: rgba(255,255,255,.35);
-    }
-    #v3d-file-label {
-      margin-left: auto;
-      font-size: .64rem;
-      color: rgba(201,168,76,.55);
-      letter-spacing: .04em;
-    }
-
-    /* Main 3-column layout */
-    #v3d-main-layout {
+    /* Scrollable main column */
+    #v3d-scroll-body {
       flex: 1;
-      display: flex;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    /* ── Left: Upload Panel ── */
-    #v3d-upload-panel {
-      width: 260px;
-      min-width: 260px;
-      flex-shrink: 0;
-      background: var(--deep);
-      border-right: 1px solid rgba(201,168,76,.12);
+      overflow-y: auto;
+      padding: 20px 0 120px;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
+      align-items: center;
     }
 
-    .v3d-panel-title {
-      padding: 14px 16px 10px;
+    /* Inner card — max-width 440px, mobile-like */
+    #v3d-card {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0 16px;
+    }
+
+    /* ── Section label ── */
+    .v3d-sec-label {
       font-size: .58rem;
       font-weight: 700;
       letter-spacing: .22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.2);
-      border-bottom: 1px solid rgba(255,255,255,.05);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 7px;
+      color: rgba(255,255,255,.28);
+      margin-bottom: 8px;
+      margin-top: 20px;
+      display: block;
     }
-    .v3d-panel-title-icon {
-      font-size: .7rem;
-      background: var(--v3d-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    .v3d-sec-label:first-child { margin-top: 0; }
 
-    /* Upload drop zone */
+    /* ── Upload drop zone ── */
     #v3d-drop-zone {
-      margin: 14px;
-      border: 2px dashed rgba(201,168,76,.3);
-      border-radius: 10px;
-      background: rgba(201,168,76,.02);
-      min-height: 200px;
+      border: 2px dashed rgba(184,151,90,.3);
+      border-radius: 12px;
+      background: rgba(184,151,90,.02);
+      min-height: 180px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1194,43 +1152,38 @@
       transition: border-color .2s, background .2s;
       position: relative;
       overflow: hidden;
-      flex-shrink: 0;
     }
     #v3d-drop-zone:hover {
-      border-color: rgba(201,168,76,.6);
-      background: rgba(201,168,76,.04);
+      border-color: rgba(184,151,90,.6);
+      background: rgba(184,151,90,.04);
     }
     #v3d-drop-zone.drag-over {
       border-color: var(--v3d-gold);
-      background: rgba(201,168,76,.07);
+      background: rgba(184,151,90,.07);
     }
     #v3d-drop-zone.has-file {
       border-style: solid;
-      border-color: rgba(201,168,76,.45);
+      border-color: rgba(184,151,90,.5);
       min-height: auto;
     }
     .v3d-drop-icon {
-      font-size: 2.4rem;
-      background: var(--v3d-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2.2rem;
+      color: rgba(184,151,90,.35);
       pointer-events: none;
     }
     .v3d-drop-title {
-      font-family: var(--serif);
       font-size: .82rem;
-      font-weight: 400;
-      color: rgba(255,255,255,.5);
-      letter-spacing: .03em;
+      color: rgba(255,255,255,.45);
+      letter-spacing: .02em;
       pointer-events: none;
     }
     .v3d-drop-hint {
       font-size: .65rem;
-      color: rgba(255,255,255,.22);
+      color: rgba(255,255,255,.2);
       text-align: center;
       line-height: 1.7;
       pointer-events: none;
+      padding: 0 20px;
     }
     .v3d-drop-formats {
       display: flex;
@@ -1243,25 +1196,25 @@
       font-size: .55rem;
       letter-spacing: .1em;
       text-transform: uppercase;
-      color: rgba(201,168,76,.6);
-      border: 1px solid rgba(201,168,76,.25);
+      color: rgba(184,151,90,.6);
+      border: 1px solid rgba(184,151,90,.25);
       padding: 2px 7px;
       border-radius: 20px;
     }
     .v3d-drop-btn {
-      padding: 6px 18px;
-      border: 1px solid rgba(201,168,76,.4);
-      border-radius: 5px;
-      background: rgba(201,168,76,.08);
-      color: var(--v3d-gold);
+      padding: 7px 20px;
+      border: 1px solid rgba(184,151,90,.4);
+      border-radius: 6px;
+      background: rgba(184,151,90,.08);
+      color: #b8975a;
       font-size: .72rem;
       cursor: pointer;
       transition: background .18s, border-color .18s;
       font-family: var(--sans);
     }
     .v3d-drop-btn:hover {
-      background: rgba(201,168,76,.16);
-      border-color: rgba(201,168,76,.6);
+      background: rgba(184,151,90,.18);
+      border-color: rgba(184,151,90,.65);
     }
 
     /* Preview image inside drop zone */
@@ -1271,7 +1224,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 10px;
       display: none;
     }
     #v3d-preview-img.visible { display: block; }
@@ -1283,16 +1236,17 @@
       right: 8px;
       display: none;
       gap: 5px;
+      z-index: 2;
     }
     #v3d-preview-controls.visible { display: flex; }
     .v3d-ctrl-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 5px;
-      background: rgba(0,0,0,.65);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: rgba(0,0,0,.7);
       border: 1px solid rgba(255,255,255,.18);
-      color: rgba(255,255,255,.7);
-      font-size: .68rem;
+      color: rgba(255,255,255,.75);
+      font-size: .7rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1300,35 +1254,31 @@
       transition: background .18s;
     }
     .v3d-ctrl-btn:hover {
-      background: rgba(201,168,76,.35);
-      border-color: rgba(201,168,76,.55);
+      background: rgba(184,151,90,.35);
+      border-color: rgba(184,151,90,.6);
     }
 
-    /* Upload info section */
-    #v3d-upload-info {
-      padding: 0 14px 14px;
-      flex-shrink: 0;
-    }
+    /* Upload info row */
     .v3d-upload-info-row {
-      display: flex;
+      display: none;
       align-items: center;
       gap: 8px;
       padding: 8px 10px;
       background: rgba(255,255,255,.03);
       border: 1px solid rgba(255,255,255,.06);
-      border-radius: 6px;
-      display: none;
+      border-radius: 8px;
+      margin-top: 8px;
     }
     .v3d-upload-info-row.visible { display: flex; }
     .v3d-upload-icon {
       font-size: .9rem;
-      color: rgba(201,168,76,.6);
+      color: rgba(184,151,90,.6);
       flex-shrink: 0;
     }
     .v3d-upload-name {
       flex: 1;
       min-width: 0;
-      font-size: .68rem;
+      font-size: .7rem;
       color: rgba(255,255,255,.5);
       white-space: nowrap;
       overflow: hidden;
@@ -1350,83 +1300,112 @@
     }
     .v3d-upload-del:hover { background: rgba(220,80,80,.15); color: rgba(220,120,120,.9); }
 
-    /* ── Center: Before/After Compare + Settings ── */
-    #v3d-center-panel {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: var(--black);
-    }
-
-    /* Settings bar */
-    #v3d-settings-bar {
-      flex-shrink: 0;
-      padding: 10px 16px;
-      background: var(--deep);
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .v3d-setting-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .v3d-setting-label {
-      font-size: .55rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.28);
-      white-space: nowrap;
-    }
+    /* ── Chip groups ── */
     .v3d-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 6px;
     }
     .v3d-chip {
-      padding: 4px 10px;
+      padding: 5px 14px;
       border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.1);
       background: transparent;
       color: rgba(255,255,255,.38);
-      font-size: .66rem;
+      font-size: .7rem;
       cursor: pointer;
       transition: all .18s;
       font-family: var(--sans);
       white-space: nowrap;
     }
     .v3d-chip:hover {
-      border-color: rgba(201,168,76,.4);
-      color: rgba(255,255,255,.65);
+      border-color: rgba(184,151,90,.45);
+      color: rgba(255,255,255,.7);
     }
     .v3d-chip.sel {
-      border-color: var(--v3d-gold);
-      color: var(--v3d-gold);
-      background: rgba(201,168,76,.1);
-    }
-    .v3d-chip.purple-sel {
-      border-color: var(--v3d-purple2);
-      color: var(--v3d-purple2);
-      background: rgba(139,92,246,.1);
+      border-color: #b8975a;
+      color: #b8975a;
+      background: rgba(184,151,90,.12);
     }
 
-    /* Before/After compare area */
-    #v3d-compare-area {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
+    /* ── Additional instructions textarea ── */
+    #v3d-extra-input {
+      width: 100%;
+      min-height: 72px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      color: rgba(255,255,255,.7);
+      font-family: var(--sans);
+      font-size: .76rem;
+      padding: 10px 12px;
+      outline: none;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-color .18s;
+      line-height: 1.55;
+    }
+    #v3d-extra-input:focus { border-color: rgba(184,151,90,.45); }
+    #v3d-extra-input::placeholder { color: rgba(255,255,255,.2); }
+
+    /* ── Fixed render bar at bottom ── */
+    #v3d-render-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 16px;
+      background: linear-gradient(to top, #050505 60%, transparent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+    #v3d-render-btn {
+      pointer-events: all;
+      width: 100%;
+      max-width: 440px;
+      height: 48px;
+      background: linear-gradient(135deg, #b8975a 0%, #d4b06a 100%);
+      border: none;
+      border-radius: 12px;
+      color: #0a0800;
+      font-family: var(--serif);
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #030303;
+      gap: 9px;
+      transition: opacity .2s, transform .1s;
+      box-shadow: 0 4px 20px rgba(184,151,90,.3);
     }
+    #v3d-render-btn:hover { opacity: .9; }
+    #v3d-render-btn:active { transform: scale(.98); }
+    #v3d-render-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+    .v3d-credit-note {
+      pointer-events: none;
+      font-size: .62rem;
+      color: rgba(255,255,255,.22);
+    }
+    .v3d-credit-note strong { color: #b8975a; }
 
-    /* Before / After side by side when both exist */
+    /* ── Before/After compare area (result) ── */
+    #v3d-compare-area {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #080808;
+      aspect-ratio: 4/3;
+      display: none;
+    }
+    #v3d-compare-area.visible { display: block; }
+
     #v3d-before-after {
       width: 100%;
       height: 100%;
@@ -1454,8 +1433,8 @@
       font-size: .58rem;
       letter-spacing: .16em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.6);
-      background: rgba(0,0,0,.55);
+      color: rgba(255,255,255,.7);
+      background: rgba(0,0,0,.6);
       padding: 3px 9px;
       border-radius: 20px;
       backdrop-filter: blur(6px);
@@ -1468,7 +1447,7 @@
       bottom: 0;
       left: 50%;
       width: 3px;
-      background: linear-gradient(180deg, var(--v3d-gold), var(--v3d-purple));
+      background: #b8975a;
       cursor: ew-resize;
       z-index: 10;
       transform: translateX(-50%);
@@ -1480,56 +1459,48 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--v3d-gold), var(--v3d-purple));
+      background: #b8975a;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 10px rgba(0,0,0,.6);
     }
-    #v3d-slider-knob i {
-      font-size: .6rem;
-      color: #fff;
-    }
+    #v3d-slider-knob i { font-size: .62rem; color: #0a0800; }
 
-    /* Empty state placeholder */
-    #v3d-empty-state {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
+    /* Download bar below compare */
+    #v3d-download-bar {
+      display: none;
       align-items: center;
-      justify-content: center;
-      gap: 14px;
-      pointer-events: none;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: 8px;
     }
-    .v3d-empty-icon {
-      font-size: 3.2rem;
-      background: var(--v3d-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      opacity: .25;
+    #v3d-download-bar.visible { display: flex; }
+    .v3d-result-btn {
+      height: 30px;
+      padding: 0 14px;
+      border-radius: 6px;
+      background: rgba(184,151,90,.1);
+      border: 1px solid rgba(184,151,90,.35);
+      color: #b8975a;
+      font-size: .68rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background .18s;
+      font-family: var(--sans);
     }
-    .v3d-empty-text {
-      font-family: var(--serif);
-      font-size: .88rem;
-      font-weight: 400;
-      color: rgba(255,255,255,.18);
-      letter-spacing: .04em;
-    }
-    .v3d-empty-hint {
-      font-size: .66rem;
-      color: rgba(255,255,255,.1);
-    }
+    .v3d-result-btn:hover { background: rgba(184,151,90,.2); }
 
     /* Loading overlay for Vibe3D */
     #v3d-loading-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(3,3,3,.88);
+      background: rgba(5,5,5,.9);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -1538,33 +1509,24 @@
       z-index: 20;
     }
     #v3d-loading-overlay.visible { display: flex; }
-    .v3d-spinner-wrap {
-      position: relative;
-      width: 52px;
-      height: 52px;
-    }
+    .v3d-spinner-wrap { position: relative; width: 52px; height: 52px; }
     .v3d-spinner {
       width: 52px;
       height: 52px;
-      border: 3px solid rgba(201,168,76,.12);
-      border-top-color: var(--v3d-gold);
-      border-right-color: var(--v3d-purple);
+      border: 3px solid rgba(184,151,90,.12);
+      border-top-color: #b8975a;
       border-radius: 50%;
       animation: spin .9s linear infinite;
     }
     .v3d-loading-label {
       font-size: .78rem;
-      font-family: var(--serif);
-      background: var(--v3d-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #b8975a;
       letter-spacing: .08em;
     }
     .v3d-loading-sub {
-      font-size: .64rem;
+      font-size: .63rem;
       color: rgba(255,255,255,.25);
-      letter-spacing: .06em;
+      letter-spacing: .05em;
     }
     .v3d-loading-progress {
       width: 200px;
@@ -1575,7 +1537,7 @@
     }
     .v3d-loading-bar {
       height: 100%;
-      background: var(--v3d-grad);
+      background: #b8975a;
       border-radius: 1px;
       width: 0%;
       animation: v3dProgress 12s ease-out forwards;
@@ -1587,202 +1549,11 @@
       100% { width: 92%; }
     }
 
-    /* Bottom render bar */
-    #v3d-render-bar {
-      flex-shrink: 0;
-      padding: 10px 16px;
-      background: var(--deep);
-      border-top: 1px solid rgba(255,255,255,.06);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    #v3d-render-btn {
-      flex: 1;
-      height: 40px;
-      background: var(--v3d-grad);
-      border: none;
-      border-radius: 8px;
-      color: #0a0800;
-      font-family: var(--serif);
-      font-size: .88rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: opacity .2s, transform .1s;
-    }
-    #v3d-render-btn:hover { opacity: .88; }
-    #v3d-render-btn:active { transform: scale(.98); }
-    #v3d-render-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
-    .v3d-credit-note {
-      font-size: .64rem;
-      color: rgba(255,255,255,.22);
-      white-space: nowrap;
-    }
-    .v3d-credit-note strong {
-      background: var(--v3d-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ── Right: Result Panel ── */
-    #v3d-result-panel {
-      width: 230px;
-      min-width: 230px;
-      flex-shrink: 0;
-      background: var(--deep);
-      border-left: 1px solid rgba(139,92,246,.15);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    /* Render style cards */
-    .v3d-style-cards {
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .v3d-style-card {
-      padding: 9px 11px;
-      border: 1px solid rgba(255,255,255,.07);
-      border-radius: 7px;
-      background: transparent;
-      cursor: pointer;
-      transition: all .18s;
-      text-align: left;
-    }
-    .v3d-style-card:hover {
-      border-color: rgba(201,168,76,.25);
-      background: rgba(201,168,76,.03);
-    }
-    .v3d-style-card.sel {
-      border-color: rgba(201,168,76,.5);
-      background: rgba(201,168,76,.07);
-    }
-    .v3d-style-card-name {
-      font-size: .74rem;
-      font-weight: 500;
-      color: rgba(255,255,255,.55);
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .v3d-style-card.sel .v3d-style-card-name { color: var(--v3d-gold); }
-    .v3d-style-card-desc {
-      font-size: .6rem;
-      color: rgba(255,255,255,.25);
-      margin-top: 2px;
-      line-height: 1.5;
-    }
-    .v3d-style-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Result image area */
-    #v3d-result-wrap {
-      margin: 12px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid rgba(139,92,246,.2);
-      background: #0a0a0f;
+    /* wrapper needs relative for loading overlay */
+    #v3d-compare-wrapper {
       position: relative;
-      display: none;
-      aspect-ratio: 4/3;
-    }
-    #v3d-result-wrap.visible { display: block; }
-    #v3d-result-img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .v3d-result-actions {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      display: flex;
-      gap: 5px;
-    }
-    .v3d-result-btn {
-      height: 26px;
-      padding: 0 10px;
-      border-radius: 5px;
-      background: rgba(0,0,0,.65);
-      border: 1px solid rgba(201,168,76,.35);
-      color: rgba(201,168,76,.9);
-      font-size: .64rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background .18s;
-      font-family: var(--sans);
-    }
-    .v3d-result-btn:hover { background: rgba(201,168,76,.18); }
-
-    /* AI Edit hints */
-    .v3d-edit-hints {
-      padding: 0 12px 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    /* Dropdown for Vibe3D */
-    .v3d-select {
-      width: 100%;
-      height: 30px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: 6px;
-      color: rgba(255,255,255,.55);
-      font-family: var(--sans);
-      font-size: .72rem;
-      padding: 0 28px 0 10px;
-      outline: none;
-      cursor: pointer;
-      transition: border-color .18s;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-    }
-    .v3d-select:focus { border-color: rgba(201,168,76,.4); }
-    .v3d-select option { background: #111; }
-
-    /* Panel section */
-    .v3d-panel-section {
-      padding: 12px 12px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.04);
-    }
-    .v3d-section-label {
-      font-size: .56rem;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.25);
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    @media (max-width: 1200px) {
-      #v3d-result-panel { display: none; }
-    }
-    @media (max-width: 900px) {
-      #v3d-upload-panel { width: 200px; min-width: 200px; }
-    }
-    @media (max-width: 700px) {
-      #v3d-upload-panel { display: none; }
+      max-width: 440px;
     }
 
     /* ── Large Reference Image Upload Zone ── */
@@ -2799,38 +2570,21 @@
     <!-- ══════════ VIBE3D EDITOR ══════════ -->
     <div id="vibe3d-editor">
 
-      <!-- Top bar -->
-      <div id="v3d-topbar">
-        <span class="v3d-topbar-logo"><i class="fa-solid fa-cube" style="font-size:.7rem;margin-right:4px;"></i>Vibe3D</span>
-        <span class="v3d-topbar-sep"></span>
-        <span class="v3d-topbar-sub">3D 건축 · 인테리어 AI 렌더링</span>
-        <span id="v3d-file-label">파일 미선택</span>
-      </div>
+      <!-- Scrollable single-column body -->
+      <div id="v3d-scroll-body">
+        <div id="v3d-card">
 
-      <!-- Main 3-column layout -->
-      <div id="v3d-main-layout">
-
-        <!-- ── Left: Upload Panel ── -->
-        <div id="v3d-upload-panel">
-
-          <div class="v3d-panel-title">
-            <i class="fa-solid fa-upload v3d-panel-title-icon"></i>
-            3D 파일 업로드
-          </div>
-
-          <!-- Drop zone -->
+          <!-- 1. Image upload -->
+          <span class="v3d-sec-label" style="margin-top:20px;">이미지 업로드</span>
           <div id="v3d-drop-zone" onclick="v3dHandleDropClick()">
             <div id="v3d-drop-content">
-              <div class="v3d-drop-icon"><i class="fa-solid fa-cube"></i></div>
-              <div class="v3d-drop-title">3D 모델 또는 이미지</div>
-              <div class="v3d-drop-hint">드래그 앤 드롭 또는 클릭</div>
+              <div class="v3d-drop-icon"><i class="fa-solid fa-image"></i></div>
+              <div class="v3d-drop-title">참고 이미지를 올려주세요</div>
+              <div class="v3d-drop-hint">이미지의 각도·구도를 그대로 유지하면서<br>실제 건축 렌더 퀄리티로 변환합니다</div>
               <div class="v3d-drop-formats">
-                <span class="v3d-fmt-badge">SKP</span>
-                <span class="v3d-fmt-badge">OBJ</span>
-                <span class="v3d-fmt-badge">GLB</span>
-                <span class="v3d-fmt-badge">FBX</span>
                 <span class="v3d-fmt-badge">JPG</span>
                 <span class="v3d-fmt-badge">PNG</span>
+                <span class="v3d-fmt-badge">WEBP</span>
               </div>
               <button class="v3d-drop-btn" onclick="event.stopPropagation(); v3dHandleDropClick()">
                 <i class="fa-solid fa-folder-open"></i> 파일 선택
@@ -2842,230 +2596,100 @@
               <button class="v3d-ctrl-btn" title="파일 제거" onclick="event.stopPropagation(); v3dClearFile()"><i class="fa-solid fa-xmark"></i></button>
             </div>
           </div>
-
-          <!-- Upload info row -->
-          <div id="v3d-upload-info">
-            <div class="v3d-upload-info-row" id="v3d-upload-info-row">
-              <i class="fa-solid fa-file-image v3d-upload-icon"></i>
-              <span class="v3d-upload-name" id="v3d-upload-name-label">파일명</span>
-              <div class="v3d-upload-del" onclick="v3dClearFile()" title="삭제"><i class="fa-solid fa-xmark"></i></div>
-            </div>
+          <div class="v3d-upload-info-row" id="v3d-upload-info-row">
+            <i class="fa-solid fa-file-image v3d-upload-icon"></i>
+            <span class="v3d-upload-name" id="v3d-upload-name-label">파일명</span>
+            <div class="v3d-upload-del" onclick="v3dClearFile()" title="삭제"><i class="fa-solid fa-xmark"></i></div>
           </div>
 
-          <!-- Render Style -->
-          <div class="v3d-panel-title" style="border-top:1px solid rgba(255,255,255,.05);">
-            <i class="fa-solid fa-palette v3d-panel-title-icon"></i>
-            렌더 스타일
-          </div>
-          <div class="v3d-style-cards" id="v3d-style-cards">
-            <button class="v3d-style-card sel" onclick="v3dSelectStyleCard(this)">
-              <div class="v3d-style-card-name">
-                <span class="v3d-style-dot" style="background:#5ca8e0;"></span>
-                Photorealistic
-              </div>
-              <div class="v3d-style-card-desc">사실적 사진 수준 렌더링. PBR 기반.</div>
-            </button>
-            <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
-              <div class="v3d-style-card-name">
-                <span class="v3d-style-dot" style="background:#c9a84c;"></span>
-                Watercolor
-              </div>
-              <div class="v3d-style-card-desc">수채화 스타일. 부드러운 워터컬러 감성.</div>
-            </button>
-            <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
-              <div class="v3d-style-card-name">
-                <span class="v3d-style-dot" style="background:#a0a0a0;"></span>
-                Sketch
-              </div>
-              <div class="v3d-style-card-desc">건축 스케치 스타일. 라인 드로잉.</div>
-            </button>
-            <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
-              <div class="v3d-style-card-name">
-                <span class="v3d-style-dot" style="background:#8b5cf6;"></span>
-                Modern
-              </div>
-              <div class="v3d-style-card-desc">모던 미니멀. 깔끔한 현대 건축 비주얼.</div>
-            </button>
-            <button class="v3d-style-card" onclick="v3dSelectStyleCard(this)">
-              <div class="v3d-style-card-name">
-                <span class="v3d-style-dot" style="background:#c06090;"></span>
-                Classic
-              </div>
-              <div class="v3d-style-card-desc">클래식 유럽풍. 고급스러운 전통 양식.</div>
-            </button>
+          <!-- 2. Time of day -->
+          <span class="v3d-sec-label">TIME OF DAY</span>
+          <div class="v3d-chips" id="v3d-time-chips">
+            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-time-chips')">MORNING<br><span style="font-size:.6rem;opacity:.55;">오전</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">EVENING<br><span style="font-size:.6rem;opacity:.55;">저녁</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">NIGHT<br><span style="font-size:.6rem;opacity:.55;">밤</span></button>
           </div>
 
-        </div><!-- /v3d-upload-panel -->
+          <!-- 3. Lighting -->
+          <span class="v3d-sec-label">LIGHTING</span>
+          <div class="v3d-chips" id="v3d-light-chips">
+            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-light-chips')">DAYLIGHT<br><span style="font-size:.6rem;opacity:.55;">자연광</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">AMBIENT<br><span style="font-size:.6rem;opacity:.55;">앰비언트</span></button>
+          </div>
 
-        <!-- ── Center: Compare + Settings ── -->
-        <div id="v3d-center-panel">
+          <!-- 4. Flooring -->
+          <span class="v3d-sec-label">FLOORING</span>
+          <div class="v3d-chips" id="v3d-floor-chips">
+            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-floor-chips')">ORIGINAL<br><span style="font-size:.6rem;opacity:.55;">원본</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-floor-chips')">MARBLE<br><span style="font-size:.6rem;opacity:.55;">대리석</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-floor-chips')">WOOD<br><span style="font-size:.6rem;opacity:.55;">나무</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-floor-chips')">TILE<br><span style="font-size:.6rem;opacity:.55;">타일</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-floor-chips')">CARPET<br><span style="font-size:.6rem;opacity:.55;">카펫</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-floor-chips')">CONCRETE<br><span style="font-size:.6rem;opacity:.55;">콘크리트</span></button>
+          </div>
 
-          <!-- Settings bar -->
-          <div id="v3d-settings-bar">
-            <!-- 조명 -->
-            <div class="v3d-setting-group">
-              <span class="v3d-setting-label">조명</span>
-              <div class="v3d-chips" id="v3d-light-chips">
-                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-light-chips')">자연광</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">스튜디오</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">석양</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-light-chips')">야간</button>
-              </div>
-            </div>
-            <!-- 각도 -->
-            <div class="v3d-setting-group">
-              <span class="v3d-setting-label">각도</span>
-              <div class="v3d-chips" id="v3d-angle-chips">
-                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-angle-chips')">정면</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-angle-chips')">45도</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-angle-chips')">조감도</button>
-              </div>
-            </div>
-            <!-- 해상도 -->
-            <div class="v3d-setting-group">
-              <span class="v3d-setting-label">해상도</span>
-              <div class="v3d-chips" id="v3d-res-chips">
-                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-res-chips')">2K</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-res-chips')">4K</button>
-              </div>
-            </div>
-            <!-- 환경 -->
-            <div class="v3d-setting-group">
-              <span class="v3d-setting-label">환경</span>
-              <div class="v3d-chips" id="v3d-env-chips">
-                <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-env-chips')">Urban</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Garden</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Mountain</button>
-                <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-env-chips')">Beach</button>
-              </div>
-            </div>
-          </div><!-- /settings-bar -->
+          <!-- 5. Render engine -->
+          <span class="v3d-sec-label">RENDER ENGINE</span>
+          <div class="v3d-chips" id="v3d-engine-chips">
+            <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-engine-chips')">FIDELITY (V1)<br><span style="font-size:.6rem;opacity:.55;">피델리티</span></button>
+            <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-engine-chips')">HYPERREAL (V2)<br><span style="font-size:.6rem;opacity:.55;">하이퍼리얼</span></button>
+          </div>
 
-          <!-- Before / After Compare area -->
-          <div id="v3d-compare-area">
+          <!-- 6. Additional instructions -->
+          <span class="v3d-sec-label">ADDITIONAL INSTRUCTIONS</span>
+          <textarea id="v3d-extra-input" placeholder="특정 요구사항이나 선호도를 입력하세요..."></textarea>
 
-            <!-- Empty state -->
-            <div id="v3d-empty-state">
-              <div class="v3d-empty-icon"><i class="fa-solid fa-cube"></i></div>
-              <div class="v3d-empty-text">3D 파일을 업로드하고 렌더링하세요</div>
-              <div class="v3d-empty-hint">좌측에서 파일 업로드 → 설정 선택 → Render 버튼</div>
-            </div>
-
-            <!-- Before / After slider -->
-            <div id="v3d-before-after" style="display:none;">
-              <!-- Before side -->
-              <div class="v3d-ba-side" id="v3d-before-side">
-                <img id="v3d-before-img" src="" alt="원본" />
-                <span class="v3d-ba-label">BEFORE</span>
-              </div>
-              <!-- After side -->
-              <div class="v3d-ba-side" id="v3d-after-side">
-                <img id="v3d-after-img" src="" alt="렌더링" />
-                <span class="v3d-ba-label">AFTER</span>
-                <div class="v3d-result-actions">
-                  <button class="v3d-result-btn" onclick="v3dDownloadResult('png')"><i class="fa-solid fa-download"></i> PNG</button>
-                  <button class="v3d-result-btn" onclick="v3dDownloadResult('jpg')"><i class="fa-solid fa-download"></i> JPG</button>
-                  <button class="v3d-result-btn" onclick="v3dClearResult()"><i class="fa-solid fa-rotate-left"></i></button>
+          <!-- 7. Result: Before/After compare (shown after render) -->
+          <div id="v3d-compare-wrapper" style="margin-top:20px;">
+            <div id="v3d-compare-area">
+              <div id="v3d-before-after">
+                <!-- Before side -->
+                <div class="v3d-ba-side" id="v3d-before-side">
+                  <img id="v3d-before-img" src="" alt="원본" />
+                  <span class="v3d-ba-label">BEFORE</span>
+                </div>
+                <!-- After side -->
+                <div class="v3d-ba-side" id="v3d-after-side">
+                  <img id="v3d-after-img" src="" alt="렌더링" />
+                  <span class="v3d-ba-label">AFTER</span>
+                </div>
+                <!-- Slider handle -->
+                <div id="v3d-slider-handle">
+                  <div id="v3d-slider-knob"><i class="fa-solid fa-arrows-left-right"></i></div>
                 </div>
               </div>
-              <!-- Slider handle -->
-              <div id="v3d-slider-handle">
-                <div id="v3d-slider-knob"><i class="fa-solid fa-arrows-left-right"></i></div>
+
+              <!-- Loading overlay -->
+              <div id="v3d-loading-overlay">
+                <div class="v3d-spinner-wrap">
+                  <div class="v3d-spinner"></div>
+                </div>
+                <div class="v3d-loading-label" id="v3d-loading-label">AI 렌더링 중...</div>
+                <div class="v3d-loading-sub">Vibe3D가 건축 렌더 이미지를 생성하고 있습니다</div>
+                <div class="v3d-loading-progress">
+                  <div class="v3d-loading-bar" id="v3d-loading-bar-fill"></div>
+                </div>
               </div>
             </div>
 
-            <!-- Loading overlay -->
-            <div id="v3d-loading-overlay">
-              <div class="v3d-spinner-wrap">
-                <div class="v3d-spinner"></div>
-              </div>
-              <div class="v3d-loading-label" id="v3d-loading-label">AI 렌더링 중...</div>
-              <div class="v3d-loading-sub">Vibe3D가 사실적 이미지를 생성하고 있습니다</div>
-              <div class="v3d-loading-progress">
-                <div class="v3d-loading-bar" id="v3d-loading-bar-fill"></div>
-              </div>
-            </div>
-          </div><!-- /compare-area -->
-
-          <!-- Render bar -->
-          <div id="v3d-render-bar">
-            <!-- AI Edit input -->
-            <i class="fa-solid fa-comment-dots" style="color:rgba(201,168,76,.4);font-size:.82rem;flex-shrink:0;"></i>
-            <input id="v3d-ai-edit-input" type="text"
-              style="flex:1;height:36px;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--silver);font-family:var(--sans);font-size:.76rem;padding:0 12px;outline:none;"
-              placeholder="AI 수정 명령... 예: make it sunset, change flooring to marble" />
-            <button id="v3d-render-btn" onclick="v3dRender()">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Render
-            </button>
-            <span class="v3d-credit-note">2K <strong>5크레딧</strong> · 4K <strong>25크레딧</strong></span>
-          </div>
-
-        </div><!-- /v3d-center-panel -->
-
-        <!-- ── Right: Style & Result Panel ── -->
-        <div id="v3d-result-panel">
-
-          <div class="v3d-panel-title">
-            <i class="fa-solid fa-image v3d-panel-title-icon"></i>
-            렌더링 결과
-          </div>
-
-          <!-- Result thumbnail -->
-          <div id="v3d-result-wrap">
-            <img id="v3d-result-img" src="" alt="렌더링 결과" />
-            <div class="v3d-result-actions">
+            <!-- Download bar (visible after result) -->
+            <div id="v3d-download-bar">
               <button class="v3d-result-btn" onclick="v3dDownloadResult('png')"><i class="fa-solid fa-download"></i> PNG</button>
               <button class="v3d-result-btn" onclick="v3dDownloadResult('jpg')"><i class="fa-solid fa-download"></i> JPG</button>
+              <button class="v3d-result-btn" onclick="v3dClearResult()"><i class="fa-solid fa-rotate-left"></i> 초기화</button>
             </div>
           </div>
 
-          <!-- Re-render hint -->
-          <div style="padding:8px 12px 0;font-size:.62rem;color:rgba(255,255,255,.2);line-height:1.6;" id="v3d-result-hint" style="display:none;">
-            렌더링이 완료되었습니다. 설정을 변경하고 다시 Render를 누르면 추가 생성됩니다.
-          </div>
+        </div><!-- /v3d-card -->
+      </div><!-- /v3d-scroll-body -->
 
-          <!-- Material / Flooring -->
-          <div class="v3d-panel-section" style="margin-top:10px;">
-            <span class="v3d-section-label">재질 / 바닥재</span>
-            <select class="v3d-select" id="v3d-material-select">
-              <option value="Wood">Wood (나무)</option>
-              <option value="Marble" selected>Marble (대리석)</option>
-              <option value="Concrete">Concrete (콘크리트)</option>
-              <option value="Tile">Tile (타일)</option>
-              <option value="Glass">Glass (유리)</option>
-              <option value="Metal">Metal (금속)</option>
-              <option value="Carpet">Carpet (카펫)</option>
-            </select>
-          </div>
-
-          <!-- Time of Day -->
-          <div class="v3d-panel-section">
-            <span class="v3d-section-label">Time of Day</span>
-            <div class="v3d-chips" id="v3d-time-chips">
-              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Morning</button>
-              <button class="v3d-chip sel" onclick="v3dSelectChip(this,'v3d-time-chips')">Noon</button>
-              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Golden Hour</button>
-              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Sunset</button>
-              <button class="v3d-chip" onclick="v3dSelectChip(this,'v3d-time-chips')">Night</button>
-            </div>
-          </div>
-
-          <!-- AI Edit quick hints -->
-          <div class="v3d-panel-section">
-            <span class="v3d-section-label">빠른 수정 명령</span>
-            <div class="v3d-edit-hints">
-              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('make it sunset')">석양 분위기</button>
-              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('add fog atmosphere')">안개 효과</button>
-              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('change flooring to wood')">나무 바닥</button>
-              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('dramatic lighting')">드라마틱 조명</button>
-              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('add greenery and plants')">식물 추가</button>
-              <button class="v3d-chip" style="font-size:.6rem;" onclick="v3dSetEditHint('make it night scene')">야간 씬</button>
-            </div>
-          </div>
-
-        </div><!-- /v3d-result-panel -->
-
-      </div><!-- /v3d-main-layout -->
+      <!-- 8. Fixed render button at bottom -->
+      <div id="v3d-render-bar">
+        <button id="v3d-render-btn" onclick="v3dRender()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> 렌더링 (5 크레딧)
+        </button>
+        <div class="v3d-credit-note"><strong>5 크레딧</strong>/회</div>
+      </div>
 
     </div><!-- /vibe3d-editor -->
 
@@ -3944,7 +3568,8 @@
 
     function v3dApplyFile(file) {
       v3dUploadedFile = file;
-      document.getElementById('v3d-file-label').textContent = file.name;
+      const fileLabelEl = document.getElementById('v3d-file-label');
+      if (fileLabelEl) fileLabelEl.textContent = file.name;
       const isImage = file.type.startsWith('image/');
       if (isImage) {
         const reader = new FileReader();
@@ -3988,17 +3613,17 @@
     function v3dClearFile() {
       v3dUploadedFile = null;
       v3dResultUrl = null;
-      document.getElementById('v3d-file-label').textContent = '파일 미선택';
+      const fileLabelElClear = document.getElementById('v3d-file-label');
+      if (fileLabelElClear) fileLabelElClear.textContent = '파일 미선택';
       document.getElementById('v3d-drop-zone').classList.remove('has-file');
       const content = document.getElementById('v3d-drop-content');
       content.style.display = '';
-      content.innerHTML = `<div class="v3d-drop-icon"><i class="fa-solid fa-cube"></i></div>
-        <div class="v3d-drop-title">3D 모델 또는 이미지</div>
-        <div class="v3d-drop-hint">드래그 앤 드롭 또는 클릭</div>
+      content.innerHTML = `<div class="v3d-drop-icon"><i class="fa-solid fa-image"></i></div>
+        <div class="v3d-drop-title">참고 이미지를 올려주세요</div>
+        <div class="v3d-drop-hint">이미지의 각도·구도를 그대로 유지하면서<br>실제 건축 렌더 퀄리티로 변환합니다</div>
         <div class="v3d-drop-formats">
-          <span class="v3d-fmt-badge">SKP</span><span class="v3d-fmt-badge">OBJ</span>
-          <span class="v3d-fmt-badge">GLB</span><span class="v3d-fmt-badge">FBX</span>
           <span class="v3d-fmt-badge">JPG</span><span class="v3d-fmt-badge">PNG</span>
+          <span class="v3d-fmt-badge">WEBP</span>
         </div>
         <button class="v3d-drop-btn" onclick="event.stopPropagation(); v3dHandleDropClick()"><i class="fa-solid fa-folder-open"></i> 파일 선택</button>`;
       const img = document.getElementById('v3d-preview-img');
@@ -4013,15 +3638,13 @@
 
     function v3dClearResult() {
       v3dResultUrl = null;
-      const baEl = document.getElementById('v3d-before-after');
-      const emptyEl = document.getElementById('v3d-empty-state');
+      const compareArea = document.getElementById('v3d-compare-area');
+      const downloadBar = document.getElementById('v3d-download-bar');
       const sliderHandle = document.getElementById('v3d-slider-handle');
-      const resultWrap = document.getElementById('v3d-result-wrap');
       const afterImg = document.getElementById('v3d-after-img');
-      if (baEl) baEl.style.display = 'none';
-      if (emptyEl) emptyEl.style.display = '';
+      if (compareArea) compareArea.classList.remove('visible');
+      if (downloadBar) downloadBar.classList.remove('visible');
       if (sliderHandle) sliderHandle.classList.remove('visible');
-      if (resultWrap) resultWrap.classList.remove('visible');
       if (afterImg) afterImg.src = '';
     }
 
@@ -4060,41 +3683,56 @@
 
     /* ── Collect current Vibe3D settings ── */
     function v3dGetSettings() {
-      const light   = document.querySelector('#v3d-light-chips .v3d-chip.sel')?.textContent?.trim() || '자연광';
-      const angle   = document.querySelector('#v3d-angle-chips .v3d-chip.sel')?.textContent?.trim() || '정면';
-      const resSel  = document.querySelector('#v3d-res-chips .v3d-chip.sel')?.textContent?.trim() || '2K';
-      const env     = document.querySelector('#v3d-env-chips .v3d-chip.sel')?.textContent?.trim() || 'Urban';
-      const material = document.getElementById('v3d-material-select')?.value || 'Marble';
-      const time     = document.querySelector('#v3d-time-chips .v3d-chip.sel')?.textContent?.trim() || 'Noon';
-      const styleCardName = document.querySelector('#v3d-style-cards .v3d-style-card.sel .v3d-style-card-name')?.textContent?.trim() || 'Photorealistic';
-      return { light, angle, resolution: resSel, env, material, time, renderStyle: styleCardName };
+      // Get first text node only (ignore child spans) for chip values
+      function chipText(groupId) {
+        const el = document.querySelector('#' + groupId + ' .v3d-chip.sel');
+        if (!el) return '';
+        return el.childNodes[0]?.textContent?.trim() || el.textContent?.trim() || '';
+      }
+      const time    = chipText('v3d-time-chips') || 'MORNING';
+      const light   = chipText('v3d-light-chips') || 'DAYLIGHT';
+      const floor   = chipText('v3d-floor-chips') || 'ORIGINAL';
+      const engine  = chipText('v3d-engine-chips') || 'FIDELITY (V1)';
+      const extra   = document.getElementById('v3d-extra-input')?.value?.trim() || '';
+      return { time, light, floor, engine, extra, resolution: '2K' };
     }
 
     function v3dBuildPrompt(settings, aiEditHint) {
-      const styleDescMap = {
-        'Photorealistic': 'photorealistic architectural visualization, physically based rendering, ultra-detailed, professional photography quality',
-        'Watercolor': 'watercolor architectural illustration, soft brush strokes, artistic rendering, hand-painted style',
-        'Sketch': 'architectural pencil sketch, line drawing style, technical illustration, clean lines',
-        'Modern': 'modern minimalist architectural rendering, clean contemporary design, sleek surfaces',
-        'Classic': 'classical European architectural style, ornate details, traditional design elements'
+      const timeMap = {
+        'MORNING': 'morning light, soft golden sunrise',
+        'EVENING': 'evening light, warm sunset tones',
+        'NIGHT': 'night scene, artificial lighting, dramatic atmosphere'
       };
-      const lightMap = { '자연광': 'natural daylight', '스튜디오': 'studio lighting', '석양': 'golden sunset light', '야간': 'night scene with artificial lighting' };
-      const angleMap = { '정면': 'front facade view', '45도': '3/4 isometric view, 45 degree angle', '조감도': 'aerial bird\'s-eye view, drone perspective' };
+      const lightMap = {
+        'DAYLIGHT': 'natural daylight, bright and crisp',
+        'AMBIENT': 'soft ambient lighting, diffused and even'
+      };
+      const floorMap = {
+        'ORIGINAL': 'keep original flooring as-is',
+        'MARBLE': 'polished marble flooring',
+        'WOOD': 'natural wood flooring',
+        'TILE': 'ceramic tile flooring',
+        'CARPET': 'carpet flooring',
+        'CONCRETE': 'polished concrete flooring'
+      };
+      const engineMap = {
+        'FIDELITY (V1)': 'photorealistic architectural visualization, physically based rendering, ultra-detailed, professional photography quality',
+        'HYPERREAL (V2)': 'hyperrealistic ultra-photorealistic architectural render, 8K cinematic quality, extreme detail, professional CGI'
+      };
 
-      const styleDesc = styleDescMap[settings.renderStyle] || styleDescMap['Photorealistic'];
-      const lightDesc = lightMap[settings.light] || settings.light;
-      const angleDesc = angleMap[settings.angle] || settings.angle;
-      const resDesc = settings.resolution === '4K' ? 'ultra high resolution 4K' : 'high resolution 2K';
+      const engineDesc = engineMap[settings.engine] || engineMap['FIDELITY (V1)'];
+      const timeDesc   = timeMap[settings.time] || settings.time;
+      const lightDesc  = lightMap[settings.light] || settings.light;
+      const floorDesc  = floorMap[settings.floor] || settings.floor;
 
-      let prompt = `${styleDesc}. `;
-      prompt += `Architectural visualization. `;
-      prompt += `Camera angle: ${angleDesc}. `;
+      let prompt = `${engineDesc}. `;
+      prompt += `IMPORTANT: preserve the exact camera angle, perspective, and composition of the reference image — only enhance the rendering quality. `;
+      prompt += `Time of day: ${timeDesc}. `;
       prompt += `Lighting: ${lightDesc}. `;
-      prompt += `Materials: ${settings.material} flooring and surfaces. `;
-      prompt += `Environment: ${settings.env} surroundings. `;
-      prompt += `Time: ${settings.time}. `;
+      prompt += `Flooring: ${floorDesc}. `;
+      if (settings.extra) prompt += `Additional requirements: ${settings.extra}. `;
       if (aiEditHint) prompt += `Additional: ${aiEditHint}. `;
-      prompt += `${resDesc}, professional architectural render, highly detailed, cinematic composition.`;
+      prompt += `Professional architectural render, highly detailed, cinematic composition.`;
       return prompt;
     }
 
@@ -4126,7 +3764,7 @@
     /* ── Main render function ── */
     async function v3dRender(aiEditHint) {
       const settings = v3dGetSettings();
-      const hint = (typeof aiEditHint === 'string') ? aiEditHint : (document.getElementById('v3d-ai-edit-input')?.value?.trim() || '');
+      const hint = (typeof aiEditHint === 'string') ? aiEditHint : (document.getElementById('v3d-extra-input')?.value?.trim() || '');
 
       // Credit check (2K=5, 4K=25)
       const renderCost = settings.resolution === '4K' ? 25 : 5;
@@ -4144,11 +3782,14 @@
       const btn = document.getElementById('v3d-render-btn');
       btn.disabled = true;
 
-      // Hide previous result / show empty loading
-      const baEl = document.getElementById('v3d-before-after');
-      const emptyEl = document.getElementById('v3d-empty-state');
-      if (baEl) baEl.style.display = 'none';
-      if (emptyEl) emptyEl.style.display = 'none';
+      // Show compare area for loading overlay; hide previous result
+      const compareArea = document.getElementById('v3d-compare-area');
+      const downloadBar = document.getElementById('v3d-download-bar');
+      if (compareArea) compareArea.classList.add('visible');
+      if (downloadBar) downloadBar.classList.remove('visible');
+      // Reset before/after display
+      const beforeSideEl = document.getElementById('v3d-before-side');
+      if (beforeSideEl) beforeSideEl.style.display = '';
       v3dStartLoading();
 
       try {
@@ -4199,43 +3840,30 @@
         const afterImg = document.getElementById('v3d-after-img');
         const beforeImg = document.getElementById('v3d-before-img');
         const sliderHandle = document.getElementById('v3d-slider-handle');
-        const resultWrap = document.getElementById('v3d-result-wrap');
-        const resultImgRight = document.getElementById('v3d-result-img');
 
         if (afterImg) afterImg.src = v3dResultUrl;
-        if (resultImgRight) resultImgRight.src = v3dResultUrl;
 
-        // If no before image (no upload), show single result centered
+        // If no before image (no upload), show single result
         const hasBeforeImage = beforeImg && beforeImg.src && beforeImg.src !== window.location.href;
         if (hasBeforeImage) {
-          if (baEl) { baEl.style.display = 'flex'; }
           if (sliderHandle) sliderHandle.classList.add('visible');
           v3dInitSlider();
         } else {
-          // No before image: show after side only
           const beforeSide = document.getElementById('v3d-before-side');
           if (beforeSide) beforeSide.style.display = 'none';
-          if (baEl) { baEl.style.display = 'flex'; }
         }
-        if (emptyEl) emptyEl.style.display = 'none';
 
-        // Right panel result thumbnail
-        if (resultWrap) resultWrap.classList.add('visible');
-        const resultHint = document.getElementById('v3d-result-hint');
-        if (resultHint) resultHint.style.display = '';
+        if (downloadBar) downloadBar.classList.add('visible');
 
         showToast('Vibe3D 렌더링이 완료되었습니다.');
-        if (hint) {
-          const aiInput = document.getElementById('v3d-ai-edit-input');
-          if (aiInput) aiInput.value = '';
-        }
 
         if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
 
       } catch(err) {
         v3dStopLoading();
         if (!isAdmin) { saveCredits(getCredits() + renderCost); renderHeaderBadge(); }
-        if (emptyEl) emptyEl.style.display = '';
+        // Hide compare area since render failed
+        if (compareArea) compareArea.classList.remove('visible');
 
         let msg = 'API 호출 중 오류가 발생했습니다.';
         const em = err.message || '';
@@ -4288,6 +3916,7 @@
     /* ── Drag & drop for Vibe3D drop zone ── */
     (function() {
       const zone = document.getElementById('v3d-drop-zone');
+      if (!zone) return;
       zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
       zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
       zone.addEventListener('drop', e => {
@@ -4297,11 +3926,6 @@
         if (file) v3dApplyFile(file);
       });
     })();
-
-    /* ── Enter key on AI edit input ── */
-    document.getElementById('v3d-ai-edit-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') v3dApplyAIEdit();
-    });
 
     /* ═══════════════════════════════════════
        3D 변환 ENGINE
