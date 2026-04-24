@@ -806,12 +806,14 @@
     }
     .btn-sm-gold:hover { background: rgba(184,151,90,.12); color: var(--gold-lt); }
 
-    /* Image grid */
+    /* Image grid - 매수에 따라 동적으로 변경 */
     #image-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 10px;
     }
+    #image-grid.grid-2 { grid-template-columns: repeat(2, 1fr); }
+    #image-grid.grid-4 { grid-template-columns: repeat(2, 1fr); }
 
     .img-slot {
       aspect-ratio: 1;
@@ -2704,9 +2706,9 @@
         <div class="opt-group">
           <span class="opt-label">매수</span>
           <div class="opt-chips" id="opt-count">
-            <button class="opt-chip" data-val="1">1장</button>
+            <button class="opt-chip sel" data-val="1">1장</button>
             <button class="opt-chip" data-val="2">2장</button>
-            <button class="opt-chip sel" data-val="4">4장</button>
+            <button class="opt-chip" data-val="4">4장</button>
           </div>
         </div>
         <div class="opt-group">
@@ -3480,6 +3482,7 @@
           group.querySelectorAll('.opt-chip').forEach(c => c.classList.remove('sel'));
           chip.classList.add('sel');
           if (id === 'opt-count' || id === 'opt-quality') updateCreditEstimate();
+          if (id === 'opt-count') updateGridLayout();
         });
       });
     });
@@ -3554,8 +3557,17 @@
 
     function getSelectedCount() {
       const sel = document.querySelector('#opt-count .opt-chip.sel');
-      return parseInt(sel ? sel.dataset.val : '4');
+      return parseInt(sel ? sel.dataset.val : '1');
     }
+
+    function updateGridLayout() {
+      const grid = document.getElementById('image-grid');
+      if (!grid) return;
+      grid.classList.remove('grid-2', 'grid-4');
+      const count = getSelectedCount();
+      if (count >= 2) grid.classList.add('grid-' + (count > 2 ? '4' : '2'));
+    }
+    updateGridLayout();
 
     function getSelectedQuality() {
       const sel = document.querySelector('#opt-quality .opt-chip.sel');
