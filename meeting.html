@@ -570,13 +570,15 @@
         <div class="upload-title">녹음 파일로 회의록 자동 생성</div>
         <div class="upload-sub">MP3, WAV, M4A, WebM, AAC, AMR, 3GP 파일을 업로드하면<br>Whisper AI가 음성을 텍스트로 변환하고<br>GPT-4o가 전문 회의록으로 정리합니다.</div>
 
+        <label for="fileInput" style="display:block;cursor:pointer;">
         <div id="dropZone">
           <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
           <div class="drop-title">파일을 드래그하거나 클릭하여 업로드</div>
           <div class="drop-sub">MP3 · WAV · M4A · WebM · AAC · AMR · 3GP</div>
           <div class="drop-limit">최대 25MB</div>
         </div>
-        <input type="file" id="fileInput" accept=".mp3,.wav,.m4a,.webm,.aac,.amr,.3gp,audio/*" />
+        </label>
+        <input type="file" id="fileInput" accept="audio/*,video/*,.mp3,.wav,.m4a,.webm,.aac,.amr,.3gp,.mp4,.ogg,.wma,.flac,.opus" />
 
         <div id="fileChip">
           <i class="fc-icon fa-solid fa-file-audio"></i>
@@ -659,29 +661,31 @@
     const CREDITS_PER_USE = 10;
     const HISTORY_KEY = 'dagaon_meeting_history';
 
-    marked.setOptions({ breaks: true, gfm: true });
+    try { marked.setOptions({ breaks: true, gfm: true }); } catch(e) { console.warn('marked 로드 실패:', e); }
 
     // ─── AUTH ─────────────────────────────────────────────────────────────
     let isAdmin = false;
     let memberData = null;
 
     (function init() {
-      if (localStorage.getItem('dagaon_admin') === '1') {
-        isAdmin = true;
-      } else {
-        const raw = localStorage.getItem('dagaon_user');
-        if (raw) {
-          try { memberData = JSON.parse(raw); } catch(e) { memberData = null; }
+      try {
+        if (localStorage.getItem('dagaon_admin') === '1') {
+          isAdmin = true;
+        } else {
+          const raw = localStorage.getItem('dagaon_user');
+          if (raw) {
+            try { memberData = JSON.parse(raw); } catch(e) { memberData = null; }
+          }
+          if (!memberData || memberData.loggedIn !== true) {
+            window.location.href = 'index.html';
+            return;
+          }
         }
-        if (!memberData || memberData.loggedIn !== true) {
-          window.location.href = 'index.html';
-          return;
-        }
-      }
-      renderHeader();
-      initEngineLock();
-      renderEngineOptions('Whisper v3');
-      renderHistory();
+        renderHeader();
+        initEngineLock();
+        renderEngineOptions('Whisper v3');
+        renderHistory();
+      } catch(e) { console.error('init 오류:', e); }
     })();
 
     function renderHeader() {
@@ -703,25 +707,43 @@
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
 
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files[0]) setFile(e.target.files[0]);
-    });
+    if (dropZone && fileInput) {
+      // 모바일 호환: onclick + touchend 둘 다 연결
+      dropZone.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInput.click();
+      };
+      dropZone.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        fileInput.click();
+      }, { passive: false });
 
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropZone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) setFile(file);
-    });
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) setFile(e.target.files[0]);
+      });
+
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) setFile(file);
+      });
+    } else {
+      console.error('dropZone 또는 fileInput 요소를 찾을 수 없습니다');
+    }
 
     function setFile(file) {
-      const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/x-m4a', 'audio/m4a', 'audio/webm', 'video/webm', 'audio/ogg', 'audio/aac', 'audio/amr', 'audio/3gpp', 'audio/3gpp2', 'audio/x-aac', 'audio/amr-wb'];
+      const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/x-m4a', 'audio/m4a', 'audio/webm', 'video/webm', 'audio/ogg', 'audio/aac', 'audio/amr', 'audio/3gpp', 'audio/3gpp2', 'audio/x-aac', 'audio/amr-wb', 'audio/mp3', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave', 'video/3gpp', 'video/mp4', 'application/octet-stream'];
       const ext = file.name.split('.').pop().toLowerCase();
-      const allowedExt = ['mp3','wav','m4a','webm','ogg','aac','amr','3gp','3gpp'];
-      if (!allowed.includes(file.type) && !allowedExt.includes(ext)) {
+      const allowedExt = ['mp3','wav','m4a','webm','ogg','aac','amr','3gp','3gpp','mp4','wma','flac','opus'];
+      // 모바일 녹음 파일은 MIME 타입이 비어있거나 비표준일 수 있음 — 확장자 우선 체크
+      const extOk = allowedExt.includes(ext);
+      const typeOk = file.type && allowed.includes(file.type);
+      const isAudio = file.type && file.type.startsWith('audio/');
+      if (!extOk && !typeOk && !isAudio) {
         showToast('지원하지 않는 파일 형식입니다. MP3, WAV, M4A, WebM, AAC, AMR, 3GP 파일을 사용하세요.');
         return;
       }
