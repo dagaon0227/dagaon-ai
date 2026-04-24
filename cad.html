@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI CAD — DAGAON AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    /* ── Variables ── */
+    :root {
+      --black:   #050505;
+      --deep:    #0a0a0a;
+      --surface: #111111;
+      --border:  rgba(255,255,255,0.07);
+      --white:   #ffffff;
+      --gold:    #b8975a;
+      --gold-lt: #d4af70;
+      --text:    #d0d0d0;
+      --serif:   'Noto Serif KR', serif;
+      --sans:    'Noto Sans KR', sans-serif;
+    }
+
+    /* ── Reset / Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+
+    ::selection { background: var(--gold); color: var(--black); }
+
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) transparent;
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Page wrapper ── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ══════════════════════════════════════
+       1. FIXED HEADER BAR
+    ══════════════════════════════════════ */
+    .header-bar {
+      flex-shrink: 0;
+      height: 58px;
+      background: var(--deep);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: relative;
+      z-index: 100;
+    }
+
+    .header-bar .hb-left a {
+      color: var(--gold);
+      font-size: 13px;
+      font-family: var(--sans);
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .header-bar .hb-left a:hover { color: var(--gold-lt); }
+    .header-bar .hb-left a i { font-size: 12px; }
+
+    .header-bar .hb-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+
+    .header-bar .hb-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .badge-unlimited {
+      background: linear-gradient(135deg, rgba(184,151,90,.18), rgba(212,175,112,.1));
+      border: 1px solid rgba(184,151,90,.35);
+      color: var(--gold-lt);
+      font-size: 10px;
+      font-family: var(--sans);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 3px;
+    }
+
+    .badge-count {
+      color: var(--text);
+      font-size: 12px;
+      font-family: var(--sans);
+      font-weight: 400;
+    }
+    .badge-count span { color: var(--gold); font-weight: 600; }
+
+    /* ══════════════════════════════════════
+       2. ENGINE SIDEBAR SHARED STYLES
+    ══════════════════════════════════════ */
+    .eng-section { padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.05); margin-bottom: 16px; }
+    .eng-section-title { font-size: .56rem; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 8px; font-weight: 600; }
+    .eng-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 5px; border: 1px solid transparent; cursor: pointer; transition: background .15s, border-color .15s; margin-bottom: 2px; }
+    .eng-item:hover { background: rgba(255,255,255,.03); }
+    .eng-item.active { background: rgba(184,151,90,.07); border-color: rgba(184,151,90,.32); }
+    .eng-icon { width: 28px; height: 28px; border-radius: 6px; background: #131313; border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; font-size: .6rem; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+    .eng-item.active .eng-icon { background: rgba(184,151,90,.12); border-color: rgba(184,151,90,.4); }
+    .eng-info { flex: 1; min-width: 0; }
+    .eng-name { font-size: .72rem; font-weight: 500; color: rgba(200,200,200,.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+    .eng-item.active .eng-name { color: var(--white); }
+    .eng-desc { font-size: .58rem; color: rgba(184,184,184,.36); font-weight: 300; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .badge-new-sm { font-size: .47rem; font-weight: 700; letter-spacing: .08em; color: #1a2f05; background: #8BC34A; padding: 1px 5px; border-radius: 10px; flex-shrink: 0; line-height: 1.7; }
+    /* Active engine bar */
+    .active-eng-bar { height: 36px; background: #080808; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; padding: 0 20px; gap: 8px; flex-shrink: 0; }
+    .active-eng-label { font-size: .56rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.2); }
+    .active-eng-name { font-family: var(--serif); font-size: .76rem; color: var(--white); letter-spacing: .04em; }
+
+    /* ══════════════════════════════════════
+       3. BODY ROW
+    ══════════════════════════════════════ */
+    .body-row {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ── Left Settings Panel ── */
+    .settings-panel {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      font-family: var(--sans);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-variant: small-caps;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+
+    .field-label {
+      font-size: 10px;
+      font-family: var(--sans);
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: rgba(208,208,208,.4);
+      margin-bottom: 6px;
+    }
+
+    .field-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      color: var(--white);
+      padding: 9px 12px;
+      font-size: 13px;
+      font-family: var(--sans);
+      font-weight: 400;
+      border-radius: 3px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color .18s;
+    }
+
+    select { padding-right: 32px; }
+
+    .select-arrow {
+      position: absolute;
+      right: 10px;
+      pointer-events: none;
+      color: rgba(208,208,208,.3);
+      font-size: 10px;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: var(--gold);
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      opacity: .4;
+    }
+
+    .unit-label {
+      position: absolute;
+      right: 11px;
+      font-size: 11px;
+      color: rgba(208,208,208,.35);
+      pointer-events: none;
+      font-family: var(--sans);
+    }
+
+    input[type="number"].has-unit { padding-right: 32px; }
+
+    /* Loading state */
+    .loading-state {
+      display: none;
+      margin-bottom: 16px;
+    }
+    .loading-state.visible { display: block; }
+
+    .loading-bar-track {
+      height: 2px;
+      background: rgba(255,255,255,.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      border-radius: 2px;
+      transition: width .4s ease;
+    }
+    .loading-msg {
+      font-size: 11px;
+      color: rgba(208,208,208,.5);
+      font-family: var(--sans);
+      letter-spacing: 0.03em;
+    }
+
+    /* Buttons */
+    .btn-generate {
+      width: 100%;
+      height: 42px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      color: var(--black);
+      border: none;
+      border-radius: 3px;
+      font-size: 13px;
+      font-family: var(--sans);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: opacity .2s, transform .12s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .btn-generate:hover { opacity: .88; }
+    .btn-generate:active { transform: scale(.985); }
+    .btn-generate:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    .btn-outline {
+      width: 100%;
+      height: 38px;
+      background: transparent;
+      border: 1px solid rgba(184,151,90,.3);
+      color: var(--gold);
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: var(--sans);
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background .18s, border-color .18s;
+      margin-top: 8px;
+    }
+    .btn-outline:hover {
+      background: rgba(184,151,90,.07);
+      border-color: rgba(184,151,90,.55);
+    }
+
+    .export-actions {
+      display: none;
+      flex-direction: column;
+    }
+    .export-actions.visible { display: flex; }
+
+    /* ── Center CAD Viewer ── */
+    .cad-viewer {
+      flex: 1;
+      background: #080808;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .cad-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(100,180,200,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,180,200,.04) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+    }
+
+    .cad-svg-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cad-svg-wrap svg {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100vh - 104px - 80px);
+    }
+
+    /* ── Right Info Panel ── */
+    .info-panel {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .info-panel-title {
+      font-size: 10px;
+      font-family: var(--sans);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-variant: small-caps;
+      color: var(--gold);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .dim-card {
+      background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .dim-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 3.5px 0;
+    }
+    .dim-row:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      padding-bottom: 7px;
+      margin-bottom: 7px;
+    }
+
+    .dim-key {
+      font-size: 11px;
+      font-family: var(--sans);
+      font-weight: 400;
+      color: rgba(208,208,208,.4);
+      white-space: nowrap;
+    }
+
+    .dim-val {
+      font-size: 13px;
+      font-family: var(--serif);
+      font-weight: 400;
+      color: var(--gold);
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* ══════════════════════════════════════
+       UPGRADE OVERLAY
+    ══════════════════════════════════════ */
+    .upgrade-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(5,5,5,.88);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+    }
+    .upgrade-overlay.visible { display: flex; }
+
+    .upgrade-box {
+      background: var(--surface);
+      border: 1px solid rgba(184,151,90,.2);
+      border-radius: 6px;
+      padding: 48px 40px 40px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+
+    .upgrade-icon {
+      font-size: 36px;
+      color: var(--gold);
+      margin-bottom: 18px;
+      opacity: .8;
+    }
+
+    .upgrade-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .upgrade-desc {
+      font-size: 13px;
+      font-family: var(--sans);
+      color: rgba(208,208,208,.55);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .btn-pricing {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      height: 44px;
+      padding: 0 28px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      color: var(--black);
+      border: none;
+      border-radius: 3px;
+      font-size: 13px;
+      font-family: var(--sans);
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: opacity .2s;
+    }
+    .btn-pricing:hover { opacity: .86; }
+
+    .upgrade-dismiss {
+      display: block;
+      margin-top: 16px;
+      font-size: 12px;
+      font-family: var(--sans);
+      color: rgba(208,208,208,.3);
+      cursor: pointer;
+      transition: color .18s;
+    }
+    .upgrade-dismiss:hover { color: rgba(208,208,208,.6); }
+
+    /* ══════════════════════════════════════
+       ENGINE SIDEBAR
+    ══════════════════════════════════════ */
+    .engine-sidebar {
+      width: 230px; flex-shrink: 0;
+      background: var(--deep); border-right: 1px solid var(--border);
+      overflow-y: auto; display: flex; flex-direction: column;
+    }
+    .eng-sidebar-title {
+      font-size: 10px; font-family: var(--sans); font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+      padding: 18px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    /* Engine Dropdown */
+    .eng-dropdown { padding: 10px 12px; position: relative; flex-shrink: 0; }
+    .eng-dd-trigger {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; background: #111;
+      border: 1px solid rgba(184,151,90,.45); border-radius: 6px;
+      cursor: pointer; transition: border-color .2s, background .2s; user-select: none;
+    }
+    .eng-dd-trigger:hover { border-color: rgba(184,151,90,.7); background: rgba(184,151,90,.04); }
+    .eng-dd-arrow {
+      margin-left: auto; font-size: .6rem;
+      color: rgba(184,151,90,.7); transition: transform .25s; flex-shrink: 0;
+    }
+    .eng-dropdown.open .eng-dd-arrow { transform: rotate(180deg); }
+    .eng-dd-menu {
+      overflow: hidden; max-height: 0;
+      transition: max-height .3s ease;
+      background: #0e0e0e;
+      border: 1px solid rgba(184,151,90,.25); border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+    .eng-dropdown.open .eng-dd-menu { max-height: 440px; }
+    .eng-dd-inner { padding: 4px 5px 5px; }
+
+    .eng-item {
+      display: flex; align-items: flex-start; gap: 11px;
+      padding: 9px 11px; cursor: pointer;
+      border: 1px solid transparent; border-radius: 5px;
+      transition: background .15s, border-color .15s; margin-bottom: 1px;
+    }
+    .eng-item:hover { background: rgba(255,255,255,.025); }
+    .eng-item.active { background: rgba(184,151,90,.06); border-color: rgba(184,151,90,.35); }
+    .eng-item.locked { opacity: 0.4; }
+    .eng-item.locked .eng-lock { display: inline-flex; align-items: center; color: #888; margin-left: 4px; font-size: .58rem; }
+    .eng-item:not(.locked) .eng-lock { display: none; }
+
+    .eng-icon {
+      width: 32px; height: 32px; flex-shrink: 0; border-radius: 6px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; font-family: var(--sans); color: var(--gold-lt);
+    }
+    .eng-item.active .eng-icon { background: rgba(184,151,90,.15); border-color: rgba(184,151,90,.3); }
+    .eng-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .eng-name-row { display: flex; align-items: center; gap: 6px; }
+    .eng-name {
+      font-size: 12px; font-family: var(--sans); font-weight: 500; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .eng-item.active .eng-name { color: var(--gold-lt); }
+    .eng-desc {
+      font-size: 10px; font-family: var(--sans); font-weight: 400;
+      color: rgba(208,208,208,.38); line-height: 1.4;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .badge-new-sm {
+      flex-shrink: 0; font-size: 9px; font-family: var(--sans); font-weight: 600;
+      letter-spacing: 0.07em; background: rgba(139,195,74,.15); color: #8BC34A;
+      border: 1px solid rgba(139,195,74,.3); padding: 1px 5px; border-radius: 3px; text-transform: uppercase;
+    }
+
+    /* Active engine bar (top of settings+cad area) */
+    .active-eng-bar {
+      flex-shrink: 0;
+      height: 36px;
+      background: rgba(184,151,90,.05);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+    }
+    .active-eng-label {
+      font-size: 10px;
+      font-family: var(--sans);
+      color: rgba(208,208,208,.35);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .active-eng-name {
+      font-size: 12px;
+      font-family: var(--sans);
+      font-weight: 500;
+      color: var(--gold-lt);
+    }
+
+    /* Wrapper for settings + cad + info */
+    .work-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .work-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast {
+      display: none;
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      z-index: 600;
+      background: rgba(10,10,10,.95);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      padding: 12px 22px;
+      font-size: 13px;
+      font-family: var(--sans);
+      font-weight: 400;
+      color: var(--text);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+    }
+    .toast.show {
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  /* ─────────────────────────────────────────
+     ENGINE OPTIONS PANEL
+  ───────────────────────────────────────── */
+  .eng-options-panel {
+    margin: 8px 8px 4px;
+    background: rgba(184,151,90,.04);
+    border: 1px solid rgba(184,151,90,.2);
+    border-radius: 7px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .eng-options-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .2s;
+  }
+  .eng-options-header:hover { background: rgba(184,151,90,.06); }
+  .eng-options-title {
+    flex: 1;
+    font-size: .58rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .eng-options-arrow {
+    font-size: .55rem;
+    color: rgba(184,151,90,.6);
+    transition: transform .25s;
+  }
+  .eng-options-panel.collapsed .eng-options-arrow { transform: rotate(-90deg); }
+  .eng-options-body {
+    padding: 8px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid rgba(184,151,90,.12);
+  }
+  .eng-options-panel.collapsed .eng-options-body { display: none; }
+  .opt-row { display: flex; flex-direction: column; gap: 5px; }
+  .opt-label { font-size: .54rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(208,208,208,.45); }
+  .opt-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .opt-chip {
+    padding: 3px 9px;
+    border: 1px solid rgba(184,151,90,.25);
+    border-radius: 3px;
+    background: transparent;
+    color: rgba(208,208,208,.55);
+    font-family: var(--sans);
+    font-size: .62rem;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .opt-chip:hover { border-color: rgba(184,151,90,.5); color: var(--gold); }
+  .opt-chip.selected { background: rgba(184,151,90,.15); border-color: var(--gold); color: var(--gold); }
+  .opt-toggle-row { display: flex; align-items: center; justify-content: space-between; }
+  .opt-toggle-label { font-size: .66rem; color: rgba(208,208,208,.6); }
+  .opt-toggle { position: relative; width: 34px; height: 18px; cursor: pointer; flex-shrink: 0; }
+  .opt-toggle input { opacity: 0; width: 0; height: 0; }
+  .opt-toggle-track { position: absolute; inset: 0; background: rgba(255,255,255,.1); border-radius: 18px; transition: background .2s; }
+  .opt-toggle input:checked + .opt-toggle-track { background: var(--gold); }
+  .opt-toggle-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform .2s; }
+  .opt-toggle input:checked ~ .opt-toggle-thumb { transform: translateX(16px); }
+  </style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ══ 1. HEADER BAR ══ -->
+  <header class="header-bar">
+    <div class="hb-left">
+      <a href="javascript:void(0)" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> 뒤로가기</a>
+    </div>
+    <div class="hb-center">AI CAD</div>
+    <div class="hb-right" id="hbRight"></div>
+  </header>
+
+  <!-- ══ 2. BODY ROW ══ -->
+  <div class="body-row">
+
+    <!-- Engine Sidebar -->
+    <nav class="engine-sidebar">
+      <div class="eng-sidebar-title">AI 엔진</div>
+      <div class="eng-dropdown" id="engDropdown">
+        <div class="eng-dd-trigger" onclick="toggleEngDropdown()">
+          <div class="eng-icon" id="ddIcon">M</div>
+          <div class="eng-info">
+            <div class="eng-name-row">
+              <span class="eng-name" id="ddName">Maket.ai</span>
+            </div>
+            <span class="eng-desc" id="ddDesc">AI 기반 건축 평면도</span>
+          </div>
+          <i class="fa-solid fa-chevron-down eng-dd-arrow"></i>
+        </div>
+        <div class="eng-dd-menu">
+          <div class="eng-dd-inner">
+            <div class="eng-item active" data-tier="pro" data-icon="M" data-desc="AI 기반 건축 평면도" onclick="selectEngine(this, 'Maket.ai')">
+              <div class="eng-icon">M</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Maket.ai</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">AI 기반 건축 평면도</span>
+              </div>
+            </div>
+            <div class="eng-item" data-tier="pro" data-icon="A" data-desc="자동 공간 배치 설계" onclick="selectEngine(this, 'Architechtures')">
+              <div class="eng-icon">A</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Architechtures</span>
+                </div>
+                <span class="eng-desc">자동 공간 배치 설계</span>
+              </div>
+            </div>
+            <div class="eng-item" data-tier="pro" data-icon="P" data-desc="인터랙티브 3D 설계" onclick="selectEngine(this, 'Planner 5D')">
+              <div class="eng-icon">P</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Planner 5D</span>
+                </div>
+                <span class="eng-desc">인터랙티브 3D 설계</span>
+              </div>
+            </div>
+            <div class="eng-item" data-tier="pro" data-icon="AC" data-desc="AI 보조 도면 작성" onclick="selectEngine(this, 'AutoCAD AI')">
+              <div class="eng-icon">AC</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">AutoCAD AI</span>
+                </div>
+                <span class="eng-desc">AI 보조 도면 작성</span>
+              </div>
+            </div>
+            <div class="eng-item" data-tier="pro" data-icon="S" data-desc="3D 모델링 자동화" onclick="selectEngine(this, 'SketchUp AI')">
+              <div class="eng-icon">S</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">SketchUp AI</span>
+                </div>
+                <span class="eng-desc">3D 모델링 자동화</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Engine Options Panel -->
+    <div id="engOptionsPanel" class="eng-options-panel" style="display:none;">
+      <div class="eng-options-header" onclick="toggleEngOptions()">
+        <i class="fa-solid fa-sliders" style="font-size:.58rem;color:var(--gold);"></i>
+        <span class="eng-options-title" id="engOptionsTitleText">Maket.ai 설정</span>
+        <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
+      </div>
+      <div class="eng-options-body" id="engOptionsBody"></div>
+    </div>
+
+    <!-- Work Area (active-eng-bar + settings + cad + info) -->
+    <div class="work-area">
+      <div class="active-eng-bar">
+        <span class="active-eng-label">현재 엔진</span>
+        <span class="active-eng-name" id="activeEngName">Maket.ai</span>
+      </div>
+      <div class="work-body">
+
+    <!-- Left Settings Panel -->
+    <aside class="settings-panel">
+      <div class="panel-title">설정</div>
+
+      <!-- 건물 유형 -->
+      <div class="field-group">
+        <label class="field-label">건물 유형</label>
+        <div class="field-wrap">
+          <select id="buildingType">
+            <option value="apt">주거 (아파트)</option>
+            <option value="house">주거 (단독주택)</option>
+            <option value="cafe">상업 (카페)</option>
+            <option value="office">상업 (오피스)</option>
+            <option value="store">상업 (매장)</option>
+          </select>
+          <i class="fa-solid fa-chevron-down select-arrow"></i>
+        </div>
+      </div>
+
+      <!-- 방 수 -->
+      <div class="field-group">
+        <label class="field-label">방 수</label>
+        <div class="field-wrap">
+          <input type="number" id="roomCount" value="3" min="1" max="6" />
+        </div>
+      </div>
+
+      <!-- 총 면적 -->
+      <div class="field-group">
+        <label class="field-label">총 면적</label>
+        <div class="field-wrap">
+          <input type="number" id="totalArea" value="84" min="10" class="has-unit" />
+          <span class="unit-label">㎡</span>
+        </div>
+      </div>
+
+      <!-- 층수 -->
+      <div class="field-group">
+        <label class="field-label">층수</label>
+        <div class="field-wrap">
+          <input type="number" id="floorCount" value="1" min="1" max="5" />
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" id="loadingState">
+        <div class="loading-bar-track">
+          <div class="loading-bar-fill" id="loadingFill"></div>
+        </div>
+        <div class="loading-msg" id="loadingMsg">평면도 알고리즘 실행 중...</div>
+      </div>
+
+      <!-- Generate Button -->
+      <button class="btn-generate" id="btnGenerate" onclick="wsGenerate()">
+        <span>🏗</span> 평면도 생성
+      </button>
+
+      <!-- Export Actions (shown after generate) -->
+      <div class="export-actions" id="exportActions">
+        <button class="btn-outline" onclick="handleDxf()">
+          <i class="fa-solid fa-file-export"></i> DXF 내보내기
+        </button>
+        <button class="btn-outline" onclick="handle3D()">
+          <i class="fa-solid fa-cube"></i> 3D 변환
+        </button>
+      </div>
+    </aside>
+
+    <!-- Center CAD Viewer -->
+    <main class="cad-viewer">
+      <div class="cad-grid"></div>
+      <div class="cad-svg-wrap">
+        <svg width="460" height="400" viewBox="0 0 460 400" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="440" height="380" fill="none" stroke="rgba(100,180,200,.3)" stroke-width="1" stroke-dasharray="6,4"/>
+          <rect x="10" y="10" width="180" height="220" fill="rgba(184,151,90,.03)" stroke="rgba(184,151,90,.5)" stroke-width="1.2"/>
+          <rect x="200" y="10" width="250" height="140" fill="rgba(100,180,200,.02)" stroke="rgba(184,151,90,.4)" stroke-width="1.2"/>
+          <rect x="10" y="240" width="180" height="150" fill="rgba(184,151,90,.02)" stroke="rgba(184,151,90,.35)" stroke-width="1.2"/>
+          <rect x="200" y="160" width="250" height="230" fill="rgba(184,151,90,.02)" stroke="rgba(184,151,90,.4)" stroke-width="1.2"/>
+          <path d="M 10 240 A 36 36 0 0 1 46 240" fill="none" stroke="rgba(184,151,90,.35)" stroke-width=".8"/>
+          <path d="M 200 160 A 28 28 0 0 1 228 160" fill="none" stroke="rgba(184,151,90,.3)" stroke-width=".8"/>
+          <text x="80" y="108" font-size="9" fill="rgba(184,151,90,.6)" font-family="monospace" letter-spacing="0.8" text-anchor="middle">거실</text>
+          <text x="310" y="82" font-size="9" fill="rgba(184,151,90,.5)" font-family="monospace" letter-spacing="0.8" text-anchor="middle">주방</text>
+          <text x="80" y="322" font-size="9" fill="rgba(184,151,90,.45)" font-family="monospace" letter-spacing="0.8" text-anchor="middle">침실 1</text>
+          <text x="310" y="278" font-size="9" fill="rgba(184,151,90,.5)" font-family="monospace" letter-spacing="0.8" text-anchor="middle">침실 2</text>
+          <line x1="10" y1="393" x2="450" y2="393" stroke="rgba(100,180,200,.4)" stroke-width=".8"/>
+          <line x1="10" y1="388" x2="10" y2="398" stroke="rgba(100,180,200,.4)" stroke-width=".8"/>
+          <line x1="450" y1="388" x2="450" y2="398" stroke="rgba(100,180,200,.4)" stroke-width=".8"/>
+          <text x="230" y="392" font-size="7" fill="rgba(100,180,200,.6)" font-family="monospace" text-anchor="middle">12,000 mm</text>
+          <circle cx="10" cy="10" r="3" fill="rgba(184,151,90,.8)"/>
+          <circle cx="450" cy="10" r="3" fill="rgba(184,151,90,.8)"/>
+          <circle cx="10" cy="390" r="3" fill="rgba(184,151,90,.8)"/>
+          <circle cx="450" cy="390" r="3" fill="rgba(184,151,90,.8)"/>
+        </svg>
+      </div>
+    </main>
+
+    <!-- Right Info Panel -->
+    <aside class="info-panel">
+      <div class="info-panel-title">치수 / 면적</div>
+
+      <div class="dim-card">
+        <div class="dim-row">
+          <span class="dim-key">전체 면적</span>
+          <span class="dim-val">84.5 ㎡</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">거실</span>
+          <span class="dim-val">28.3 ㎡</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">침실 1</span>
+          <span class="dim-val">14.2 ㎡</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">침실 2</span>
+          <span class="dim-val">12.8 ㎡</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">주방</span>
+          <span class="dim-val">11.6 ㎡</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">욕실</span>
+          <span class="dim-val">5.2 ㎡</span>
+        </div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-row">
+          <span class="dim-key">외벽 두께</span>
+          <span class="dim-val">200 mm</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">내벽 두께</span>
+          <span class="dim-val">100 mm</span>
+        </div>
+        <div class="dim-row">
+          <span class="dim-key">층고</span>
+          <span class="dim-val">2,800 mm</span>
+        </div>
+      </div>
+    </aside>
+
+      <!-- CAD History Panel -->
+      <div id="cadHistoryWrap" style="display:none;position:absolute;bottom:0;left:0;right:0;max-height:160px;overflow-y:auto;background:rgba(5,5,5,.96);border-top:1px solid rgba(184,151,90,.18);padding:8px 12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:.57rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,151,90,.6);">이전 CAD 기록</span>
+          <button onclick="clearCadHistory()" style="background:none;border:1px solid rgba(220,80,80,.3);border-radius:3px;color:rgba(220,80,80,.55);font-size:.57rem;padding:2px 7px;cursor:pointer;">전체 삭제</button>
+        </div>
+        <div id="cadHistoryList" style="display:flex;flex-direction:column;gap:5px;"></div>
+      </div>
+
+      </div><!-- /.work-body -->
+    </div><!-- /.work-area -->
+
+  </div><!-- /.body-row -->
+</div><!-- /#app -->
+
+<!-- ══ UPGRADE OVERLAY ══ -->
+<div class="upgrade-overlay" id="upgradeOverlay">
+  <div class="upgrade-box">
+    <div class="upgrade-icon"><i class="fa-solid fa-lock"></i></div>
+    <div class="upgrade-title">크레딧 부족</div>
+    <div class="upgrade-desc">
+      크레딧이 부족합니다. 플랜을 업그레이드하세요.<br>
+      CAD 설계는 1회당 10 크레딧이 필요합니다.
+    </div>
+    <button class="btn-pricing" onclick="window.open('index.html#pricing','_blank')">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> 요금제 보기
+    </button>
+    <a class="upgrade-dismiss" onclick="dismissUpgrade()">나중에</a>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // 프로덕션에서는 백엔드 프록시를 통해 호출해야 합니다
+  const OPENAI_API_KEY = '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';
+
+  /* ─────────────────────────────────────────
+     AUTH CHECK
+  ───────────────────────────────────────── */
+  let isAdmin  = false;
+  let isLoggedIn = false;
+
+  (function authCheck() {
+    if (localStorage.getItem('dagaon_admin') === '1') {
+      isAdmin = true;
+      isLoggedIn = true;
+    } else {
+      try {
+        const u = JSON.parse(localStorage.getItem('dagaon_user') || 'null');
+        if (u && u.loggedIn === true) {
+          isLoggedIn = true;
+        } else {
+          window.location.href = 'index.html';
+          return;
+        }
+      } catch (e) {
+        window.location.href = 'index.html';
+        return;
+      }
+    }
+    renderHeaderBadge();
+  })();
+
+  /* ─────────────────────────────────────────
+     HEADER BADGE
+  ───────────────────────────────────────── */
+  function renderHeaderBadge() {
+    const el = document.getElementById('hbRight');
+    if (isAdmin) {
+      el.innerHTML = '<span class="badge-unlimited">UNLIMITED</span>';
+    } else {
+      const left = Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10));
+      el.innerHTML = '<span class="badge-count">남은 크레딧 <span>' + left + '</span></span>';
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     USAGE HELPERS
+  ───────────────────────────────────────── */
+  function getCredits() {
+    return Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10));
+  }
+  function saveCredits(v) {
+    localStorage.setItem('dagaon_credits', String(Math.max(0, v)));
+  }
+
+  /* ─────────────────────────────────────────
+     ENGINE SELECTOR
+  ───────────────────────────────────────── */
+  function selectEngine(el, name) {
+    if (el.classList.contains('locked')) { window._showEngLockToast && window._showEngLockToast(el.getAttribute('data-tier')); return; }
+    document.querySelectorAll('.eng-item').forEach(function(i) { i.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('activeEngName').textContent = name;
+    // Update dropdown trigger
+    var ddName = document.getElementById('ddName');
+    var ddDesc = document.getElementById('ddDesc');
+    var ddIcon = document.getElementById('ddIcon');
+    if (ddName) ddName.textContent = name;
+    if (ddDesc) ddDesc.textContent = el.dataset.desc || '';
+    if (ddIcon) ddIcon.textContent = el.dataset.icon || name.substring(0,2).toUpperCase();
+    var dd = document.getElementById('engDropdown');
+    if (dd) dd.classList.remove('open');
+    // Render engine-specific options
+    renderEngineOptions(name);
+  }
+
+  function toggleEngDropdown() {
+    var dd = document.getElementById('engDropdown');
+    if (dd) dd.classList.toggle('open');
+  }
+
+  document.addEventListener('click', function(e) {
+    var dd = document.getElementById('engDropdown');
+    if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+
+  /* ─────────────────────────────────────────
+     CHIP SELECTOR
+  ───────────────────────────────────────── */
+  function selectChip(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  /* ─────────────────────────────────────────
+     LOADING HELPERS
+  ───────────────────────────────────────── */
+  function setLoadingState(on, msg) {
+    const loadEl = document.getElementById('loadingState');
+    const fillEl = document.getElementById('loadingFill');
+    const msgEl  = document.getElementById('loadingMsg');
+    if (on) {
+      loadEl.classList.add('visible');
+      fillEl.style.width = '0%';
+      if (msg) msgEl.textContent = msg;
+      // 진행 애니메이션
+      let prog = 0;
+      loadEl._iv = setInterval(() => {
+        prog = Math.min(prog + 3, 85);
+        fillEl.style.width = prog + '%';
+      }, 300);
+    } else {
+      clearInterval(loadEl._iv);
+      fillEl.style.width = '100%';
+      setTimeout(() => {
+        loadEl.classList.remove('visible');
+        fillEl.style.width = '0%';
+      }, 400);
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     PARSE SVG FROM RESPONSE
+  ───────────────────────────────────────── */
+  function extractSvg(text) {
+    const match = text.match(/<svg[\s\S]*?<\/svg>/i);
+    return match ? match[0] : null;
+  }
+
+  function parseAreaInfo(text) {
+    const rows = [];
+    const lines = text.split('\n');
+    for (const line of lines) {
+      const m = line.match(/([가-힣\s]+)\s*[:\:]\s*([\d.]+)\s*㎡/);
+      if (m) rows.push({ key: m[1].trim(), val: m[2] + ' ㎡' });
+    }
+    return rows;
+  }
+
+  /* ─────────────────────────────────────────
+     GENERATE LOGIC
+  ───────────────────────────────────────── */
+  async function wsGenerate() {
+    if (!isAdmin) {
+      const credits = getCredits();
+      if (credits < 50) { showUpgrade(); return; }
+      saveCredits(credits - 50);
+      renderHeaderBadge();
+    }
+    await runGenerate();
+  }
+
+  async function runGenerate() {
+    const btn      = document.getElementById('btnGenerate');
+    const exportEl = document.getElementById('exportActions');
+
+    btn.disabled = true;
+    exportEl.classList.remove('visible');
+    setLoadingState(true, '평면도 알고리즘 실행 중...');
+
+    const buildingType = document.getElementById('buildingType').value;
+    const buildingTypeMap = {
+      'apt': '주거용 아파트', 'house': '단독주택', 'cafe': '상업용 카페',
+      'office': '사무실', 'store': '상업 매장'
+    };
+    const rooms = document.getElementById('roomCount').value;
+    const area  = document.getElementById('totalArea').value;
+    const floors = document.getElementById('floorCount').value;
+
+    const userPrompt = `건물 유형: ${buildingTypeMap[buildingType] || buildingType}, 방 수: ${rooms}개, 총 면적: ${area}㎡, 층수: ${floors}층\n\n위 조건에 맞는 평면도를 SVG 코드로 생성해주세요. 방 배치, 문(호 모양), 창문, 치수선을 포함하세요. 그 후 각 방의 면적도 목록으로 알려주세요 (예: 거실: 28.3㎡).`;
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + OPENAI_API_KEY
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            { role: 'system', content: '당신은 건축 CAD 설계 AI입니다. 사용자 요구에 맞는 평면도를 SVG 코드로 생성합니다. 방 배치, 문, 창문, 치수를 포함한 정확한 SVG를 생성하세요. SVG viewBox는 "0 0 460 400"으로 설정하고, 배경은 투명하게, 선은 rgba(184,151,90,0.7) 색상을 사용하세요. 텍스트는 font-family="monospace" 사용. SVG 응답 후에 각 방의 면적 목록도 한국어로 작성하세요.' },
+            { role: 'user', content: userPrompt }
+          ],
+          max_tokens: 4000
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || 'API 오류 (' + response.status + ')');
+      }
+
+      const data = await response.json();
+      const content = data.choices[0].message.content;
+
+      setLoadingState(false);
+
+      // SVG 추출 및 삽입
+      const svgCode = extractSvg(content);
+      const svgWrap = document.querySelector('.cad-svg-wrap');
+      if (svgCode && svgWrap) {
+        svgWrap.innerHTML = svgCode;
+        // SVG 스타일 조정
+        const svgEl = svgWrap.querySelector('svg');
+        if (svgEl) {
+          svgEl.setAttribute('width', '460');
+          svgEl.setAttribute('height', '400');
+          if (!svgEl.getAttribute('viewBox')) svgEl.setAttribute('viewBox', '0 0 460 400');
+        }
+      }
+
+      // 면적 정보 파싱 및 표시
+      const areaRows = parseAreaInfo(content);
+      if (areaRows.length > 0) {
+        const dimCard = document.querySelector('.dim-card');
+        if (dimCard) {
+          dimCard.innerHTML = areaRows.map(r =>
+            `<div class="dim-row"><span class="dim-key">${r.key}</span><span class="dim-val">${r.val}</span></div>`
+          ).join('');
+        }
+      }
+
+      btn.disabled = false;
+      exportEl.classList.add('visible');
+
+      if (isAdmin && !document.querySelector('.dagaon-brand')) {
+        const viewer = document.querySelector('.cad-viewer');
+        if (viewer) {
+          const brand = document.createElement('div');
+          brand.className = 'dagaon-brand';
+          brand.style.cssText = 'position:absolute;bottom:12px;right:14px;display:flex;align-items:center;gap:6px;z-index:5;';
+          brand.innerHTML = '<span style="font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(184,151,90,.35);">Powered by</span><span style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(184,151,90,.6);font-family:\'Noto Serif KR\',serif;font-weight:500;">DAGAON AI</span>';
+          viewer.appendChild(brand);
+        }
+      }
+
+      showToast('AI CAD 평면도 생성이 완료되었습니다.');
+      saveCadHistory(content, svgCode);
+      if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
+
+    } catch(err) {
+      setLoadingState(false);
+      btn.disabled = false;
+      let msg = 'API 호출 중 오류가 발생했습니다.';
+      if (err.message && err.message.includes('401')) msg = 'API 키가 유효하지 않습니다.';
+      else if (err.message && err.message.includes('429')) msg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요.';
+      else if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('network'))) msg = '네트워크 오류가 발생했습니다.';
+      else if (err.message) msg = err.message;
+      showToast('오류: ' + msg);
+      if (!isAdmin) { saveCredits(getCredits() + 50); renderHeaderBadge(); }
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     EXPORT STUBS
+  ───────────────────────────────────────── */
+  function handleDxf() {
+    showToast('DXF 파일을 준비 중입니다...');
+  }
+
+  function handle3D() {
+    showToast('3D 변환을 시작합니다...');
+  }
+
+  /* ─────────────────────────────────────────
+     UPGRADE OVERLAY
+  ───────────────────────────────────────── */
+  function showUpgrade() {
+    document.getElementById('upgradeOverlay').classList.add('visible');
+  }
+
+  function dismissUpgrade() {
+    document.getElementById('upgradeOverlay').classList.remove('visible');
+  }
+
+  /* ─────────────────────────────────────────
+     TOAST
+  ───────────────────────────────────────── */
+  let toastTimer = null;
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      el.classList.remove('show');
+    }, 3200);
+  }
+
+  // ── Engine Tier Lock ──────────────────────────────────────────────────────
+  (function initEngineLock() {
+    var TIER_ORDER = { free: 0, basic: 2, standard: 2, pro: 3, enterprise: 3 };
+    var plan = localStorage.getItem('dagaon_plan') || 'free';
+    var isAdmin = localStorage.getItem('dagaon_admin') === '1';
+    var userLevel = isAdmin ? 99 : (TIER_ORDER[plan] !== undefined ? TIER_ORDER[plan] : 0);
+    document.querySelectorAll('.eng-item, .model-item, .engine-item').forEach(function(item) {
+      var tier = item.getAttribute('data-tier');
+      if (!tier) return;
+      var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+      if (userLevel < required) {
+        item.classList.add('locked');
+        var nameEl = item.querySelector('.eng-name, .model-name, .engine-name');
+        if (nameEl && !nameEl.querySelector('.eng-lock')) {
+          var lockSpan = document.createElement('span');
+          lockSpan.className = 'eng-lock';
+          lockSpan.innerHTML = '<i class="fa-solid fa-lock"></i>';
+          nameEl.appendChild(lockSpan);
+        }
+        var descEl = item.querySelector('.eng-desc, .model-desc, .engine-desc');
+        if (descEl) {
+          descEl.textContent = (required >= 3) ? 'Pro 플랜부터' : 'Standard 플랜부터';
+        }
+      }
+    });
+    window._showEngLockToast = function(tier) {
+      var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+      var msg = (required >= 3) ? '이 엔진은 Pro 플랜부터 사용 가능합니다' : '이 엔진은 Standard 플랜부터 사용 가능합니다';
+      var toast = document.getElementById('engLockToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'engLockToast';
+        toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(184,151,90,.4);color:#d0c090;font-size:.78rem;padding:10px 22px;border-radius:6px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap;';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function() { toast.style.opacity = '0'; }, 2500);
+    };
+  })();
+  // ── End Engine Tier Lock ──────────────────────────────────────────────────
+
+  // ─── ENGINE OPTIONS ──────────────────────────────────────────────────────
+  var ENGINE_OPTIONS_CAD = {
+    'Maket.ai':       [
+      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '평면도' },
+      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:100' },
+      { type: 'toggle', label: '레이어 분리', key: 'layer', default: true },
+      { type: 'toggle', label: '치수 표기', key: 'dim', default: true },
+      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '솔리드' },
+    ],
+    'Architechtures': [
+      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '평면도' },
+      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:100' },
+      { type: 'toggle', label: '레이어 분리', key: 'layer', default: true },
+      { type: 'toggle', label: '치수 표기', key: 'dim', default: false },
+      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '와이어프레임' },
+    ],
+    'Planner 5D':     [
+      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '3D' },
+      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:50' },
+      { type: 'toggle', label: '레이어 분리', key: 'layer', default: false },
+      { type: 'toggle', label: '치수 표기', key: 'dim', default: true },
+      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '텍스처' },
+    ],
+    'AutoCAD AI':     [
+      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '평면도' },
+      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:100' },
+      { type: 'toggle', label: '레이어 분리', key: 'layer', default: true },
+      { type: 'toggle', label: '치수 표기', key: 'dim', default: true },
+      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '솔리드' },
+    ],
+    'SketchUp AI':    [
+      { type: 'chip', label: '도면 유형', key: 'drawing', values: ['평면도', '입면도', '단면도', '3D'], default: '3D' },
+      { type: 'chip', label: '스케일', key: 'scale', values: ['1:50', '1:100', '1:200'], default: '1:50' },
+      { type: 'toggle', label: '레이어 분리', key: 'layer', default: false },
+      { type: 'toggle', label: '치수 표기', key: 'dim', default: false },
+      { type: 'chip', label: '재질 표현', key: 'material', values: ['와이어프레임', '솔리드', '텍스처'], default: '텍스처' },
+    ],
+  };
+  var currentCadEngOpts = {};
+
+  function renderEngineOptions(engineName) {
+    var panel = document.getElementById('engOptionsPanel');
+    var body = document.getElementById('engOptionsBody');
+    var titleEl = document.getElementById('engOptionsTitleText');
+    var opts = ENGINE_OPTIONS_CAD[engineName];
+    if (!opts || opts.length === 0) { panel.style.display = 'none'; return; }
+    panel.style.display = '';
+    titleEl.textContent = engineName + ' 설정';
+    body.innerHTML = '';
+    currentCadEngOpts = {};
+    opts.forEach(function(opt) {
+      currentCadEngOpts[opt.key] = opt.default !== undefined ? opt.default : (opt.values ? opt.values[0] : false);
+      var row = document.createElement('div');
+      row.className = 'opt-row';
+      if (opt.type === 'chip') {
+        row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-chips" data-key="' + opt.key + '"></div>';
+        body.appendChild(row);
+        var chipsEl = row.querySelector('.opt-chips');
+        opt.values.forEach(function(v) {
+          var btn = document.createElement('button');
+          btn.className = 'opt-chip' + (v === (opt.default || opt.values[0]) ? ' selected' : '');
+          btn.textContent = v;
+          (function(key, val, chips) {
+            btn.onclick = function() {
+              chips.querySelectorAll('.opt-chip').forEach(function(c) { c.classList.remove('selected'); });
+              btn.classList.add('selected');
+              currentCadEngOpts[key] = val;
+            };
+          })(opt.key, v, chipsEl);
+          chipsEl.appendChild(btn);
+        });
+      } else if (opt.type === 'toggle') {
+        var id = 'opt_toggle_' + opt.key;
+        row.innerHTML = '<div class="opt-toggle-row"><span class="opt-toggle-label">' + opt.label + '</span><label class="opt-toggle"><input type="checkbox" id="' + id + '"' + (opt.default ? ' checked' : '') + '><span class="opt-toggle-track"></span><span class="opt-toggle-thumb"></span></label></div>';
+        body.appendChild(row);
+        (function(key) { row.querySelector('input').onchange = function() { currentCadEngOpts[key] = this.checked; }; })(opt.key);
+      }
+    });
+  }
+
+  function toggleEngOptions() {
+    document.getElementById('engOptionsPanel').classList.toggle('collapsed');
+  }
+
+  function getEngineOptionsPromptCad() {
+    var parts = [];
+    Object.keys(currentCadEngOpts).forEach(function(k) {
+      var v = currentCadEngOpts[k];
+      if (v !== false && v !== '' && v !== null) { parts.push('[' + k + ': ' + v + ']'); }
+    });
+    return parts.length ? ' ' + parts.join(' ') : '';
+  }
+
+  // Init
+  renderEngineOptions('Maket.ai');
+
+  // ─── CAD HISTORY (localStorage) ───────────────────────────
+  var CAD_HISTORY_KEY = 'dagaon_cad_history';
+
+  function loadCadHistory() {
+    try { return JSON.parse(localStorage.getItem(CAD_HISTORY_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveCadHistory(fullContent, svgCode) {
+    var history = loadCadHistory();
+    var engine = document.getElementById('activeEngName').textContent;
+    var buildingType = document.getElementById('buildingType').value;
+    var roomCount = document.getElementById('roomCount').value;
+    var totalArea = document.getElementById('totalArea').value;
+    var entry = { id: 'cad_' + Date.now(), timestamp: Date.now(), engine: engine, buildingType: buildingType, roomCount: roomCount, totalArea: totalArea, svgCode: svgCode || '', areaText: fullContent ? fullContent.replace(/<[^>]*>/g,'').slice(0,500) : '' };
+    history.unshift(entry);
+    if (history.length > 10) history = history.slice(0, 10);
+    localStorage.setItem(CAD_HISTORY_KEY, JSON.stringify(history));
+    renderCadHistory();
+  }
+  function deleteCadHistoryItem(id) {
+    var history = loadCadHistory().filter(function(e) { return e.id !== id; });
+    localStorage.setItem(CAD_HISTORY_KEY, JSON.stringify(history));
+    renderCadHistory();
+  }
+  function clearCadHistory() {
+    if (!confirm('CAD 생성 기록을 모두 삭제하시겠습니까?')) return;
+    localStorage.removeItem(CAD_HISTORY_KEY);
+    renderCadHistory();
+  }
+  function renderCadHistory() {
+    var history = loadCadHistory();
+    var wrap = document.getElementById('cadHistoryWrap');
+    var list = document.getElementById('cadHistoryList');
+    if (!wrap || !list) return;
+    if (history.length === 0) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    list.innerHTML = '';
+    var buildingMap = { apt:'아파트', house:'단독주택', cafe:'카페', office:'오피스', store:'매장' };
+    history.forEach(function(entry) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:5px 8px;background:rgba(255,255,255,.02);border:1px solid rgba(184,151,90,.12);border-radius:4px;font-size:.62rem;cursor:pointer;';
+      var ts = new Date(entry.timestamp).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+      var label = (buildingMap[entry.buildingType] || entry.buildingType) + ' · ' + entry.roomCount + '방 · ' + entry.totalArea + '㎡';
+      row.innerHTML = '<span style="color:rgba(184,151,90,.7);">' + label + '</span><span style="color:rgba(208,208,208,.3);margin-left:auto;flex-shrink:0;">' + ts + '</span>';
+      var delBtn = document.createElement('span');
+      delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      delBtn.style.cssText = 'color:rgba(208,208,208,.25);cursor:pointer;padding:0 2px;flex-shrink:0;';
+      delBtn.onmouseover = function() { this.style.color='#e07070'; };
+      delBtn.onmouseout = function() { this.style.color='rgba(208,208,208,.25)'; };
+      (function(id) { delBtn.onclick = function(e) { e.stopPropagation(); deleteCadHistoryItem(id); }; })(entry.id);
+      row.appendChild(delBtn);
+      if (entry.svgCode) {
+        (function(e) {
+          row.onclick = function() {
+            var svgWrap = document.querySelector('.cad-svg-wrap');
+            if (svgWrap && e.svgCode) {
+              svgWrap.innerHTML = e.svgCode;
+              var svgEl = svgWrap.querySelector('svg');
+              if (svgEl) { svgEl.setAttribute('width','460'); svgEl.setAttribute('height','400'); if (!svgEl.getAttribute('viewBox')) svgEl.setAttribute('viewBox','0 0 460 400'); }
+            }
+            document.getElementById('exportActions').classList.add('visible');
+            showToast('이전 CAD 기록을 불러왔습니다.');
+          };
+        })(entry);
+      }
+      list.appendChild(row);
+    });
+  }
+
+  // ─── ENGINE SAVE/RESTORE ───────────────────────────────────
+  var _origSelectEngine = selectEngine;
+  selectEngine = function(el, name) {
+    _origSelectEngine(el, name);
+    var n = name || el.dataset.eng || '';
+    if (n) localStorage.setItem('dagaon_cad_engine', n);
+  };
+
+  (function restoreCadEngine() {
+    var savedEng = localStorage.getItem('dagaon_cad_engine');
+    if (savedEng) {
+      var items = document.querySelectorAll('.eng-item');
+      for (var i = 0; i < items.length; i++) {
+        var nameEl = items[i].querySelector('.eng-name');
+        if (nameEl && nameEl.textContent.trim() === savedEng && !items[i].classList.contains('locked')) {
+          selectEngine(items[i], savedEng);
+          break;
+        }
+      }
+    }
+    renderCadHistory();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 문서 제작 — DAGAON AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --black:   #050505;
+      --deep:    #0a0a0a;
+      --surface: #111111;
+      --border:  rgba(255,255,255,0.07);
+      --white:   #ffffff;
+      --gold:    #b8975a;
+      --gold-lt: #d4af70;
+      --text:    #d0d0d0;
+      --serif:   'Noto Serif KR', serif;
+      --sans:    'Noto Sans KR', sans-serif;
+      --word-color:  #4a90d9;
+      --excel-color: #4caf7d;
+      --hwp-color:   #d97f3a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--black); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+    ::selection { background: var(--gold); color: var(--black); }
+    .header { position: fixed; top: 0; left: 0; right: 0; height: 58px; background: var(--deep); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 200; }
+    .header__back { font-family: var(--sans); font-size: .72rem; font-weight: 400; color: var(--gold); text-decoration: none; letter-spacing: .04em; opacity: .82; transition: opacity .2s; white-space: nowrap; }
+    .header__back:hover { opacity: 1; }
+    .header__title { font-family: var(--serif); font-size: .96rem; font-weight: 500; color: var(--white); letter-spacing: .06em; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
+    .header__right { display: flex; align-items: center; min-width: 0; }
+    .badge-unlimited { background: rgba(184,151,90,.1); border: 1px solid rgba(184,151,90,.42); color: var(--gold); padding: 4px 13px; font-size: .64rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; border-radius: 2px; }
+    .usage-label { color: rgba(208,208,208,.5); font-size: .72rem; font-weight: 300; letter-spacing: .02em; }
+    .usage-label strong { color: var(--gold); font-weight: 500; }
+    .app-layout { position: fixed; top: 58px; left: 0; right: 0; bottom: 0; display: flex; }
+    .sidebar { width: 240px; min-width: 240px; background: var(--deep); border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+    .sidebar-hdr { padding: 12px 12px 8px; font-size: .56rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.2); border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; }
+    .eng-list { padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+    .eng-item { display: flex; align-items: center; gap: 9px; padding: 8px 9px; border-radius: 5px; border: 1px solid transparent; cursor: pointer; transition: background .15s, border-color .15s; }
+    .eng-item:hover { background: rgba(255,255,255,.03); }
+    .eng-item.active { background: rgba(184,151,90,.07); border-color: rgba(184,151,90,.32); }
+    .eng-icon { width: 30px; height: 30px; border-radius: 6px; background: #131313; border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; font-size: .62rem; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+    .eng-item.active .eng-icon { background: rgba(184,151,90,.12); border-color: rgba(184,151,90,.4); }
+    .eng-info { flex: 1; min-width: 0; }
+    .eng-name { font-size: .74rem; font-weight: 500; color: rgba(200,200,200,.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .eng-item.active .eng-name { color: var(--white); }
+    .eng-desc { font-size: .6rem; color: rgba(184,184,184,.36); font-weight: 300; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .badge-new { font-size: .48rem; font-weight: 700; letter-spacing: .08em; color: #1a2f05; background: #8BC34A; padding: 1px 5px; border-radius: 10px; flex-shrink: 0; line-height: 1.7; }
+    .eng-item.locked { opacity: 0.4; }
+    .eng-item.locked .eng-lock { display: inline-flex; align-items: center; color: #888; margin-left: 4px; font-size: .58rem; }
+    .eng-item:not(.locked) .eng-lock { display: none; }
+    /* Excel recommendation badge on sidebar */
+    .excel-rec-badge { display: none; font-size: .44rem; font-weight: 700; letter-spacing: .05em; color: #062010; background: var(--excel-color); padding: 2px 6px; border-radius: 10px; flex-shrink: 0; line-height: 1.7; white-space: nowrap; }
+    body.excel-mode .excel-rec-badge { display: inline-block; }
+    .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .active-eng-bar { padding: 8px 24px; background: #080808; border-bottom: 1px solid rgba(255,255,255,.05); flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+    .active-eng-label { font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.2); }
+    .active-eng-name { font-family: var(--serif); font-size: .8rem; color: var(--white); letter-spacing: .04em; }
+    .main { flex: 1; overflow-y: auto; }
+    .content { max-width: 800px; margin: 0 auto; padding: 40px 32px 80px; }
+    .field-group { margin-bottom: 28px; }
+    .field-label { display: block; font-family: var(--sans); font-size: .64rem; font-weight: 500; color: var(--gold); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 10px; }
+    .topic-input { width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); color: var(--white); padding: 12px 16px; font-family: var(--sans); font-size: .86rem; font-weight: 300; outline: none; border-radius: 2px; transition: border-color .2s; }
+    .topic-input::placeholder { color: rgba(208,208,208,.25); }
+    .topic-input:focus { border-color: rgba(184,151,90,.6); }
+    body.excel-mode .topic-input:focus { border-color: rgba(76,175,125,.6); }
+    .url-input { width: 100%; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); color: var(--white); padding: 10px 16px; font-family: var(--sans); font-size: .8rem; font-weight: 300; outline: none; border-radius: 2px; transition: border-color .2s; }
+    .url-input::placeholder { color: rgba(208,208,208,.2); }
+    .url-input:focus { border-color: rgba(184,151,90,.5); }
+    .field-hint { margin-top: 6px; font-size: .62rem; font-weight: 300; color: rgba(208,208,208,.28); letter-spacing: .02em; }
+    .chips-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { font-family: var(--sans); font-size: .74rem; font-weight: 400; color: rgba(208,208,208,.55); border: 1px solid rgba(255,255,255,.1); background: transparent; padding: 7px 16px; cursor: pointer; border-radius: 2px; letter-spacing: .02em; transition: border-color .2s, color .2s, background .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .chip:hover { border-color: rgba(184,151,90,.4); color: rgba(184,151,90,.8); }
+    .chip.selected { border-color: rgba(184,151,90,.7); color: var(--gold); background: rgba(184,151,90,.07); }
+    .chip[data-format="word"] { border-color: rgba(74,144,217,.22); color: rgba(74,144,217,.7); }
+    .chip[data-format="word"]:hover { border-color: rgba(74,144,217,.55); color: rgba(74,144,217,.95); background: rgba(74,144,217,.06); }
+    .chip[data-format="word"].selected { border-color: rgba(74,144,217,.75); color: var(--word-color); background: rgba(74,144,217,.1); }
+    .chip[data-format="excel"] { border-color: rgba(76,175,125,.22); color: rgba(76,175,125,.7); }
+    .chip[data-format="excel"]:hover { border-color: rgba(76,175,125,.55); color: rgba(76,175,125,.95); background: rgba(76,175,125,.06); }
+    .chip[data-format="excel"].selected { border-color: rgba(76,175,125,.75); color: var(--excel-color); background: rgba(76,175,125,.1); }
+    .chip[data-format="hwp"] { border-color: rgba(217,127,58,.22); color: rgba(217,127,58,.7); }
+    .chip[data-format="hwp"]:hover { border-color: rgba(217,127,58,.55); color: rgba(217,127,58,.95); background: rgba(217,127,58,.06); }
+    .chip[data-format="hwp"].selected { border-color: rgba(217,127,58,.75); color: var(--hwp-color); background: rgba(217,127,58,.1); }
+    .chip[data-group="excelTask"] { border-color: rgba(76,175,125,.22); color: rgba(76,175,125,.65); }
+    .chip[data-group="excelTask"]:hover { border-color: rgba(76,175,125,.55); color: rgba(76,175,125,.95); background: rgba(76,175,125,.06); }
+    .chip[data-group="excelTask"].selected { border-color: rgba(76,175,125,.75); color: var(--excel-color); background: rgba(76,175,125,.1); }
+    .btn-generate { display: block; width: 100%; margin-top: 28px; background: var(--gold); color: var(--black); border: none; padding: 16px 44px; font-family: var(--sans); font-size: .76rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background .2s, transform .2s; }
+    .btn-generate:hover { background: var(--gold-lt); transform: translateY(-2px); }
+    .btn-generate:active { transform: translateY(0); }
+    body.excel-mode .btn-generate { background: var(--excel-color); color: #030e06; }
+    body.excel-mode .btn-generate:hover { background: #68d4a0; }
+    .loading-state { display: none; flex-direction: column; align-items: center; gap: 14px; padding: 36px 0 12px; }
+    .loading-state.visible { display: flex; }
+    .spinner { width: 26px; height: 26px; border: 2px solid rgba(184,151,90,.18); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+    body.excel-mode .spinner { border-color: rgba(76,175,125,.18); border-top-color: var(--excel-color); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-msg { font-family: var(--sans); font-size: .78rem; font-weight: 300; color: rgba(208,208,208,.45); letter-spacing: .04em; min-height: 1.2em; }
+    .result-section { margin-top: 36px; }
+    .result-label { display: block; font-family: var(--sans); font-size: .64rem; font-weight: 500; color: var(--gold); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 10px; }
+    body.excel-mode .result-label { color: var(--excel-color); }
+    .result-box { background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); padding: 24px; min-height: 200px; max-height: 520px; overflow-y: auto; border-radius: 2px; font-family: var(--sans); font-size: .86rem; font-weight: 300; line-height: 1.9; color: var(--text); white-space: pre-wrap; }
+    body.excel-mode .result-box { border-color: rgba(76,175,125,.1); }
+    .result-box .md-h1 { font-family: var(--serif); font-size: 1.18rem; font-weight: 600; color: var(--white); letter-spacing: .02em; margin: 0 0 6px; line-height: 1.4; }
+    .result-box .md-h2 { font-family: var(--serif); font-size: .98rem; font-weight: 500; color: var(--gold-lt); margin: 18px 0 5px; line-height: 1.4; }
+    body.excel-mode .result-box .md-h2 { color: var(--excel-color); }
+    .result-box .md-h3 { font-size: .88rem; font-weight: 500; color: rgba(208,208,208,.85); margin: 14px 0 4px; }
+    .result-box .md-para { margin: 4px 0 8px; white-space: pre-wrap; }
+    .result-box .md-divider { border: none; border-top: 1px solid rgba(255,255,255,.07); margin: 14px 0; }
+    .result-box .excel-formula-block { display: block; background: rgba(76,175,125,.07); border: 1px solid rgba(76,175,125,.22); border-left: 3px solid var(--excel-color); color: #7ee8a8; font-family: 'Courier New', Courier, monospace; font-size: .83rem; padding: 10px 14px; border-radius: 3px; margin: 8px 0; white-space: pre; overflow-x: auto; line-height: 1.65; }
+    .result-box .md-table-wrap { overflow-x: auto; margin: 10px 0 14px; }
+    .result-box .md-table { border-collapse: collapse; width: 100%; font-size: .8rem; }
+    .result-box .md-table th { background: rgba(76,175,125,.1); color: #7cebb0; border: 1px solid rgba(76,175,125,.22); padding: 7px 12px; font-weight: 500; text-align: left; white-space: nowrap; }
+    .result-box .md-table td { border: 1px solid rgba(255,255,255,.07); padding: 6px 12px; color: var(--text); }
+    .result-box .md-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .result-placeholder { color: rgba(208,208,208,.22); font-size: .82rem; }
+    .result-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn-action { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-size: .68rem; font-weight: 500; letter-spacing: .08em; padding: 8px 16px; border-radius: 2px; cursor: pointer; border: 1px solid; background: transparent; transition: background .18s, color .18s, transform .15s; }
+    .btn-action:hover { transform: translateY(-1px); }
+    .btn-action:active { transform: translateY(0); }
+    .btn-copy { border-color: rgba(255,255,255,.14); color: rgba(208,208,208,.6); }
+    .btn-copy:hover { border-color: rgba(255,255,255,.28); color: var(--white); background: rgba(255,255,255,.04); }
+    .btn-copy-excel { border-color: rgba(76,175,125,.38); color: rgba(76,175,125,.82); }
+    .btn-copy-excel:hover { background: rgba(76,175,125,.09); color: var(--excel-color); border-color: rgba(76,175,125,.65); }
+    .btn-dl-word { border-color: rgba(74,144,217,.35); color: rgba(74,144,217,.8); }
+    .btn-dl-word:hover { background: rgba(74,144,217,.08); color: var(--word-color); border-color: rgba(74,144,217,.6); }
+    .btn-dl-excel { border-color: rgba(76,175,125,.35); color: rgba(76,175,125,.8); }
+    .btn-dl-excel:hover { background: rgba(76,175,125,.08); color: var(--excel-color); border-color: rgba(76,175,125,.6); }
+    .btn-dl-hwp { border-color: rgba(217,127,58,.35); color: rgba(217,127,58,.8); }
+    .btn-dl-hwp:hover { background: rgba(217,127,58,.08); color: var(--hwp-color); border-color: rgba(217,127,58,.6); }
+    /* ── Excel mode show/hide ── */
+    .doc-mode-fields { display: block; }
+    .doc-mode-fields.hidden { display: none; }
+    .excel-mode-fields { display: none; }
+    .excel-mode-fields.visible { display: block; }
+    /* Excel mode banner */
+    .excel-mode-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(76,175,125,.06); border: 1px solid rgba(76,175,125,.2); border-radius: 3px; margin-bottom: 26px; }
+    .excel-mode-banner i { color: var(--excel-color); font-size: 1rem; }
+    .excel-mode-banner-text { font-size: .74rem; font-weight: 400; color: rgba(76,175,125,.9); letter-spacing: .02em; }
+    .excel-mode-banner-text span { font-weight: 600; color: var(--excel-color); }
+    /* File upload */
+    .file-upload-area { position: relative; border: 1.5px dashed rgba(76,175,125,.3); background: rgba(76,175,125,.025); border-radius: 4px; padding: 26px 20px 22px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+    .file-upload-area:hover, .file-upload-area.drag-over { border-color: rgba(76,175,125,.65); background: rgba(76,175,125,.06); }
+    .file-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; font-size: 0; }
+    .upload-icon { font-size: 1.65rem; color: var(--excel-color); margin-bottom: 9px; opacity: .72; }
+    .upload-title { font-size: .82rem; font-weight: 500; color: rgba(255,255,255,.65); margin-bottom: 5px; }
+    .upload-guide { font-size: .68rem; font-weight: 300; color: rgba(208,208,208,.38); margin-bottom: 6px; line-height: 1.6; }
+    .upload-formats { font-size: .6rem; color: rgba(76,175,125,.5); letter-spacing: .05em; }
+    .uploaded-file-badge { display: none; align-items: center; gap: 7px; margin-top: 10px; padding: 6px 14px; background: rgba(76,175,125,.08); border: 1px solid rgba(76,175,125,.28); border-radius: 3px; font-size: .72rem; color: var(--excel-color); justify-content: center; }
+    .uploaded-file-badge.visible { display: inline-flex; }
+    .excel-textarea { width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); color: var(--white); padding: 12px 16px; font-family: var(--sans); font-size: .82rem; font-weight: 300; outline: none; border-radius: 2px; transition: border-color .2s; resize: vertical; min-height: 90px; line-height: 1.7; }
+    .excel-textarea::placeholder { color: rgba(208,208,208,.22); }
+    .excel-textarea:focus { border-color: rgba(76,175,125,.52); }
+    /* Upgrade overlay */
+    .upgrade-overlay { display: none; position: fixed; inset: 0; background: rgba(7,7,7,.96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 900; align-items: center; justify-content: center; }
+    .upgrade-overlay.visible { display: flex; }
+    .upgrade-card { text-align: center; padding: 52px 44px; max-width: 400px; width: 92%; }
+    .upgrade-icon { font-size: 2.2rem; color: var(--gold); margin-bottom: 22px; }
+    .upgrade-title { font-family: var(--serif); font-size: 1.18rem; font-weight: 500; color: var(--white); letter-spacing: .02em; line-height: 1.55; margin-bottom: 14px; }
+    .upgrade-desc { font-family: var(--sans); font-size: .8rem; font-weight: 300; color: rgba(208,208,208,.42); line-height: 1.75; margin-bottom: 32px; }
+    .btn-upgrade { display: inline-block; background: var(--gold); color: var(--black); border: none; padding: 14px 36px; font-family: var(--sans); font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background .2s, transform .2s; margin-bottom: 18px; }
+    .btn-upgrade:hover { background: var(--gold-lt); transform: translateY(-2px); }
+    .upgrade-dismiss { display: block; font-family: var(--sans); font-size: .72rem; font-weight: 300; color: rgba(208,208,208,.28); cursor: pointer; letter-spacing: .06em; transition: color .2s; background: none; border: none; margin: 0 auto; }
+    .upgrade-dismiss:hover { color: rgba(208,208,208,.58); }
+    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(14px); background: rgba(14,14,14,.97); border: 1px solid rgba(184,151,90,.42); color: var(--text); font-family: var(--sans); font-size: .76rem; font-weight: 300; letter-spacing: .04em; padding: 11px 24px; border-radius: 2px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s; z-index: 1000; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ─────────────────────────────────────────
+       ENGINE OPTIONS PANEL
+    ───────────────────────────────────────── */
+    .eng-options-panel {
+      margin: 8px 10px 4px;
+      background: rgba(184,151,90,.04);
+      border: 1px solid rgba(184,151,90,.2);
+      border-radius: 7px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .eng-options-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .2s;
+    }
+    .eng-options-header:hover { background: rgba(184,151,90,.06); }
+    .eng-options-title {
+      flex: 1;
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .eng-options-arrow {
+      font-size: .55rem;
+      color: rgba(184,151,90,.6);
+      transition: transform .25s;
+    }
+    .eng-options-panel.collapsed .eng-options-arrow { transform: rotate(-90deg); }
+    .eng-options-body {
+      padding: 8px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid rgba(184,151,90,.12);
+    }
+    .eng-options-panel.collapsed .eng-options-body { display: none; }
+    .opt-row { display: flex; flex-direction: column; gap: 5px; }
+    .opt-label {
+      font-size: .56rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(208,208,208,.45);
+    }
+    .opt-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .opt-chip {
+      padding: 4px 10px;
+      border: 1px solid rgba(184,151,90,.25);
+      border-radius: 3px;
+      background: transparent;
+      color: rgba(208,208,208,.55);
+      font-family: var(--sans);
+      font-size: .65rem;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .opt-chip:hover { border-color: rgba(184,151,90,.5); color: var(--gold); }
+    .opt-chip.selected {
+      background: rgba(184,151,90,.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .opt-toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .opt-toggle-label {
+      font-size: .68rem;
+      color: rgba(208,208,208,.6);
+    }
+    .opt-toggle {
+      position: relative;
+      width: 34px; height: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .opt-toggle input { opacity: 0; width: 0; height: 0; }
+    .opt-toggle-track {
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.1);
+      border-radius: 18px;
+      transition: background .2s;
+    }
+    .opt-toggle input:checked + .opt-toggle-track { background: var(--gold); }
+    .opt-toggle-thumb {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .opt-toggle input:checked ~ .opt-toggle-thumb { transform: translateX(16px); }
+    .opt-slider-wrap { display: flex; align-items: center; gap: 8px; }
+    .opt-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 3px;
+      background: rgba(255,255,255,.12);
+      border-radius: 2px;
+      outline: none;
+    }
+    .opt-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+    }
+    .opt-slider-val {
+      font-size: .65rem;
+      color: var(--gold);
+      min-width: 28px;
+      text-align: right;
+    }
+    .opt-select {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(184,151,90,.25);
+      color: var(--white);
+      padding: 6px 10px;
+      font-family: var(--sans);
+      font-size: .7rem;
+      border-radius: 3px;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    .opt-select:focus { border-color: rgba(184,151,90,.55); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <a href="javascript:void(0)" onclick="history.back()" class="header__back">← 뒤로가기</a>
+    <span class="header__title">AI 문서 제작</span>
+    <div class="header__right" id="headerRight"></div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-hdr">AI 엔진</div>
+      <div class="eng-list">
+        <div class="eng-item active" data-eng="GPT-4o" data-desc="범용 고품질 글쓰기" data-tier="basic" onclick="selectEngine(this)">
+          <div class="eng-icon">G4</div>
+          <div class="eng-info"><div class="eng-name">GPT-4o</div><div class="eng-desc">범용 고품질 글쓰기</div></div>
+          <span class="excel-rec-badge">수식 추천</span>
+        </div>
+        <div class="eng-item" data-eng="Claude 4 Sonnet" data-desc="정교한 문체" data-tier="standard" onclick="selectEngine(this)">
+          <div class="eng-icon" style="color:rgba(180,120,220,.9);">C4</div>
+          <div class="eng-info"><div class="eng-name">Claude 4 Sonnet</div><div class="eng-desc">정교한 문체</div></div>
+          <span class="badge-new">NEW</span>
+          <span class="excel-rec-badge">데이터 분석 추천</span>
+        </div>
+        <div class="eng-item" data-eng="Gemini 2.5 Pro" data-desc="긴 문서 특화" data-tier="basic" onclick="selectEngine(this)">
+          <div class="eng-icon" style="color:rgba(100,180,240,.9);">G2</div>
+          <div class="eng-info"><div class="eng-name">Gemini 2.5 Pro</div><div class="eng-desc">긴 문서 특화</div></div>
+          <span class="badge-new">NEW</span>
+          <span class="excel-rec-badge">재무제표 추천</span>
+        </div>
+        <div class="eng-item" data-eng="GPT-4o Mini" data-desc="빠른 초안 작성" data-tier="basic" onclick="selectEngine(this)">
+          <div class="eng-icon" style="color:rgba(130,210,130,.8);">GM</div>
+          <div class="eng-info"><div class="eng-name">GPT-4o Mini</div><div class="eng-desc">빠른 초안 작성</div></div>
+          <span class="excel-rec-badge">빠른 정리</span>
+        </div>
+        <div class="eng-item" data-eng="Llama 3.1" data-desc="오픈소스 대안" data-tier="pro" onclick="selectEngine(this)">
+          <div class="eng-icon" style="color:rgba(220,160,80,.8);">LL</div>
+          <div class="eng-info"><div class="eng-name">Llama 3.1</div><div class="eng-desc">오픈소스 대안</div></div>
+          <span class="excel-rec-badge">기본 작업</span>
+        </div>
+      </div>
+
+      <!-- Engine Options Panel -->
+      <div id="engOptionsPanel" class="eng-options-panel">
+        <div class="eng-options-header" onclick="toggleEngOptions()">
+          <i class="fa-solid fa-sliders" style="font-size:.6rem;color:var(--gold);"></i>
+          <span class="eng-options-title" id="engOptionsTitleText">GPT-4o 설정</span>
+          <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
+        </div>
+        <div class="eng-options-body" id="engOptionsBody"></div>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <div class="active-eng-bar">
+        <span class="active-eng-label">현재 엔진</span>
+        <span class="active-eng-name" id="activeEngName">GPT-4o</span>
+      </div>
+
+      <main class="main">
+        <div class="content">
+
+          <div class="field-group">
+            <label class="field-label" for="topicInput" id="topicLabel">주제 / 키워드</label>
+            <input id="topicInput" class="topic-input" type="text" placeholder="예: 2026년 국내 AI 산업 동향 보고서" autocomplete="off" spellcheck="false" />
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">출력 포맷</span>
+            <div class="chips-row" id="formatChips">
+              <button class="chip selected" data-group="format" data-format="word"><i class="fa-solid fa-file-word"></i> 워드 (.docx)</button>
+              <button class="chip" data-group="format" data-format="excel"><i class="fa-solid fa-file-excel"></i> 엑셀 (.xlsx)</button>
+              <button class="chip" data-group="format" data-format="hwp"><i class="fa-solid fa-file-alt"></i> 한컴 (.hwp)</button>
+            </div>
+          </div>
+
+          <!-- Doc Mode Fields (Word / HWP) -->
+          <div id="docModeFields" class="doc-mode-fields">
+            <div class="field-group">
+              <span class="field-label">문서 유형</span>
+              <div class="chips-row" id="docTypeChips">
+                <button class="chip selected" data-group="docType">계획서</button>
+                <button class="chip" data-group="docType">보고서</button>
+                <button class="chip" data-group="docType">기획서</button>
+                <button class="chip" data-group="docType">자료수집</button>
+                <button class="chip" data-group="docType">블로그</button>
+                <button class="chip" data-group="docType">보도자료</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">톤 선택</span>
+              <div class="chips-row">
+                <button class="chip selected" data-group="tone">전문적</button>
+                <button class="chip" data-group="tone">캐주얼</button>
+                <button class="chip" data-group="tone">격식체</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">분량</span>
+              <div class="chips-row">
+                <button class="chip" data-group="length">짧게</button>
+                <button class="chip selected" data-group="length">보통</button>
+                <button class="chip" data-group="length">길게</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="refUrlInput">참고자료 URL <span style="text-transform:none;font-size:.58rem;color:rgba(208,208,208,.3);letter-spacing:.04em;font-weight:300;">(선택)</span></label>
+              <input id="refUrlInput" class="url-input" type="url" placeholder="https://example.com/reference" autocomplete="off" spellcheck="false" />
+              <p class="field-hint">AI가 참고할 URL을 입력하세요. 실제 크롤링은 지원되지 않으며, URL 정보를 프롬프트에 포함합니다.</p>
+            </div>
+          </div>
+
+          <!-- Excel Mode Fields -->
+          <div id="excelModeFields" class="excel-mode-fields">
+            <div class="excel-mode-banner">
+              <i class="fa-solid fa-table"></i>
+              <span class="excel-mode-banner-text"><span>엑셀 전용 모드</span> — AI가 수식·템플릿·데이터 분석을 전문적으로 생성합니다</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label" style="color:var(--excel-color);">엑셀 작업 유형</span>
+              <div class="chips-row">
+                <button class="chip selected" data-group="excelTask"><i class="fa-solid fa-chart-line"></i> 재무제표 작성</button>
+                <button class="chip" data-group="excelTask"><i class="fa-solid fa-calculator"></i> 월말 결산</button>
+                <button class="chip" data-group="excelTask"><i class="fa-solid fa-magnifying-glass-chart"></i> 데이터 정리/분석</button>
+                <button class="chip" data-group="excelTask"><i class="fa-solid fa-code"></i> 수식 자동 생성</button>
+                <button class="chip" data-group="excelTask"><i class="fa-solid fa-coins"></i> 예산 계획표</button>
+                <button class="chip" data-group="excelTask"><i class="fa-solid fa-file-invoice-dollar"></i> 매출 보고서</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label" style="color:var(--excel-color);">파일 업로드 <span style="text-transform:none;font-size:.58rem;color:rgba(208,208,208,.3);letter-spacing:.04em;font-weight:300;">(선택)</span></span>
+              <div class="file-upload-area" id="fileUploadArea">
+                <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" />
+                <div class="upload-icon"><i class="fa-solid fa-file-excel"></i></div>
+                <div class="upload-title">파일을 드래그하거나 클릭하여 업로드</div>
+                <div class="upload-guide">은행권 엑셀, 회계 자료 등을 업로드하면 AI가 검토/정리합니다</div>
+                <div class="upload-formats">지원 포맷: .xlsx · .xls · .csv</div>
+              </div>
+              <div class="uploaded-file-badge" id="uploadedFileBadge">
+                <i class="fa-solid fa-file-excel"></i>
+                <span id="uploadedFileName"></span>
+                <span style="margin-left:4px;opacity:.55;cursor:pointer;" onclick="clearUploadedFile()">✕</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="excelInstruction" style="color:var(--excel-color);">추가 지시사항</label>
+              <textarea id="excelInstruction" class="excel-textarea" placeholder="어떤 작업을 원하시나요? 예: VLOOKUP으로 거래처별 매출 집계, 월별 손익계산서 자동 생성, 피벗 테이블 구조 설계" spellcheck="false"></textarea>
+            </div>
+          </div>
+
+          <button class="btn-generate" id="btnGenerate">AI 문서 생성</button>
+
+          <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <span class="loading-msg" id="loadingMsg">문서 구조 분석 중...</span>
+          </div>
+
+          <div class="result-section">
+            <span class="result-label" id="resultLabel">생성 결과 미리보기</span>
+            <div class="result-box" id="resultBox">
+              <span class="result-placeholder" id="resultPlaceholder">AI 문서 생성 버튼을 클릭하면 결과가 여기 표시됩니다.</span>
+            </div>
+            <div class="result-actions" id="resultActions" style="display:none;">
+              <button class="btn-action btn-copy" id="btnCopy"><i class="fa-regular fa-copy"></i> 복사</button>
+              <button class="btn-action btn-copy-excel" id="btnCopyExcel" style="display:none;"><i class="fa-solid fa-table"></i> 엑셀에 복사</button>
+              <button class="btn-action btn-dl-word" id="btnDlWord" onclick="showDownloadToast('Word')"><i class="fa-solid fa-file-word"></i> Word 다운로드</button>
+              <button class="btn-action btn-dl-excel" id="btnDlExcel" onclick="showDownloadToast('Excel')"><i class="fa-solid fa-file-excel"></i> Excel 다운로드</button>
+              <button class="btn-action btn-dl-hwp" id="btnDlHwp" onclick="showDownloadToast('한컴')"><i class="fa-solid fa-file-alt"></i> 한컴 다운로드</button>
+            </div>
+          </div>
+
+          <!-- Doc History -->
+          <div id="docHistoryWrap" style="margin-top:18px;display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,151,90,.6);">이전 생성 기록</span>
+              <button onclick="clearDocHistory()" style="background:none;border:1px solid rgba(220,80,80,.35);border-radius:3px;color:rgba(220,80,80,.6);font-size:.6rem;padding:3px 8px;cursor:pointer;font-family:var(--sans);transition:all .18s;" onmouseover="this.style.background='rgba(220,80,80,.08)'" onmouseout="this.style.background='none'"><i class="fa-solid fa-trash-can"></i> 전체 삭제</button>
+            </div>
+            <div id="docHistoryList" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="upgrade-overlay" id="upgradeOverlay">
+    <div class="upgrade-card">
+      <div class="upgrade-icon"><i class="fa-solid fa-lock"></i></div>
+      <div class="upgrade-title">크레딧 부족</div>
+      <div class="upgrade-desc">크레딧이 부족합니다. 플랜을 업그레이드하세요.</div>
+      <button class="btn-upgrade" id="btnUpgrade">요금제 보기</button>
+      <button class="upgrade-dismiss" id="btnDismiss">나중에</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const OPENAI_API_KEY = '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';
+    const ENGINE_MODEL_MAP_DOC = { 'GPT-4o': 'gpt-4o', 'Claude 4 Sonnet': 'gpt-4o', 'Gemini 2.5 Pro': 'gpt-4o', 'GPT-4o Mini': 'gpt-4o-mini', 'Llama 3.1': 'gpt-4o-mini' };
+    var currentFormat = 'word';
+    var uploadedFileName = '';
+    var isAdmin = false;
+    var isMember = false;
+
+    (function initAuth() {
+      if (localStorage.getItem('dagaon_admin') === '1') { isAdmin = true; }
+      else { try { var u = JSON.parse(localStorage.getItem('dagaon_user') || 'null'); if (u && u.loggedIn === true) { isMember = true; } } catch (e) {} }
+      if (!isAdmin && !isMember) { window.location.href = 'index.html'; return; }
+      renderHeaderRight();
+    })();
+
+    function getCredits() { return Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10)); }
+    function saveCredits(v) { localStorage.setItem('dagaon_credits', String(Math.max(0, v))); }
+
+    function renderHeaderRight() {
+      var el = document.getElementById('headerRight');
+      if (isAdmin) { el.innerHTML = '<span class="badge-unlimited">Unlimited</span>'; }
+      else { var left = Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10)); el.innerHTML = '<span class="usage-label">남은 크레딧 <strong>' + left + '</strong></span>'; }
+    }
+
+    function selectEngine(el) {
+      if (el.classList.contains('locked')) { window._showEngLockToast && window._showEngLockToast(el.getAttribute('data-tier')); return; }
+      document.querySelectorAll('.eng-item').forEach(function(i) { i.classList.remove('active'); });
+      el.classList.add('active');
+      document.getElementById('activeEngName').textContent = el.dataset.eng;
+      renderEngineOptions(el.dataset.eng);
+      localStorage.setItem('dagaon_doc_engine', el.dataset.eng);
+    }
+
+    function switchMode(fmt) {
+      currentFormat = fmt;
+      var docFields = document.getElementById('docModeFields');
+      var excelFields = document.getElementById('excelModeFields');
+      var topicLabel = document.getElementById('topicLabel');
+      var topicInput = document.getElementById('topicInput');
+      var btnGen = document.getElementById('btnGenerate');
+      var resultLabel = document.getElementById('resultLabel');
+      var btnCopyExcel = document.getElementById('btnCopyExcel');
+      var btnDlWord = document.getElementById('btnDlWord');
+      var btnDlExcel = document.getElementById('btnDlExcel');
+      var btnDlHwp = document.getElementById('btnDlHwp');
+      if (fmt === 'excel') {
+        document.body.classList.add('excel-mode');
+        docFields.classList.add('hidden');
+        excelFields.classList.add('visible');
+        topicLabel.textContent = '주제 / 키워드 (엑셀)';
+        topicInput.placeholder = '예: 2026년 월별 매출 분석, 거래처별 손익계산서';
+        btnGen.textContent = '엑셀 AI 생성';
+        resultLabel.textContent = '엑셀 결과 미리보기';
+        btnCopyExcel.style.display = 'inline-flex';
+        btnDlWord.style.display = 'none';
+        btnDlExcel.style.display = 'inline-flex';
+        btnDlHwp.style.display = 'none';
+      } else {
+        document.body.classList.remove('excel-mode');
+        docFields.classList.remove('hidden');
+        excelFields.classList.remove('visible');
+        topicLabel.textContent = '주제 / 키워드';
+        topicInput.placeholder = '예: 2026년 국내 AI 산업 동향 보고서';
+        btnGen.textContent = 'AI 문서 생성';
+        resultLabel.textContent = '생성 결과 미리보기';
+        btnCopyExcel.style.display = 'none';
+        btnDlWord.style.display = fmt === 'hwp' ? 'none' : 'inline-flex';
+        btnDlExcel.style.display = 'none';
+        btnDlHwp.style.display = fmt === 'hwp' ? 'inline-flex' : 'none';
+      }
+    }
+
+    document.querySelectorAll('.chip[data-group]').forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var group = chip.getAttribute('data-group');
+        document.querySelectorAll('.chip[data-group="' + group + '"]').forEach(function(c) { c.classList.remove('selected'); });
+        chip.classList.add('selected');
+        if (group === 'format') { var fmt = chip.getAttribute('data-format') || 'word'; switchMode(fmt); }
+      });
+    });
+
+    var fileInput = document.getElementById('excelFileInput');
+    var uploadArea = document.getElementById('fileUploadArea');
+    fileInput.addEventListener('change', function() { if (fileInput.files && fileInput.files[0]) { setUploadedFile(fileInput.files[0].name); } });
+    uploadArea.addEventListener('dragover', function(e) { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+    uploadArea.addEventListener('dragleave', function() { uploadArea.classList.remove('drag-over'); });
+    uploadArea.addEventListener('drop', function(e) { e.preventDefault(); uploadArea.classList.remove('drag-over'); var files = e.dataTransfer.files; if (files && files[0]) { setUploadedFile(files[0].name); } });
+    function setUploadedFile(name) { uploadedFileName = name; var badge = document.getElementById('uploadedFileBadge'); var nameEl = document.getElementById('uploadedFileName'); nameEl.textContent = name; badge.classList.add('visible'); }
+    function clearUploadedFile() { uploadedFileName = ''; fileInput.value = ''; document.getElementById('uploadedFileBadge').classList.remove('visible'); }
+
+    var toastTimer = null;
+    function showToast(msg) { var el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3200); }
+    function showDownloadToast(fmt) { showToast(fmt + ' 다운로드 기능은 곧 오픈됩니다.'); }
+
+    document.getElementById('btnUpgrade').addEventListener('click', function() { window.open('index.html#pricing', '_blank'); });
+    document.getElementById('btnDismiss').addEventListener('click', function() { document.getElementById('upgradeOverlay').classList.remove('visible'); });
+    function showUpgrade() { document.getElementById('upgradeOverlay').classList.add('visible'); }
+
+    function setLoading(on) { var el = document.getElementById('loadingState'); if (on) el.classList.add('visible'); else el.classList.remove('visible'); }
+
+    function getSelectedChip(group) { var sel = document.querySelector('.chip[data-group="' + group + '"].selected'); return sel ? sel.textContent.trim() : ''; }
+    function getActiveEngineNameDoc() { var active = document.querySelector('.eng-item.active'); return active ? active.dataset.eng : 'GPT-4o'; }
+
+    function getFormatInstruction(fmt) {
+      if (fmt === 'excel' || fmt.includes('엑셀') || fmt.includes('xlsx')) return '표/데이터 중심 구조로 작성하세요. 마크다운 테이블(| 헤더 | 헤더 |)을 적극 활용하고, 데이터를 열/행으로 체계적으로 정리하세요.';
+      if (fmt === 'hwp' || fmt.includes('한컴') || fmt.includes('hwp')) return '한국 공문서/보고서 양식으로 작성하세요. 제목, 수신, 발신, 날짜, 본문, 붙임 형태의 공식 문서 구조를 사용하세요.';
+      return '목차 + 제목 + 본문 구조로 작성하세요. # 제목, ## 소제목, ### 세부항목 형태의 마크다운 계층 구조를 사용하세요.';
+    }
+
+    function escHtml(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function renderMdTable(tableLines) {
+      if (tableLines.length < 1) return '';
+      var html = '<div class="md-table-wrap"><table class="md-table">';
+      var isHeader = true;
+      for (var r = 0; r < tableLines.length; r++) {
+        var row = tableLines[r];
+        if (/^\|[\s\-:|]+\|/.test(row)) { isHeader = false; continue; }
+        var cells = row.replace(/^\||\|$/g, '').split('|');
+        html += '<tr>';
+        for (var c = 0; c < cells.length; c++) {
+          html += isHeader ? '<th>' + escHtml(cells[c].trim()) + '</th>' : '<td>' + escHtml(cells[c].trim()) + '</td>';
+        }
+        html += '</tr>';
+        if (isHeader) { isHeader = false; }
+      }
+      html += '</table></div>';
+      return html;
+    }
+
+    function renderExcelMarkdown(text) {
+      var lines = text.split('\n');
+      var html = '';
+      var i = 0;
+      while (i < lines.length) {
+        var line = lines[i];
+        if (/^```/.test(line)) {
+          var codeLines = [];
+          i++;
+          while (i < lines.length && !/^```/.test(lines[i])) { codeLines.push(lines[i]); i++; }
+          html += '<div class="excel-formula-block">' + escHtml(codeLines.join('\n')) + '</div>';
+          i++; continue;
+        }
+        if (/^\|/.test(line)) {
+          var tableLines = [];
+          while (i < lines.length && /^\|/.test(lines[i])) { tableLines.push(lines[i]); i++; }
+          html += renderMdTable(tableLines); continue;
+        }
+        if (/^### (.+)/.test(line)) { html += '<div class="md-h3">' + escHtml(line.replace(/^### /, '')) + '</div>'; }
+        else if (/^## (.+)/.test(line)) { html += '<div class="md-h2">' + escHtml(line.replace(/^## /, '')) + '</div>'; }
+        else if (/^# (.+)/.test(line)) { html += '<div class="md-h1">' + escHtml(line.replace(/^# /, '')) + '</div>'; }
+        else if (/^---+$/.test(line.trim())) { html += '<hr class="md-divider">'; }
+        else {
+          var rendered = escHtml(line).replace(/=(SUM|AVERAGE|VLOOKUP|HLOOKUP|IF|SUMIF|SUMIFS|COUNTIF|COUNTIFS|INDEX|MATCH|IFERROR|CONCATENATE|LEFT|RIGHT|MID|LEN|TRIM|UPPER|LOWER|DATE|TODAY|NOW|YEAR|MONTH|DAY|MAX|MIN|LARGE|SMALL|RANK|ROUND|INT|MOD|ABS|SQRT|POWER|AND|OR|NOT|ISBLANK|ISERROR|TEXT|VALUE|COUNTA|COUNT|OFFSET|INDIRECT)[^&lt;\n]*/gi, function(m) { return '<code style="background:rgba(76,175,125,.1);border:1px solid rgba(76,175,125,.22);color:#7ee8a8;font-family:Courier New,monospace;font-size:.8rem;padding:1px 6px;border-radius:3px;">' + m + '</code>'; });
+          html += '<div class="md-para">' + rendered + '</div>';
+        }
+        i++;
+      }
+      return html;
+    }
+
+    function renderMarkdown(text) {
+      if (currentFormat === 'excel') return renderExcelMarkdown(text);
+      var lines = text.split('\n');
+      var html = '';
+      var i = 0;
+      while (i < lines.length) {
+        var line = lines[i];
+        if (/^\|/.test(line)) {
+          var tableLines = [];
+          while (i < lines.length && /^\|/.test(lines[i])) { tableLines.push(lines[i]); i++; }
+          html += renderMdTable(tableLines); continue;
+        }
+        if (/^### (.+)/.test(line)) { html += '<div class="md-h3">' + escHtml(line.replace(/^### /, '')) + '</div>'; }
+        else if (/^## (.+)/.test(line)) { html += '<div class="md-h2">' + escHtml(line.replace(/^## /, '')) + '</div>'; }
+        else if (/^# (.+)/.test(line)) { html += '<div class="md-h1">' + escHtml(line.replace(/^# /, '')) + '</div>'; }
+        else if (/^---+$/.test(line.trim())) { html += '<hr class="md-divider">'; }
+        else { html += '<div class="md-para">' + escHtml(line) + '</div>'; }
+        i++;
+      }
+      return html;
+    }
+
+    function buildExcelPrompt() {
+      var topic = document.getElementById('topicInput').value.trim() || '주제 없음';
+      var taskType = getSelectedChip('excelTask') || '데이터 정리/분석';
+      var instruction = document.getElementById('excelInstruction').value.trim();
+      var userPrompt = '[엑셀 작업] ' + taskType + '\n주제/목적: ' + topic;
+      if (uploadedFileName) { userPrompt += '\n업로드된 파일: ' + uploadedFileName + ' — 이 파일 유형에 맞는 데이터 검토/정리 방법과 수식을 제안해주세요.'; }
+      if (instruction) { userPrompt += '\n추가 지시: ' + instruction; }
+      var systemPrompt = '당신은 엑셀 전문 AI입니다. 엑셀 수식(SUM, AVERAGE, VLOOKUP, INDEX/MATCH, IF, SUMIFS 등), VBA 매크로, 데이터 분석을 전문으로 합니다. 사용자의 요청에 따라: 1) 엑셀 수식과 함수를 정확하게 생성하고 설명 2) 재무제표, 월말결산, 예산표 등의 템플릿을 표 형태로 작성 3) 업로드된 엑셀 데이터의 검토 및 정리 방법 제안 4) 셀 주소(A1, B2 등)와 함께 구체적인 수식 제공. 한국어로 작성하세요. 표는 마크다운 테이블로 작성하세요. 수식은 코드 블록(```)으로 감싸서 제공하세요.';
+      return { userPrompt: userPrompt, systemPrompt: systemPrompt };
+    }
+
+    function buildDocPrompt() {
+      var topic = document.getElementById('topicInput').value.trim() || '주제 없음';
+      var docType = getSelectedChip('docType') || '계획서';
+      var format = getSelectedChip('format') || '워드 (.docx)';
+      var tone = getSelectedChip('tone') || '전문적';
+      var length = getSelectedChip('length') || '보통';
+      var pages = getSelectedChip('pages') || '1페이지';
+      var refUrl = document.getElementById('refUrlInput').value.trim();
+      var lengthMap = { '짧게': '500자 내외', '보통': '1000자 내외', '길게': '2000자 내외' };
+      var lengthInstruction = lengthMap[length] || '1000자 내외';
+      var userPrompt = '[' + docType + '] 주제: ' + topic + '\n포맷: ' + format + '\n분량: ' + lengthInstruction + ' / ' + pages + '\n톤: ' + tone;
+      if (refUrl) { userPrompt += '\n참고자료 URL: ' + refUrl + ' (이 URL을 참고하여 작성하세요)'; }
+      var engOpt = getEngineOptionsPromptDoc();
+      if (engOpt) { userPrompt += '\n엔진 옵션: ' + engOpt; }
+      var systemPrompt = '당신은 전문 문서 작성 AI입니다. 계획서, 보고서, 기획서, 자료수집, 블로그, 보도자료를 작성합니다. 선택된 포맷에 맞는 구조로 작성하세요. ' + getFormatInstruction(format) + ' 한국어로 작성하세요.';
+      return { userPrompt: userPrompt, systemPrompt: systemPrompt };
+    }
+
+    async function wsGenerate() {
+      var length = getSelectedChip('length') || '보통';
+      var costMap = { '짧게': 50, '보통': 60, '길게': 70 };
+      var cost = costMap[length] || 60;
+      if (isAdmin) { await runGenerate(); }
+      else { var credits = getCredits(); if (credits < cost) { showUpgrade(); return; } saveCredits(credits - cost); window._lastDocCost = cost; renderHeaderRight(); await runGenerate(); }
+    }
+
+    async function runGenerate() {
+      var engName = getActiveEngineNameDoc();
+      var model = ENGINE_MODEL_MAP_DOC[engName] || 'gpt-4o';
+      var prompts = currentFormat === 'excel' ? buildExcelPrompt() : buildDocPrompt();
+      var box = document.getElementById('resultBox');
+      var ph = document.getElementById('resultPlaceholder');
+      if (ph) ph.remove();
+      box.innerHTML = '';
+      document.getElementById('resultActions').style.display = 'none';
+      setLoading(true);
+      document.getElementById('loadingMsg').textContent = currentFormat === 'excel' ? '엑셀 수식 및 데이터 분석 중...' : '문서 구조 분석 중...';
+      var fullText = '';
+      try {
+        var response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+          body: JSON.stringify({ model: model, stream: true, messages: [{ role: 'system', content: prompts.systemPrompt }, { role: 'user', content: prompts.userPrompt }] })
+        });
+        if (!response.ok) { var errData = await response.json().catch(function() { return {}; }); throw new Error(errData.error && errData.error.message ? errData.error.message : 'API 오류 (' + response.status + ')'); }
+        setLoading(false);
+        var reader = response.body.getReader();
+        var decoder = new TextDecoder();
+        var buf = '';
+        while (true) {
+          var result = await reader.read();
+          if (result.done) break;
+          buf += decoder.decode(result.value, { stream: true });
+          var lines = buf.split('\n');
+          buf = lines.pop();
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (line.startsWith('data: ')) {
+              var data = line.slice(6).trim();
+              if (data === '[DONE]') continue;
+              try { var parsed = JSON.parse(data); var delta = (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) || ''; fullText += delta; box.innerHTML = renderMarkdown(fullText); } catch(e) {}
+            }
+          }
+        }
+        if (isAdmin) { var brandEl = document.createElement('div'); brandEl.style.cssText = 'margin-top:24px;padding:10px 16px;border-top:1px solid rgba(184,151,90,.18);display:flex;align-items:center;gap:8px;'; brandEl.innerHTML = '<span style="font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(184,151,90,.45);">Powered by</span><span style="font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,151,90,.7);font-family:Noto Serif KR,serif;font-weight:500;">DAGAON AI</span>'; box.appendChild(brandEl); }
+        document.getElementById('resultActions').style.display = 'flex';
+        showToast(currentFormat === 'excel' ? '엑셀 AI 생성이 완료되었습니다.' : 'AI 문서 생성이 완료되었습니다.');
+        saveDocHistory(fullText);
+      } catch(err) {
+        setLoading(false);
+        var errMsg = 'API 호출 중 오류가 발생했습니다.';
+        if (err.message && err.message.includes('401')) errMsg = 'API 키가 유효하지 않습니다.';
+        else if (err.message && err.message.includes('429')) errMsg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요.';
+        else if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('network'))) errMsg = '네트워크 오류가 발생했습니다.';
+        else if (err.message) errMsg = err.message;
+        showToast('오류: ' + errMsg);
+        box.innerHTML = '';
+        if (!isAdmin) { saveCredits(getCredits() + (window._lastDocCost || 60)); renderHeaderRight(); }
+      }
+    }
+
+    document.getElementById('btnGenerate').addEventListener('click', function() { wsGenerate(); });
+
+    document.getElementById('btnCopy').addEventListener('click', function() {
+      var box = document.getElementById('resultBox');
+      var text = box.innerText || box.textContent || '';
+      navigator.clipboard.writeText(text).then(function() { showToast('결과가 클립보드에 복사되었습니다.'); }).catch(function() { showToast('복사에 실패했습니다. 직접 선택 후 복사해 주세요.'); });
+    });
+
+    document.getElementById('btnCopyExcel').addEventListener('click', function() {
+      var box = document.getElementById('resultBox');
+      var tables = box.querySelectorAll('.md-table');
+      var tsvParts = [];
+      tables.forEach(function(table) {
+        var rows = table.querySelectorAll('tr');
+        rows.forEach(function(row) { var cells = row.querySelectorAll('th, td'); var cellTexts = []; cells.forEach(function(cell) { cellTexts.push(cell.textContent.trim()); }); tsvParts.push(cellTexts.join('\t')); });
+        tsvParts.push('');
+      });
+      var copyText = tsvParts.length > 0 ? tsvParts.join('\n') : (box.innerText || box.textContent || '');
+      navigator.clipboard.writeText(copyText).then(function() { showToast('엑셀 붙여넣기 형식으로 복사되었습니다. (탭 구분)'); }).catch(function() { showToast('복사에 실패했습니다.'); });
+    });
+
+    switchMode('word');
+
+    // ─── DOC HISTORY (localStorage) ────────────────────────
+    var DOC_HISTORY_KEY = 'dagaon_doc_history';
+    var MAX_DOC_HISTORY = 20;
+
+    function loadDocHistory() {
+      try { return JSON.parse(localStorage.getItem(DOC_HISTORY_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function saveDocHistory(resultText) {
+      var history = loadDocHistory();
+      var topic = (document.getElementById('topicInput') && document.getElementById('topicInput').value.trim()) || '문서';
+      var engine = getActiveEngineNameDoc();
+      var format = getSelectedChip('format') || currentFormat;
+      var docType = getSelectedChip('docType') || '';
+      var length = getSelectedChip('length') || '';
+      var entry = { id: 'doc_' + Date.now(), timestamp: Date.now(), engine: engine, topic: topic, format: format, docType: docType, length: length, result: resultText };
+      history.unshift(entry);
+      if (history.length > MAX_DOC_HISTORY) history = history.slice(0, MAX_DOC_HISTORY);
+      localStorage.setItem(DOC_HISTORY_KEY, JSON.stringify(history));
+      renderDocHistory();
+    }
+    function deleteDocHistoryItem(id) {
+      var history = loadDocHistory().filter(function(e) { return e.id !== id; });
+      localStorage.setItem(DOC_HISTORY_KEY, JSON.stringify(history));
+      renderDocHistory();
+    }
+    function clearDocHistory() {
+      if (!confirm('문서 생성 기록을 모두 삭제하시겠습니까?')) return;
+      localStorage.removeItem(DOC_HISTORY_KEY);
+      renderDocHistory();
+    }
+    function renderDocHistory() {
+      var history = loadDocHistory();
+      var wrap = document.getElementById('docHistoryWrap');
+      var list = document.getElementById('docHistoryList');
+      if (!wrap || !list) return;
+      if (history.length === 0) { wrap.style.display = 'none'; return; }
+      wrap.style.display = '';
+      list.innerHTML = '';
+      history.forEach(function(entry) {
+        var card = document.createElement('div');
+        card.style.cssText = 'border:1px solid rgba(184,151,90,.18);border-radius:5px;padding:10px 12px;background:rgba(255,255,255,.02);';
+        var header = document.createElement('div');
+        header.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;';
+        var ts = new Date(entry.timestamp).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+        header.innerHTML = '<span style="font-size:.6rem;color:rgba(184,151,90,.7);">' + escHtml(entry.engine) + '</span><span style="font-size:.58rem;color:rgba(208,208,208,.35);">' + ts + '</span>';
+        var delBtn = document.createElement('button');
+        delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        delBtn.style.cssText = 'margin-left:auto;background:none;border:none;color:rgba(208,208,208,.3);cursor:pointer;font-size:.65rem;padding:2px 5px;border-radius:2px;';
+        delBtn.onmouseover = function() { this.style.color='#e07070'; };
+        delBtn.onmouseout = function() { this.style.color='rgba(208,208,208,.3)'; };
+        (function(id) { delBtn.onclick = function() { deleteDocHistoryItem(id); }; })(entry.id);
+        header.appendChild(delBtn);
+        card.appendChild(header);
+        var title = document.createElement('div');
+        title.style.cssText = 'font-size:.72rem;color:rgba(208,208,208,.8);margin-bottom:6px;';
+        title.textContent = entry.topic + (entry.docType ? ' (' + entry.docType + ')' : '');
+        card.appendChild(title);
+        var preview = document.createElement('div');
+        preview.style.cssText = 'font-size:.65rem;color:rgba(208,208,208,.35);max-height:40px;overflow:hidden;white-space:pre-wrap;word-break:break-all;';
+        preview.textContent = entry.result ? entry.result.slice(0, 120) + '…' : '';
+        card.appendChild(preview);
+        var restoreBtn = document.createElement('button');
+        restoreBtn.textContent = '불러오기';
+        restoreBtn.style.cssText = 'margin-top:7px;background:none;border:1px solid rgba(184,151,90,.3);border-radius:3px;color:rgba(184,151,90,.7);font-size:.6rem;padding:3px 9px;cursor:pointer;font-family:var(--sans);';
+        restoreBtn.onmouseover = function() { this.style.borderColor='rgba(184,151,90,.6)';this.style.color='var(--gold)'; };
+        restoreBtn.onmouseout = function() { this.style.borderColor='rgba(184,151,90,.3)';this.style.color='rgba(184,151,90,.7)'; };
+        (function(e) {
+          restoreBtn.onclick = function() {
+            var box = document.getElementById('resultBox');
+            var ph = document.getElementById('resultPlaceholder');
+            if (ph) ph.remove();
+            box.innerHTML = renderMarkdown(e.result);
+            document.getElementById('resultActions').style.display = 'flex';
+            showToast('이전 기록을 불러왔습니다.');
+          };
+        })(entry);
+        card.appendChild(restoreBtn);
+        list.appendChild(card);
+      });
+    }
+
+    // ─── ENGINE SAVE/RESTORE ────────────────────────────────
+    (function restoreDocEngine() {
+      var savedEng = localStorage.getItem('dagaon_doc_engine');
+      if (savedEng) {
+        var items = document.querySelectorAll('.eng-item');
+        for (var i = 0; i < items.length; i++) {
+          var n = items[i].dataset.eng;
+          if (n === savedEng && !items[i].classList.contains('locked')) {
+            selectEngine(items[i]);
+            break;
+          }
+        }
+      }
+    })();
+
+    // ─── INIT: restore history ─────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() { renderDocHistory(); });
+    renderDocHistory();
+
+    // ─── ENGINE OPTIONS ───────────────────────────────
+    var ENGINE_OPTIONS_DOC = {
+      'GPT-4o': [
+        { type: 'chip', label: '문서 구조', key: 'struct', values: ['자동', '수동'], default: '자동' },
+        { type: 'toggle', label: '각주 포함', key: 'footnote', default: false },
+        { type: 'toggle', label: '목차 자동생성', key: 'toc', default: true },
+      ],
+      'GPT-4o Mini': [
+        { type: 'chip', label: '속도 모드', key: 'speed', values: ['빠름', '표준'], default: '빠름' },
+        { type: 'toggle', label: '요약 포함', key: 'summary', default: false },
+      ],
+      'Gemini 2.5 Pro': [
+        { type: 'toggle', label: '웹 검색 참고', key: 'websearch', default: true },
+        { type: 'toggle', label: '팩트체크', key: 'factcheck', default: false },
+        { type: 'toggle', label: '출처 표기', key: 'cite', default: false },
+      ],
+      'Claude 4 Sonnet': [
+        { type: 'chip', label: '논리 구조', key: 'logic', values: ['연역', '귀납', '비교분석'], default: '연역' },
+        { type: 'slider', label: '톤 세밀 조정', key: 'tone_level', min: 1, max: 10, step: 1, default: 5 },
+      ],
+      'Llama 3.1': [
+        { type: 'slider', label: '창의성', key: 'creativity', min: 0, max: 100, step: 5, default: 50 },
+        { type: 'toggle', label: '반복 제거', key: 'dedup', default: true },
+      ],
+    };
+    var currentDocEngOpts = {};
+
+    function renderEngineOptions(engineName) {
+      var panel = document.getElementById('engOptionsPanel');
+      var body = document.getElementById('engOptionsBody');
+      var titleEl = document.getElementById('engOptionsTitleText');
+      var opts = ENGINE_OPTIONS_DOC[engineName];
+      if (!opts || opts.length === 0) { panel.style.display = 'none'; return; }
+      panel.style.display = '';
+      titleEl.textContent = engineName + ' 설정';
+      body.innerHTML = '';
+      currentDocEngOpts = {};
+      opts.forEach(function(opt) {
+        currentDocEngOpts[opt.key] = opt.default !== undefined ? opt.default : (opt.values ? opt.values[0] : false);
+        var row = document.createElement('div');
+        row.className = 'opt-row';
+        if (opt.type === 'chip') {
+          row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-chips" data-key="' + opt.key + '"></div>';
+          body.appendChild(row);
+          var chipsEl = row.querySelector('.opt-chips');
+          opt.values.forEach(function(v) {
+            var btn = document.createElement('button');
+            btn.className = 'opt-chip' + (v === (opt.default || opt.values[0]) ? ' selected' : '');
+            btn.textContent = v;
+            (function(key, val, chips) {
+              btn.onclick = function() {
+                chips.querySelectorAll('.opt-chip').forEach(function(c) { c.classList.remove('selected'); });
+                btn.classList.add('selected');
+                currentDocEngOpts[key] = val;
+              };
+            })(opt.key, v, chipsEl);
+            chipsEl.appendChild(btn);
+          });
+        } else if (opt.type === 'toggle') {
+          var id = 'opt_toggle_' + opt.key;
+          row.innerHTML = '<div class="opt-toggle-row"><span class="opt-toggle-label">' + opt.label + '</span><label class="opt-toggle"><input type="checkbox" id="' + id + '"' + (opt.default ? ' checked' : '') + '><span class="opt-toggle-track"></span><span class="opt-toggle-thumb"></span></label></div>';
+          body.appendChild(row);
+          (function(key) { row.querySelector('input').onchange = function() { currentDocEngOpts[key] = this.checked; }; })(opt.key);
+        } else if (opt.type === 'slider') {
+          var sid = 'opt_slider_' + opt.key;
+          var val = opt.default !== undefined ? opt.default : opt.min;
+          row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-slider-wrap"><input class="opt-slider" type="range" id="' + sid + '" min="' + opt.min + '" max="' + opt.max + '" step="' + (opt.step || 1) + '" value="' + val + '"><span class="opt-slider-val" id="' + sid + '_val">' + val + '</span></div>';
+          body.appendChild(row);
+          (function(key) { var inp = row.querySelector('input'); var valEl = row.querySelector('.opt-slider-val'); inp.oninput = function() { valEl.textContent = this.value; currentDocEngOpts[key] = this.value; }; })(opt.key);
+        }
+      });
+    }
+
+    function toggleEngOptions() {
+      document.getElementById('engOptionsPanel').classList.toggle('collapsed');
+    }
+
+    function getEngineOptionsPromptDoc() {
+      var parts = [];
+      Object.keys(currentDocEngOpts).forEach(function(k) {
+        var v = currentDocEngOpts[k];
+        if (v !== false && v !== '' && v !== null) {
+          parts.push('[' + k + ': ' + v + ']');
+        }
+      });
+      return parts.length ? ' ' + parts.join(' ') : '';
+    }
+
+    // Init default engine options
+    renderEngineOptions('GPT-4o');
+
+    (function initEngineLock() {
+      var TIER_ORDER = { free: 0, basic: 2, standard: 2, pro: 3, enterprise: 3 };
+      var plan = localStorage.getItem('dagaon_plan') || 'free';
+      var isAdm = localStorage.getItem('dagaon_admin') === '1';
+      var userLevel = isAdm ? 99 : (TIER_ORDER[plan] !== undefined ? TIER_ORDER[plan] : 0);
+      document.querySelectorAll('.eng-item, .model-item, .engine-item').forEach(function(item) {
+        var tier = item.getAttribute('data-tier');
+        if (!tier) return;
+        var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+        if (userLevel < required) {
+          item.classList.add('locked');
+          var nameEl = item.querySelector('.eng-name, .model-name, .engine-name');
+          if (nameEl && !nameEl.querySelector('.eng-lock')) { var lockSpan = document.createElement('span'); lockSpan.className = 'eng-lock'; lockSpan.innerHTML = '<i class="fa-solid fa-lock"></i>'; nameEl.appendChild(lockSpan); }
+          var descEl = item.querySelector('.eng-desc, .model-desc, .engine-desc');
+          if (descEl) { descEl.textContent = (required >= 3) ? 'Pro 플랜부터' : 'Standard 플랜부터'; }
+        }
+      });
+      window._showEngLockToast = function(tier) {
+        var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+        var msg = (required >= 3) ? '이 엔진은 Pro 플랜부터 사용 가능합니다' : '이 엔진은 Standard 플랜부터 사용 가능합니다';
+        var toast = document.getElementById('engLockToast');
+        if (!toast) { toast = document.createElement('div'); toast.id = 'engLockToast'; toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(184,151,90,.4);color:#d0c090;font-size:.78rem;padding:10px 22px;border-radius:6px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap;'; document.body.appendChild(toast); }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._t);
+        toast._t = setTimeout(function() { toast.style.opacity = '0'; }, 2500);
+      };
+    })();
+  </script>
+</body>
+</html>

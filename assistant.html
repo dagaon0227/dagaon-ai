@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAGAON AI — AI 비서</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Marked (markdown parser) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    /* ─────────────────────────────────────────
+       ROOT & RESET
+    ───────────────────────────────────────── */
+    :root {
+      --black:    #050505;
+      --deep:     #0a0a0a;
+      --surface:  #111111;
+      --surface2: #1a1a1a;
+      --border:   rgba(255,255,255,0.07);
+      --white:    #ffffff;
+      --silver:   #c8c8c8;
+      --gold:     #b8975a;
+      --gold-lt:  #d4af70;
+      --text:     #d0d0d0;
+      --serif:    'Noto Serif KR', serif;
+      --sans:     'Noto Sans KR', sans-serif;
+      --sidebar-w: 260px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; height: 100%; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      font-weight: 400;
+      height: 100%;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    /* ── Scrollbar ─────────────────────────── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(184,151,90,.3); border-radius: 2px; }
+
+    /* ── Selection ─────────────────────────── */
+    ::selection { background: var(--gold); color: var(--black); }
+
+    /* ─────────────────────────────────────────
+       LAYOUT
+    ───────────────────────────────────────── */
+    #app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─────────────────────────────────────────
+       SIDEBAR
+    ───────────────────────────────────────── */
+    #sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--deep);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 20px 18px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; margin-bottom: 16px;
+    }
+    .sidebar-logo-text {
+      font-family: var(--serif);
+      font-size: .82rem;
+      letter-spacing: .18em;
+      color: var(--white);
+      font-weight: 400;
+    }
+    .sidebar-logo-text span { color: var(--gold); }
+
+    .btn-new-chat {
+      width: 100%;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      background: transparent;
+      border: 1px solid rgba(184,151,90,.35);
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: .76rem;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .btn-new-chat:hover { background: rgba(184,151,90,.07); border-color: var(--gold); }
+
+    .sidebar-section-title {
+      font-size: .58rem;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: rgba(184,151,90,.55);
+      padding: 16px 18px 8px;
+      flex-shrink: 0;
+    }
+
+    /* Engine Dropdown */
+    .engine-dropdown { padding: 8px 10px; position: relative; flex-shrink: 0; }
+    .engine-dd-trigger {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; background: #111;
+      border: 1px solid rgba(184,151,90,.45); border-radius: 6px;
+      cursor: pointer; transition: border-color .2s, background .2s; user-select: none;
+    }
+    .engine-dd-trigger:hover { border-color: rgba(184,151,90,.7); background: rgba(184,151,90,.04); }
+    .engine-dd-arrow {
+      margin-left: auto; font-size: .6rem;
+      color: rgba(184,151,90,.7); transition: transform .25s; flex-shrink: 0;
+    }
+    .engine-dropdown.open .engine-dd-arrow { transform: rotate(180deg); }
+    .engine-dd-menu {
+      overflow: hidden; max-height: 0;
+      transition: max-height .3s ease;
+      background: #0e0e0e;
+      border: 1px solid rgba(184,151,90,.25); border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+    .engine-dropdown.open .engine-dd-menu { max-height: 440px; }
+    .engine-dd-inner { padding: 4px 6px 6px; }
+    .engine-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 9px; cursor: pointer;
+      border: 1px solid transparent; border-radius: 4px;
+      margin-bottom: 2px; transition: background .15s, border-color .15s;
+      position: relative;
+    }
+    .engine-item:hover { background: rgba(255,255,255,.04); }
+    .engine-item.active { background: rgba(184,151,90,.08); border-color: rgba(184,151,90,.4); }
+    .engine-item.locked { opacity: 0.45; }
+    .engine-item.locked .eng-lock { display: inline-flex; align-items: center; color: #888; margin-left: 4px; font-size: .58rem; }
+    .engine-item:not(.locked) .eng-lock { display: none; }
+    .engine-badge {
+      width: 30px; height: 30px; border-radius: 7px;
+      display: grid; place-items: center;
+      font-size: .68rem; font-weight: 700;
+      font-family: var(--serif); flex-shrink: 0; letter-spacing: .04em;
+    }
+    .badge-gpt   { background: rgba(16,163,127,.18); color: #10a37f; }
+    .badge-mini  { background: rgba(16,163,127,.12); color: rgba(16,163,127,.8); }
+    .badge-gem   { background: rgba(66,133,244,.18); color: #4285f4; }
+    .badge-claude{ background: rgba(204,120,92,.18); color: #cc785c; }
+    .badge-llama { background: rgba(100,149,237,.18); color: #6495ed; }
+    .engine-info { flex: 1; min-width: 0; }
+    .engine-name {
+      font-size: .78rem; color: var(--white); font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .engine-desc {
+      font-size: .62rem; color: rgba(208,208,208,.45); margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .engine-new-badge {
+      font-size: .48rem; letter-spacing: .1em; text-transform: uppercase;
+      background: var(--gold); color: var(--black);
+      padding: 2px 5px; font-weight: 700; flex-shrink: 0; border-radius: 2px;
+    }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .user-info {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(184,151,90,.15);
+      border: 1px solid rgba(184,151,90,.3);
+      display: grid; place-items: center;
+      font-size: .7rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .user-name {
+      font-size: .78rem;
+      color: var(--text);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-plan-badge {
+      font-size: .55rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      font-weight: 700;
+    }
+    .badge-unlimited {
+      background: var(--gold);
+      color: var(--black);
+    }
+    .badge-count {
+      background: rgba(255,255,255,.08);
+      color: rgba(208,208,208,.7);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    /* ─────────────────────────────────────────
+       MAIN CHAT AREA
+    ───────────────────────────────────────── */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    /* Chat header */
+    #chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+      background: var(--deep);
+    }
+    .chat-engine-name {
+      font-family: var(--serif);
+      font-size: 1rem;
+      color: var(--white);
+      font-weight: 400;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .chat-engine-name i {
+      color: var(--gold);
+      font-size: .85rem;
+    }
+    #chat-plan-badge {
+      font-size: .6rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      font-weight: 700;
+    }
+
+    /* Messages area */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .msg-row {
+      padding: 0 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 14px;
+    }
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: .8rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .msg-avatar.ai {
+      background: rgba(184,151,90,.12);
+      border: 1px solid rgba(184,151,90,.25);
+      color: var(--gold);
+    }
+    .msg-avatar.user-av {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: rgba(208,208,208,.7);
+    }
+
+    .msg-bubble {
+      max-width: 72%;
+      padding: 14px 18px;
+      line-height: 1.85;
+      font-size: .88rem;
+      font-weight: 400;
+    }
+    .msg-bubble.ai {
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 0 12px 12px 12px;
+      color: var(--text);
+    }
+    .msg-bubble.user {
+      background: rgba(184,151,90,.1);
+      border: 1px solid rgba(184,151,90,.22);
+      border-radius: 12px 0 12px 12px;
+      color: var(--white);
+    }
+
+    /* Markdown styles inside AI bubble */
+    .msg-bubble.ai strong { color: var(--white); }
+    .msg-bubble.ai em { color: var(--gold-lt); }
+    .msg-bubble.ai code {
+      background: rgba(255,255,255,.07);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: .82rem;
+      font-family: 'Courier New', monospace;
+      color: #e8d5a3;
+    }
+    .msg-bubble.ai pre {
+      background: rgba(0,0,0,.4);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 6px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    .msg-bubble.ai pre code {
+      background: none;
+      padding: 0;
+      font-size: .82rem;
+      color: #d4d4d4;
+    }
+    .msg-bubble.ai ul, .msg-bubble.ai ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    .msg-bubble.ai li { margin-bottom: 4px; }
+    .msg-bubble.ai p { margin-bottom: 8px; }
+    .msg-bubble.ai p:last-child { margin-bottom: 0; }
+    .msg-bubble.ai h1, .msg-bubble.ai h2, .msg-bubble.ai h3 {
+      font-family: var(--serif);
+      color: var(--white);
+      margin: 10px 0 6px;
+    }
+    .msg-bubble.ai blockquote {
+      border-left: 2px solid var(--gold);
+      padding-left: 12px;
+      color: rgba(208,208,208,.7);
+      margin: 8px 0;
+    }
+
+    /* Typing dots */
+    .typing-dots {
+      display: flex; gap: 5px; align-items: center;
+      padding: 4px 2px;
+    }
+    .typing-dots span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: .5;
+      animation: typingPulse 1.2s ease-in-out infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes typingPulse {
+      0%,100% { opacity: .25; transform: translateY(0); }
+      50%      { opacity: .85; transform: translateY(-3px); }
+    }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+      gap: 16px;
+    }
+    .empty-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(184,151,90,.08);
+      border: 1px solid rgba(184,151,90,.2);
+      display: grid; place-items: center;
+      font-size: 1.6rem;
+      color: var(--gold);
+    }
+    .empty-title {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      color: var(--white);
+      font-weight: 300;
+    }
+    .empty-sub {
+      font-size: .84rem;
+      color: rgba(208,208,208,.5);
+      max-width: 340px;
+      line-height: 1.8;
+    }
+    .suggestion-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .suggestion-chip {
+      padding: 8px 16px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: transparent;
+      color: rgba(208,208,208,.7);
+      font-family: var(--sans);
+      font-size: .76rem;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+      border-radius: 20px;
+    }
+    .suggestion-chip:hover {
+      border-color: rgba(184,151,90,.5);
+      color: var(--gold);
+      background: rgba(184,151,90,.05);
+    }
+
+    /* Image preview in user message */
+    .msg-image {
+      max-width: 260px;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* ─────────────────────────────────────────
+       INPUT AREA
+    ───────────────────────────────────────── */
+    #input-area {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--deep);
+    }
+    .input-wrapper {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color .2s;
+    }
+    .input-wrapper:focus-within {
+      border-color: rgba(184,151,90,.5);
+    }
+
+    /* File preview strip */
+    #file-preview {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    #file-preview.has-file { display: flex; }
+    .preview-item {
+      position: relative;
+      display: inline-flex;
+    }
+    .preview-img {
+      width: 52px; height: 52px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .preview-remove {
+      position: absolute;
+      top: -5px; right: -5px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: rgba(0,0,0,.8);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #fff;
+      font-size: .5rem;
+      display: grid; place-items: center;
+      cursor: pointer;
+    }
+    .preview-doc-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: .7rem;
+      color: rgba(208,208,208,.7);
+      max-width: 180px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    #msg-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .9rem;
+      resize: none;
+      line-height: 1.6;
+      min-height: 28px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    #msg-input::placeholder { color: rgba(208,208,208,.3); }
+
+    .input-actions {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .input-left-actions { display: flex; gap: 6px; }
+
+    .action-btn {
+      width: 32px; height: 32px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px;
+      color: rgba(208,208,208,.5);
+      cursor: pointer;
+      display: grid; place-items: center;
+      font-size: .82rem;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .action-btn:hover {
+      border-color: rgba(184,151,90,.4);
+      color: var(--gold);
+      background: rgba(184,151,90,.05);
+    }
+
+    #send-btn {
+      width: 36px; height: 36px;
+      background: var(--gold);
+      border: none;
+      border-radius: 8px;
+      color: var(--black);
+      cursor: pointer;
+      display: grid; place-items: center;
+      font-size: .88rem;
+      transition: background .2s, transform .15s;
+    }
+    #send-btn:hover { background: var(--gold-lt); transform: scale(1.05); }
+    #send-btn:disabled {
+      background: rgba(184,151,90,.3);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .input-hint {
+      font-size: .65rem;
+      color: rgba(208,208,208,.3);
+      text-align: center;
+      margin-top: 8px;
+      letter-spacing: .04em;
+    }
+
+    /* hidden file input */
+    #file-input { display: none; }
+
+    /* ─────────────────────────────────────────
+       TOAST
+    ───────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      background: #0d0d0d;
+      border: 1px solid rgba(184,151,90,.4);
+      padding: 14px 28px;
+      color: var(--gold);
+      font-size: .82rem;
+      letter-spacing: .06em;
+      z-index: 9999;
+      animation: toastIn .35s cubic-bezier(.16,1,.3,1) both;
+      min-width: 240px;
+      text-align: center;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #sidebar.mobile-open { display: flex; position: fixed; z-index: 200; height: 100vh; }
+      #mobile-menu-btn { display: flex; }
+    }
+
+    #mobile-menu-btn {
+      display: none;
+      width: 36px; height: 36px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      place-items: center;
+      font-size: .9rem;
+    }
+
+    /* ═══════════════════════════════════════
+       ENGINE OPTIONS PANEL
+    ═══════════════════════════════════════ */
+    .eng-options-panel {
+      margin: 0 10px 8px;
+      background: rgba(184,151,90,.04);
+      border: 1px solid rgba(184,151,90,.2);
+      border-radius: 7px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .eng-options-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .2s;
+    }
+    .eng-options-header:hover { background: rgba(184,151,90,.06); }
+    .eng-options-title {
+      flex: 1;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .eng-options-arrow {
+      font-size: .55rem;
+      color: rgba(184,151,90,.6);
+      transition: transform .25s;
+    }
+    .eng-options-panel.collapsed .eng-options-arrow { transform: rotate(-90deg); }
+    .eng-options-body {
+      padding: 8px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid rgba(184,151,90,.12);
+    }
+    .eng-options-panel.collapsed .eng-options-body { display: none; }
+    .opt-row { display: flex; flex-direction: column; gap: 5px; }
+    .opt-label {
+      font-size: .56rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(208,208,208,.45);
+    }
+    .opt-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .opt-chip {
+      padding: 4px 10px;
+      border: 1px solid rgba(184,151,90,.25);
+      border-radius: 3px;
+      background: transparent;
+      color: rgba(208,208,208,.55);
+      font-family: var(--sans);
+      font-size: .65rem;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .opt-chip:hover { border-color: rgba(184,151,90,.5); color: var(--gold); }
+    .opt-chip.selected {
+      background: rgba(184,151,90,.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .opt-toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .opt-toggle-label { font-size: .68rem; color: rgba(208,208,208,.6); }
+    .opt-toggle {
+      position: relative;
+      width: 34px; height: 18px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .opt-toggle input { opacity: 0; width: 0; height: 0; }
+    .opt-toggle-track {
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.1);
+      border-radius: 18px;
+      transition: background .2s;
+    }
+    .opt-toggle input:checked + .opt-toggle-track { background: var(--gold); }
+    .opt-toggle-thumb {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .opt-toggle input:checked ~ .opt-toggle-thumb { transform: translateX(16px); }
+    .opt-slider-wrap { display: flex; align-items: center; gap: 8px; }
+    .opt-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 3px;
+      background: rgba(255,255,255,.12);
+      border-radius: 2px;
+      outline: none;
+    }
+    .opt-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+    }
+    .opt-slider-val {
+      font-size: .65rem;
+      color: var(--gold);
+      min-width: 28px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<!--
+  PRODUCTION NOTE:
+  직접 브라우저에서 OpenAI API를 호출합니다.
+  프로덕션 환경에서는 API 키 노출을 방지하기 위해
+  반드시 서버 측 프록시를 통해 API를 호출하세요.
+  예: /api/chat 엔드포인트를 만들어 API 키를 서버에서만 보관.
+-->
+
+<div id="app">
+
+  <!-- ═══════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════ -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-logo">
+        <span class="sidebar-logo-text">DAGAON <span>AI</span></span>
+      </a>
+      <button class="btn-new-chat" id="newChatBtn">
+        <i class="fa-solid fa-plus" style="font-size:.72rem;"></i>
+        새 대화 시작
+      </button>
+    </div>
+
+    <div class="sidebar-section-title">AI 엔진 선택</div>
+
+    <div class="engine-dropdown" id="engineDropdown">
+      <div class="engine-dd-trigger" onclick="toggleEngineDropdown()">
+        <div class="engine-badge badge-gpt" id="ddBadge">G4</div>
+        <div class="engine-info">
+          <div class="engine-name" id="ddName">GPT-4o</div>
+          <div class="engine-desc" id="ddDesc">가장 똑똑한 범용 AI</div>
+        </div>
+        <i class="fa-solid fa-chevron-down engine-dd-arrow"></i>
+      </div>
+      <div class="engine-dd-menu">
+        <div class="engine-dd-inner">
+          <div class="engine-item active" data-engine="gpt-4o" data-tier="basic" data-badge-class="badge-gpt" data-badge-text="G4" onclick="selectEngine(this)">
+            <div class="engine-badge badge-gpt">G4</div>
+            <div class="engine-info">
+              <div class="engine-name">GPT-4o</div>
+              <div class="engine-desc">가장 똑똑한 범용 AI</div>
+            </div>
+          </div>
+          <div class="engine-item" data-engine="gpt-4o-mini" data-tier="basic" data-badge-class="badge-mini" data-badge-text="GM" onclick="selectEngine(this)">
+            <div class="engine-badge badge-mini">GM</div>
+            <div class="engine-info">
+              <div class="engine-name">GPT-4o Mini</div>
+              <div class="engine-desc">빠르고 경제적인 경량 모델</div>
+            </div>
+            <span class="engine-new-badge">NEW</span>
+          </div>
+          <div class="engine-item" data-engine="gpt-4o" data-tier="basic" data-badge-class="badge-gem" data-badge-text="G" onclick="selectEngine(this)">
+            <div class="engine-badge badge-gem">G</div>
+            <div class="engine-info">
+              <div class="engine-name">Gemini 2.5 Pro</div>
+              <div class="engine-desc">Google의 멀티모달 AI</div>
+            </div>
+            <span class="engine-new-badge">NEW</span>
+          </div>
+          <div class="engine-item" data-engine="gpt-4o" data-tier="standard" data-badge-class="badge-claude" data-badge-text="C" onclick="selectEngine(this)">
+            <div class="engine-badge badge-claude">C</div>
+            <div class="engine-info">
+              <div class="engine-name">Claude 4 Sonnet</div>
+              <div class="engine-desc">Anthropic의 정교한 추론 AI</div>
+            </div>
+            <span class="engine-new-badge">NEW</span>
+          </div>
+          <div class="engine-item" data-engine="gpt-4o" data-tier="pro" data-badge-class="badge-llama" data-badge-text="L" onclick="selectEngine(this)">
+            <div class="engine-badge badge-llama">L</div>
+            <div class="engine-info">
+              <div class="engine-name">Llama 3.1 405B</div>
+              <div class="engine-desc">Meta의 오픈소스 대형 모델</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engine Options Panel -->
+    <div id="engOptionsPanel" class="eng-options-panel" style="display:none;">
+      <div class="eng-options-header" onclick="toggleEngOptions()">
+        <i class="fa-solid fa-sliders" style="font-size:.58rem;color:var(--gold);"></i>
+        <span class="eng-options-title" id="engOptionsTitleText">엔진 설정</span>
+        <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
+      </div>
+      <div class="eng-options-body" id="engOptionsBody"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+        <span class="user-name" id="sidebarUsername">사용자</span>
+        <span class="user-plan-badge badge-unlimited" id="sidebarPlanBadge">UNLIMITED</span>
+      </div>
+    </div>
+
+    <!-- Chat History -->
+    <div style="padding:8px 0 4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 4px;">
+        <span style="font-size:.57rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,151,90,.5);">이전 대화</span>
+        <button id="assistantClearBtn" onclick="clearAssistantHistory()" style="display:none;background:none;border:1px solid rgba(220,80,80,.25);border-radius:3px;color:rgba(220,80,80,.45);font-size:.57rem;padding:2px 6px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-trash-can"></i> 전체 삭제</button>
+      </div>
+      <div id="assistantHistoryList" style="max-height:220px;overflow-y:auto;"></div>
+      <div id="assistantHistoryEmpty" style="padding:6px 16px;font-size:.65rem;color:rgba(208,208,208,.2);font-style:italic;">아직 대화 내역이 없습니다.</div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════
+       MAIN
+  ═══════════════════════════════════════ -->
+  <div id="main">
+
+    <!-- Header -->
+    <div id="chat-header">
+      <div class="chat-engine-name">
+        <button id="mobile-menu-btn" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <i class="fa-solid fa-robot"></i>
+        <span id="activeEngineName">GPT-4o</span>
+      </div>
+      <span id="chat-plan-badge" class="user-plan-badge badge-unlimited">UNLIMITED</span>
+    </div>
+
+    <!-- Messages -->
+    <div id="messages">
+      <!-- empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon"><i class="fa-solid fa-robot"></i></div>
+        <div class="empty-title">DAGAON AI 비서</div>
+        <div class="empty-sub">
+          공간 디자인, 인테리어, 건축, 마케팅 등 어떤 질문이든
+          전문적으로 답변해 드립니다.
+        </div>
+        <div class="suggestion-chips">
+          <button class="suggestion-chip" onclick="sendSuggestion('현대적인 거실 인테리어 아이디어를 알려줘')">💡 거실 인테리어 아이디어</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('공간 제안서 작성 팁을 알려줘')">📄 제안서 작성 팁</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('SNS 마케팅 카피라이팅 방법을 알려줘')">✍️ SNS 카피 작성법</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('미니멀 인테리어의 핵심 원칙은?')">🏠 미니멀 인테리어 원칙</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div id="input-area">
+      <div class="input-wrapper">
+        <div id="file-preview"></div>
+        <textarea
+          id="msg-input"
+          placeholder="메시지를 입력하세요... (Enter로 전송, Shift+Enter로 줄바꿈)"
+          rows="1"
+        ></textarea>
+        <div class="input-actions">
+          <div class="input-left-actions">
+            <button class="action-btn" id="attachBtn" title="파일 첨부">
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+          </div>
+          <button id="send-btn" title="전송">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      <div class="input-hint">Enter로 전송 · Shift+Enter로 줄바꿈 · 이미지 첨부 시 Vision 모드로 분석</div>
+    </div>
+  </div>
+</div>
+
+<!-- hidden file input -->
+<input type="file" id="file-input" accept="image/*,.pdf,.txt,.doc,.docx" />
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+// PRODUCTION NOTE: API 키를 클라이언트에 노출하지 마세요.
+// 프로덕션에서는 서버 측 프록시를 사용하세요.
+const OPENAI_API_KEY = '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';
+const SYSTEM_PROMPT = '당신은 DAGAON AI의 전문 AI 비서입니다. 공간 디자인, 인테리어, 건축, 마케팅 등 다양한 분야에 대해 전문적이고 친절하게 답변합니다. 한국어로 답변하세요.';
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let messages = [];          // [{role, content}]
+let currentModel = 'gpt-4o';
+let currentDisplayName = 'GPT-4o';
+let isStreaming = false;
+let attachedFile = null;    // { type: 'image'|'doc', name, base64, mime }
+let isAdmin = false;
+let isMember = false;
+
+// ═══════════════════════════════════════════════
+//  AUTH CHECK
+// ═══════════════════════════════════════════════
+(function checkAuth() {
+  const adminFlag  = localStorage.getItem('dagaon_admin');
+  const userRaw    = localStorage.getItem('dagaon_user');
+
+  if (adminFlag === '1') {
+    isAdmin = true;
+    updateUserUI('관리자', true, null);
+    return;
+  }
+  if (userRaw) {
+    try {
+      const u = JSON.parse(userRaw);
+      isMember = true;
+      const credits = parseInt(localStorage.getItem('dagaon_credits') || '0', 10);
+      updateUserUI(u.name || '회원', false, credits);
+      return;
+    } catch(e) {}
+  }
+  // not logged in → redirect
+  window.location.href = 'index.html';
+})();
+
+function getCredits() {
+  return Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10));
+}
+function saveCredits(v) { localStorage.setItem('dagaon_credits', String(Math.max(0, v))); }
+
+function updateUserUI(name, unlimited, credits) {
+  document.getElementById('sidebarUsername').textContent = name;
+  const badge = document.getElementById('sidebarPlanBadge');
+  const headerBadge = document.getElementById('chat-plan-badge');
+  if (unlimited) {
+    badge.textContent = 'UNLIMITED';
+    badge.className = 'user-plan-badge badge-unlimited';
+    headerBadge.textContent = 'UNLIMITED';
+    headerBadge.className = 'user-plan-badge badge-unlimited';
+  } else {
+    badge.textContent = `${credits} 크레딧`;
+    badge.className = 'user-plan-badge badge-count';
+    headerBadge.textContent = `${credits} 크레딧`;
+    headerBadge.className = 'user-plan-badge badge-count';
+  }
+}
+
+function refreshUsageBadge() {
+  if (isAdmin) return;
+  const credits = getCredits();
+  const userRaw = localStorage.getItem('dagaon_user');
+  const name = userRaw ? (JSON.parse(userRaw).name || '회원') : '회원';
+  updateUserUI(name, false, credits);
+}
+
+// ═══════════════════════════════════════════════
+//  ENGINE SELECTION
+// ═══════════════════════════════════════════════
+// Engine name → actual OpenAI model mapping
+const ENGINE_MODEL_MAP = {
+  'GPT-4o':          'gpt-4o',
+  'GPT-4o Mini':     'gpt-4o-mini',
+  'Gemini 2.5 Pro':  'gpt-4o',
+  'Claude 4 Sonnet': 'gpt-4o',
+  'Llama 3.1 405B':  'gpt-4o',
+};
+
+function selectEngine(el) {
+  if (el.classList.contains('locked')) { window._showEngLockToast && window._showEngLockToast(el.getAttribute('data-tier')); return; }
+  document.querySelectorAll('.engine-item').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  currentModel = el.dataset.engine;
+  const nameEl = el.querySelector('.engine-name');
+  const descEl = el.querySelector('.engine-desc');
+  const badgeEl = el.querySelector('.engine-badge');
+  currentDisplayName = nameEl ? nameEl.textContent : 'GPT-4o';
+  currentModel = ENGINE_MODEL_MAP[currentDisplayName] || 'gpt-4o';
+  document.getElementById('activeEngineName').textContent = currentDisplayName;
+  // Update dropdown trigger
+  const ddName = document.getElementById('ddName');
+  const ddDesc = document.getElementById('ddDesc');
+  const ddBadge = document.getElementById('ddBadge');
+  if (ddName) ddName.textContent = currentDisplayName;
+  if (ddDesc && descEl) ddDesc.textContent = descEl.textContent;
+  if (ddBadge && badgeEl) {
+    ddBadge.className = 'engine-badge ' + (el.dataset.badgeClass || badgeEl.className.replace('engine-badge','').trim());
+    ddBadge.textContent = el.dataset.badgeText || badgeEl.textContent;
+  }
+  const dd = document.getElementById('engineDropdown');
+  if (dd) dd.classList.remove('open');
+  renderEngineOptions(currentDisplayName);
+  localStorage.setItem('dagaon_assistant_engine', currentDisplayName);
+}
+
+function toggleEngineDropdown() {
+  const dd = document.getElementById('engineDropdown');
+  if (dd) dd.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('engineDropdown');
+  if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════
+//  NEW CHAT
+// ═══════════════════════════════════════════════
+document.getElementById('newChatBtn').addEventListener('click', () => {
+  messages = [];
+  attachedFile = null;
+  clearFilePreview();
+  const container = document.getElementById('messages');
+  // Remove all message rows
+  container.querySelectorAll('.msg-row').forEach(el => el.remove());
+  // Show empty state
+  document.getElementById('emptyState').style.display = '';
+  document.getElementById('msg-input').value = '';
+  autoResize();
+});
+
+// ═══════════════════════════════════════════════
+//  FILE ATTACHMENT
+// ═══════════════════════════════════════════════
+document.getElementById('attachBtn').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+
+  const isImage = file.type.startsWith('image/');
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const base64 = ev.target.result.split(',')[1];
+    attachedFile = {
+      type: isImage ? 'image' : 'doc',
+      name: file.name,
+      base64,
+      mime: file.type,
+      dataUrl: ev.target.result,
+    };
+    showFilePreview(attachedFile);
+  };
+  reader.readAsDataURL(file);
+});
+
+function showFilePreview(f) {
+  const preview = document.getElementById('file-preview');
+  preview.innerHTML = '';
+  preview.classList.add('has-file');
+
+  const item = document.createElement('div');
+  item.className = 'preview-item';
+
+  if (f.type === 'image') {
+    const img = document.createElement('img');
+    img.src = f.dataUrl;
+    img.className = 'preview-img';
+    item.appendChild(img);
+  } else {
+    const chip = document.createElement('div');
+    chip.className = 'preview-doc-chip';
+    chip.innerHTML = `<i class="fa-solid fa-file-lines"></i>${f.name}`;
+    item.appendChild(chip);
+  }
+
+  const removeBtn = document.createElement('div');
+  removeBtn.className = 'preview-remove';
+  removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+  removeBtn.onclick = clearFilePreview;
+  item.appendChild(removeBtn);
+  preview.appendChild(item);
+}
+
+function clearFilePreview() {
+  attachedFile = null;
+  const preview = document.getElementById('file-preview');
+  preview.innerHTML = '';
+  preview.classList.remove('has-file');
+}
+
+// ═══════════════════════════════════════════════
+//  TEXTAREA AUTO-RESIZE
+// ═══════════════════════════════════════════════
+const textarea = document.getElementById('msg-input');
+
+function autoResize() {
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.min(textarea.scrollHeight, 160) + 'px';
+}
+textarea.addEventListener('input', autoResize);
+
+// ═══════════════════════════════════════════════
+//  KEYBOARD HANDLER
+// ═══════════════════════════════════════════════
+textarea.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// ═══════════════════════════════════════════════
+//  SEND BUTTON
+// ═══════════════════════════════════════════════
+document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+function sendSuggestion(text) {
+  textarea.value = text;
+  autoResize();
+  sendMessage();
+}
+
+// ═══════════════════════════════════════════════
+//  SEND MESSAGE
+// ═══════════════════════════════════════════════
+async function sendMessage() {
+  if (isStreaming) return;
+
+  const text = textarea.value.trim();
+  if (!text && !attachedFile) return;
+
+  // Usage limit check for members
+  if (isMember && !isAdmin) {
+    const credits = getCredits();
+    if (credits <= 0) {
+      showToast('크레딧이 부족합니다. 플랜을 업그레이드하세요.');
+      return;
+    }
+  }
+
+  // Hide empty state
+  document.getElementById('emptyState').style.display = 'none';
+
+  // Build user message content
+  let userContent;
+  if (attachedFile && attachedFile.type === 'image') {
+    userContent = [
+      { type: 'image_url', image_url: { url: `data:${attachedFile.mime};base64,${attachedFile.base64}`, detail: 'auto' } },
+      { type: 'text', text: text || '이 이미지를 분석해주세요.' },
+    ];
+  } else {
+    userContent = text;
+  }
+
+  const userMsg = { role: 'user', content: userContent };
+  messages.push(userMsg);
+
+  // Render user bubble
+  appendUserBubble(text, attachedFile);
+  clearFilePreview();
+  textarea.value = '';
+  autoResize();
+
+  // Decrement usage if member
+  if (isMember && !isAdmin) {
+    saveCredits(getCredits() - 1);
+    refreshUsageBadge();
+  }
+
+  // Disable send
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.disabled = true;
+  isStreaming = true;
+
+  // Show typing bubble
+  const typingEl = appendTypingBubble();
+
+  try {
+    const reply = await streamOpenAI(messages);
+    // Remove typing
+    typingEl.remove();
+    // Append AI reply
+    appendAIBubble(reply);
+    messages.push({ role: 'assistant', content: reply });
+    saveAssistantSession();
+  } catch (err) {
+    typingEl.remove();
+    const errMsg = err.message || '오류가 발생했습니다.';
+    appendAIBubble(`⚠️ **오류:** ${errMsg}\n\n잠시 후 다시 시도해주세요.`);
+    console.error('API error:', err);
+  } finally {
+    sendBtn.disabled = false;
+    isStreaming = false;
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  OpenAI STREAMING
+// ═══════════════════════════════════════════════
+async function streamOpenAI(msgs) {
+  // Build API messages array (system + conversation)
+  const apiMessages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...msgs.map(m => ({
+      role: m.role,
+      content: m.content,
+    })),
+  ];
+
+  const useVision = msgs[msgs.length - 1]?.content?.[0]?.type === 'image_url';
+  const model = useVision ? 'gpt-4o' : currentModel;
+
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: apiMessages,
+      stream: true,
+      temperature: 0.7,
+      max_tokens: 2000,
+    }),
+  });
+
+  if (!resp.ok) {
+    const errJson = await resp.json().catch(() => ({}));
+    throw new Error(errJson.error?.message || `HTTP ${resp.status}`);
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let fullText = '';
+  let aiBubble = null;
+
+  // Remove typing indicator and create streaming bubble
+  const typingEl = document.querySelector('.typing-bubble');
+  if (typingEl) typingEl.remove();
+  aiBubble = createStreamingBubble();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+    const lines = chunk.split('\n');
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data:')) continue;
+      const data = trimmed.slice(5).trim();
+      if (data === '[DONE]') break;
+      try {
+        const json = JSON.parse(data);
+        const delta = json.choices?.[0]?.delta?.content;
+        if (delta) {
+          fullText += delta;
+          renderStreamingBubble(aiBubble, fullText);
+        }
+      } catch {}
+    }
+  }
+
+  return fullText;
+}
+
+// ═══════════════════════════════════════════════
+//  DOM HELPERS
+// ═══════════════════════════════════════════════
+function appendUserBubble(text, file) {
+  const container = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row user';
+
+  const av = document.createElement('div');
+  av.className = 'msg-avatar user-av';
+  av.innerHTML = '<i class="fa-solid fa-user"></i>';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble user';
+
+  if (file && file.type === 'image') {
+    const img = document.createElement('img');
+    img.src = file.dataUrl;
+    img.className = 'msg-image';
+    bubble.appendChild(img);
+  }
+  if (text) {
+    const p = document.createElement('p');
+    p.style.whiteSpace = 'pre-wrap';
+    p.textContent = text;
+    bubble.appendChild(p);
+  }
+
+  row.appendChild(av);
+  row.appendChild(bubble);
+  container.appendChild(row);
+  scrollToBottom();
+}
+
+function appendTypingBubble() {
+  const container = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row typing-bubble';
+
+  const av = document.createElement('div');
+  av.className = 'msg-avatar ai';
+  av.innerHTML = '<i class="fa-solid fa-robot"></i>';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble ai';
+  bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+
+  row.appendChild(av);
+  row.appendChild(bubble);
+  container.appendChild(row);
+  scrollToBottom();
+  return row;
+}
+
+function createStreamingBubble() {
+  const container = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+
+  const av = document.createElement('div');
+  av.className = 'msg-avatar ai';
+  av.innerHTML = '<i class="fa-solid fa-robot"></i>';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble ai streaming-bubble';
+
+  row.appendChild(av);
+  row.appendChild(bubble);
+  container.appendChild(row);
+  scrollToBottom();
+  return bubble;
+}
+
+function renderStreamingBubble(bubbleEl, text) {
+  // Parse markdown
+  bubbleEl.innerHTML = marked.parse(text);
+  scrollToBottom();
+}
+
+function appendAIBubble(text) {
+  // Check if there's already a streaming bubble
+  const existing = document.querySelector('.streaming-bubble');
+  if (existing) {
+    existing.innerHTML = marked.parse(text);
+    existing.classList.remove('streaming-bubble');
+    scrollToBottom();
+    return;
+  }
+  const container = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  const av = document.createElement('div');
+  av.className = 'msg-avatar ai';
+  av.innerHTML = '<i class="fa-solid fa-robot"></i>';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble ai';
+  bubble.innerHTML = marked.parse(text);
+  row.appendChild(av);
+  row.appendChild(bubble);
+  container.appendChild(row);
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  const container = document.getElementById('messages');
+  container.scrollTop = container.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ═══════════════════════════════════════════════
+//  MOBILE SIDEBAR TOGGLE
+// ═══════════════════════════════════════════════
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+// ═══════════════════════════════════════════════
+//  ENGINE OPTIONS
+// ═══════════════════════════════════════════════
+var ENGINE_OPTIONS_ASST = {
+  'GPT-4o': [
+    { type: 'chip',   label: '응답 길이',   key: 'length',    values: ['짧게', '보통', '상세'],       default: '보통' },
+    { type: 'toggle', label: '코드 모드',   key: 'codeMode',  default: false },
+    { type: 'toggle', label: '웹 검색',     key: 'webSearch', default: false },
+  ],
+  'GPT-4o Mini': [
+    { type: 'toggle', label: '속도 우선',   key: 'speedFirst',  default: true  },
+    { type: 'toggle', label: '간결 모드',   key: 'concise',     default: false },
+  ],
+  'Gemini 2.5 Pro': [
+    { type: 'toggle', label: '멀티모달',    key: 'multimodal',  default: true  },
+    { type: 'chip',   label: '추론 깊이',   key: 'reasoning',   values: ['빠름', '표준', '깊은사고'], default: '표준' },
+  ],
+  'Claude 4 Sonnet': [
+    { type: 'chip',   label: '안전 모드',   key: 'safety',      values: ['표준', '관대'],             default: '표준' },
+    { type: 'toggle', label: '코딩 특화',   key: 'codingMode',  default: false },
+  ],
+  'Llama 3.1 405B': [
+    { type: 'slider', label: 'Temperature', key: 'temperature', min: 0, max: 2, step: 0.1, default: 0.7 },
+    { type: 'slider', label: 'Top P',       key: 'topP',        min: 0, max: 1, step: 0.05, default: 0.9 },
+  ],
+};
+var currentAsstEngOpts = {};
+
+function renderEngineOptions(engineName) {
+  var panel  = document.getElementById('engOptionsPanel');
+  var body   = document.getElementById('engOptionsBody');
+  var titleEl = document.getElementById('engOptionsTitleText');
+  var opts   = ENGINE_OPTIONS_ASST[engineName];
+  if (!opts || opts.length === 0) { if(panel) panel.style.display = 'none'; return; }
+  if(panel) panel.style.display = '';
+  if(titleEl) titleEl.textContent = engineName + ' 설정';
+  if(!body) return;
+  body.innerHTML = '';
+  currentAsstEngOpts = {};
+  opts.forEach(function(opt) {
+    currentAsstEngOpts[opt.key] = opt.default !== undefined ? opt.default : (opt.values ? opt.values[0] : false);
+    var row = document.createElement('div');
+    row.className = 'opt-row';
+    if (opt.type === 'chip') {
+      row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-chips" data-key="' + opt.key + '"></div>';
+      body.appendChild(row);
+      var chipsEl = row.querySelector('.opt-chips');
+      opt.values.forEach(function(v) {
+        var btn = document.createElement('button');
+        btn.className = 'opt-chip' + (v === (opt.default || opt.values[0]) ? ' selected' : '');
+        btn.textContent = v;
+        (function(key, val, chips) {
+          btn.onclick = function() {
+            chips.querySelectorAll('.opt-chip').forEach(function(c) { c.classList.remove('selected'); });
+            btn.classList.add('selected');
+            currentAsstEngOpts[key] = val;
+          };
+        })(opt.key, v, chipsEl);
+        chipsEl.appendChild(btn);
+      });
+    } else if (opt.type === 'toggle') {
+      var id = 'opt_toggle_' + opt.key + '_asst';
+      row.innerHTML = '<div class="opt-toggle-row"><span class="opt-toggle-label">' + opt.label + '</span><label class="opt-toggle"><input type="checkbox" id="' + id + '"' + (opt.default ? ' checked' : '') + '><span class="opt-toggle-track"></span><span class="opt-toggle-thumb"></span></label></div>';
+      body.appendChild(row);
+      (function(key) { row.querySelector('input').onchange = function() { currentAsstEngOpts[key] = this.checked; }; })(opt.key);
+    } else if (opt.type === 'slider') {
+      var sid = 'opt_slider_' + opt.key + '_asst';
+      var vid = 'opt_sliderval_' + opt.key + '_asst';
+      row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-slider-wrap"><input type="range" class="opt-slider" id="' + sid + '" min="' + opt.min + '" max="' + opt.max + '" step="' + opt.step + '" value="' + opt.default + '"><span class="opt-slider-val" id="' + vid + '">' + opt.default + '</span></div>';
+      body.appendChild(row);
+      (function(key, valId) {
+        row.querySelector('input[type=range]').oninput = function() {
+          document.getElementById(valId).textContent = this.value;
+          currentAsstEngOpts[key] = parseFloat(this.value);
+        };
+      })(opt.key, vid);
+    }
+  });
+}
+
+function toggleEngOptions() {
+  var panel = document.getElementById('engOptionsPanel');
+  if (panel) panel.classList.toggle('collapsed');
+}
+
+function getEngineOptionsPromptAsst() {
+  var parts = [];
+  var labelMap = {
+    length:'응답길이', codeMode:'코드모드', webSearch:'웹검색',
+    speedFirst:'속도우선', concise:'간결모드', multimodal:'멀티모달',
+    reasoning:'추론깊이', safety:'안전모드', codingMode:'코딩특화',
+    temperature:'Temperature', topP:'Top_P'
+  };
+  Object.keys(currentAsstEngOpts).forEach(function(k) {
+    var v = currentAsstEngOpts[k];
+    var label = labelMap[k] || k;
+    if (typeof v === 'boolean') {
+      parts.push('[' + label + ':' + (v ? 'ON' : 'OFF') + ']');
+    } else if (v !== '' && v !== null) {
+      parts.push('[' + label + ':' + v + ']');
+    }
+  });
+  return parts.length ? '\n\n엔진 설정: ' + parts.join(' ') : '';
+}
+
+// Initialize default engine options on page load
+document.addEventListener('DOMContentLoaded', function() {
+  var firstActive = document.querySelector('.engine-item.active');
+  if (firstActive) {
+    var nameEl = firstActive.querySelector('.engine-name');
+    if (nameEl) renderEngineOptions(nameEl.textContent.trim());
+  } else {
+    renderEngineOptions('GPT-4o');
+  }
+});
+
+// ═══════════════════════════════════════════════
+//  MARKED CONFIG
+// ═══════════════════════════════════════════════
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+});
+
+// ── Engine Tier Lock ──────────────────────────────────────────────────────
+(function initEngineLock() {
+  var TIER_ORDER = { free: 0, basic: 2, standard: 2, pro: 3, enterprise: 3 };
+  var plan = localStorage.getItem('dagaon_plan') || 'free';
+  var isAdmin = localStorage.getItem('dagaon_admin') === '1';
+  var userLevel = isAdmin ? 99 : (TIER_ORDER[plan] !== undefined ? TIER_ORDER[plan] : 0);
+  document.querySelectorAll('.eng-item, .model-item, .engine-item').forEach(function(item) {
+    var tier = item.getAttribute('data-tier');
+    if (!tier) return;
+    var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+    if (userLevel < required) {
+      item.classList.add('locked');
+      var nameEl = item.querySelector('.eng-name, .model-name, .engine-name');
+      if (nameEl && !nameEl.querySelector('.eng-lock')) {
+        var lockSpan = document.createElement('span');
+        lockSpan.className = 'eng-lock';
+        lockSpan.innerHTML = '<i class="fa-solid fa-lock"></i>';
+        nameEl.appendChild(lockSpan);
+      }
+      var descEl = item.querySelector('.eng-desc, .model-desc, .engine-desc');
+      if (descEl) {
+        descEl.textContent = (required >= 3) ? 'Pro 플랜부터' : 'Standard 플랜부터';
+      }
+    }
+  });
+  window._showEngLockToast = function(tier) {
+    var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+    var msg = (required >= 3) ? '이 엔진은 Pro 플랜부터 사용 가능합니다' : '이 엔진은 Standard 플랜부터 사용 가능합니다';
+    var toast = document.getElementById('engLockToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'engLockToast';
+      toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(184,151,90,.4);color:#d0c090;font-size:.78rem;padding:10px 22px;border-radius:6px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function() { toast.style.opacity = '0'; }, 2500);
+  };
+})();
+// ── End Engine Tier Lock ──────────────────────────────────────────────────
+
+// ─── ASSISTANT HISTORY (localStorage) ───────────────────────────────────
+const ASSISTANT_HISTORY_KEY = 'dagaon_assistant_history';
+const MAX_SESSIONS = 20;
+const MAX_MSGS_PER_SESSION = 100;
+let currentSessionId = null;
+
+function loadAssistantHistory() {
+  try { return JSON.parse(localStorage.getItem(ASSISTANT_HISTORY_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveAssistantSession() {
+  if (!messages || messages.length === 0) return;
+  let history = loadAssistantHistory();
+  // Limit messages per session
+  const msgsToSave = messages.slice(-MAX_MSGS_PER_SESSION).filter(m => typeof m.content === 'string');
+  if (msgsToSave.length === 0) return;
+  const firstUser = msgsToSave.find(m => m.role === 'user');
+  const title = firstUser ? firstUser.content.slice(0, 50) : '대화';
+  if (!currentSessionId) currentSessionId = 'ast_' + Date.now();
+  const idx = history.findIndex(s => s.id === currentSessionId);
+  const entry = { id: currentSessionId, timestamp: Date.now(), engine: currentDisplayName, title: title, messages: msgsToSave };
+  if (idx >= 0) history[idx] = entry;
+  else history.unshift(entry);
+  if (history.length > MAX_SESSIONS) history = history.slice(0, MAX_SESSIONS);
+  localStorage.setItem(ASSISTANT_HISTORY_KEY, JSON.stringify(history));
+  renderAssistantHistory();
+}
+function deleteAssistantSession(id) {
+  let history = loadAssistantHistory().filter(s => s.id !== id);
+  localStorage.setItem(ASSISTANT_HISTORY_KEY, JSON.stringify(history));
+  if (currentSessionId === id) {
+    messages = [];
+    currentSessionId = null;
+    document.getElementById('messages').querySelectorAll('.msg-row').forEach(el => el.remove());
+    document.getElementById('emptyState').style.display = '';
+  }
+  renderAssistantHistory();
+}
+function clearAssistantHistory() {
+  if (!confirm('모든 대화 기록을 삭제하시겠습니까?')) return;
+  localStorage.removeItem(ASSISTANT_HISTORY_KEY);
+  messages = [];
+  currentSessionId = null;
+  document.getElementById('messages').querySelectorAll('.msg-row').forEach(el => el.remove());
+  document.getElementById('emptyState').style.display = '';
+  renderAssistantHistory();
+}
+function renderAssistantHistory() {
+  const history = loadAssistantHistory();
+  const list = document.getElementById('assistantHistoryList');
+  const emptyEl = document.getElementById('assistantHistoryEmpty');
+  const clearBtn = document.getElementById('assistantClearBtn');
+  if (!list) return;
+  list.innerHTML = '';
+  if (history.length === 0) {
+    emptyEl.style.display = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  if (clearBtn) clearBtn.style.display = '';
+  history.forEach(session => {
+    const item = document.createElement('div');
+    item.style.cssText = 'display:flex;align-items:center;gap:5px;padding:5px 12px;cursor:pointer;border-radius:4px;transition:background .15s;';
+    item.onmouseover = function() { this.style.background='rgba(255,255,255,.03)'; };
+    item.onmouseout = function() { this.style.background='transparent'; };
+    const icon = document.createElement('i');
+    icon.className = 'fa-regular fa-comment';
+    icon.style.cssText = 'font-size:.6rem;color:rgba(184,151,90,.4);flex-shrink:0;';
+    const textEl = document.createElement('span');
+    textEl.style.cssText = 'flex:1;font-size:.68rem;color:rgba(208,208,208,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    textEl.textContent = session.title;
+    const delBtn = document.createElement('span');
+    delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    delBtn.style.cssText = 'flex-shrink:0;color:rgba(208,208,208,.2);cursor:pointer;font-size:.6rem;padding:1px 3px;border-radius:2px;display:none;';
+    item.onmouseover = function() { this.style.background='rgba(255,255,255,.03)'; delBtn.style.display=''; };
+    item.onmouseout = function() { this.style.background='transparent'; delBtn.style.display='none'; };
+    delBtn.onmouseover = function(e) { e.stopPropagation(); this.style.color='#e07070'; };
+    delBtn.onmouseout = function(e) { e.stopPropagation(); this.style.color='rgba(208,208,208,.2)'; };
+    ((id) => { delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteAssistantSession(id); }); })(session.id);
+    ((sess) => {
+      item.addEventListener('click', () => {
+        messages = sess.messages.slice();
+        currentSessionId = sess.id;
+        const container = document.getElementById('messages');
+        container.querySelectorAll('.msg-row').forEach(el => el.remove());
+        document.getElementById('emptyState').style.display = 'none';
+        sess.messages.forEach(m => {
+          if (m.role === 'user') appendUserBubble(m.content, null);
+          else if (m.role === 'assistant') appendAIBubble(m.content);
+        });
+        showToast('이전 대화를 불러왔습니다.');
+      });
+    })(session);
+    item.appendChild(icon);
+    item.appendChild(textEl);
+    item.appendChild(delBtn);
+    list.appendChild(item);
+  });
+}
+
+// Start new chat resets session id
+(function patchNewChat() {
+  const btn = document.getElementById('newChatBtn');
+  if (!btn) return;
+  const origHandler = btn.onclick;
+  btn.addEventListener('click', function() { currentSessionId = null; }, true);
+})();
+
+// Restore engine
+(function restoreAssistantEngine() {
+  const savedEng = localStorage.getItem('dagaon_assistant_engine');
+  if (savedEng) {
+    const items = document.querySelectorAll('.engine-item');
+    for (let i = 0; i < items.length; i++) {
+      const nameEl = items[i].querySelector('.engine-name');
+      if (nameEl && nameEl.textContent.trim() === savedEng && !items[i].classList.contains('locked')) {
+        selectEngine(items[i]);
+        break;
+      }
+    }
+  }
+  renderAssistantHistory();
+})();
+</script>
+</body>
+</html>

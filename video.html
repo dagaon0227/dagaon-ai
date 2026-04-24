@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 영상 제작 — DAGAON AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --black:   #050505;
+      --deep:    #0a0a0a;
+      --surface: #111111;
+      --border:  rgba(255,255,255,0.07);
+      --white:   #ffffff;
+      --gold:    #b8975a;
+      --gold-lt: #d4af70;
+      --text:    #d0d0d0;
+      --cyan:    #00BCD4;
+      --green:   #8BC34A;
+      --serif:   'Noto Serif KR', serif;
+      --sans:    'Noto Sans KR', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+    /* ══ FIXED HEADER ══ */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 58px;
+      background: #0d0d0d;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+    #header .h-left a {
+      text-decoration: none;
+      color: var(--gold);
+      font-size: .78rem;
+      letter-spacing: .04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    #header .h-left a:hover { color: var(--gold-lt); }
+    #header .h-center {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: .06em;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    #header .h-right {
+      display: flex;
+      align-items: center;
+    }
+    .badge-unlimited {
+      background: linear-gradient(135deg, rgba(184,151,90,.25), rgba(212,175,112,.12));
+      border: 1px solid rgba(184,151,90,.4);
+      color: var(--gold-lt);
+      font-size: .6rem;
+      font-weight: 500;
+      letter-spacing: .14em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    .usage-count {
+      color: rgba(208,208,208,.65);
+      font-size: .75rem;
+      letter-spacing: .03em;
+    }
+    .usage-count span { color: var(--gold); font-weight: 500; }
+
+    /* ══ ENGINE SIDEBAR ══ */
+    .engine-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .eng-sidebar-title {
+      font-size: .6rem;
+      font-family: var(--sans);
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 16px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    /* Engine Dropdown */
+    .eng-dropdown { padding: 8px 10px; position: relative; flex-shrink: 0; }
+    .eng-dd-trigger {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; background: #111;
+      border: 1px solid rgba(184,151,90,.45); border-radius: 6px;
+      cursor: pointer; transition: border-color .2s, background .2s; user-select: none;
+    }
+    .eng-dd-trigger:hover { border-color: rgba(184,151,90,.7); background: rgba(184,151,90,.04); }
+    .eng-dd-arrow {
+      margin-left: auto; font-size: .6rem;
+      color: rgba(184,151,90,.7); transition: transform .25s; flex-shrink: 0;
+    }
+    .eng-dropdown.open .eng-dd-arrow { transform: rotate(180deg); }
+    .eng-dd-menu {
+      overflow: hidden; max-height: 0;
+      transition: max-height .35s ease;
+      background: #0e0e0e;
+      border: 1px solid rgba(184,151,90,.25); border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+    .eng-dropdown.open .eng-dd-menu { max-height: 540px; }
+    .eng-dd-inner { padding: 4px 5px 5px; overflow-y: auto; max-height: 520px; }
+    .eng-group-label {
+      font-size: .52rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(208,208,208,.28); padding: 8px 8px 3px;
+    }
+    .eng-divider { border-top: 1px solid rgba(255,255,255,.06); margin: 4px 0; }
+    .eng-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 9px; cursor: pointer;
+      border: 1px solid transparent; border-radius: 5px;
+      transition: background .15s, border-color .15s; margin-bottom: 1px;
+    }
+    .eng-item:hover { background: rgba(255,255,255,.025); }
+    .eng-item.active { background: rgba(184,151,90,.06); border-color: rgba(184,151,90,.32); }
+    .eng-item.locked { opacity: 0.4; }
+    .eng-item.locked .eng-lock { display: inline-flex; align-items: center; color: #888; margin-left: 4px; font-size: .58rem; }
+    .eng-item:not(.locked) .eng-lock { display: none; }
+    .eng-icon {
+      width: 30px; height: 30px; flex-shrink: 0; border-radius: 6px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; font-family: var(--sans); color: var(--gold-lt);
+    }
+    .eng-item.active .eng-icon { background: rgba(184,151,90,.14); border-color: rgba(184,151,90,.3); }
+    .eng-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .eng-name-row { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .eng-name {
+      font-size: .7rem; font-family: var(--sans); font-weight: 500; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .eng-item.active .eng-name { color: var(--gold-lt); }
+    .eng-desc {
+      font-size: .6rem; font-family: var(--sans); color: rgba(208,208,208,.38);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .badge-top {
+      flex-shrink: 0; font-size: .52rem; font-weight: 700; letter-spacing: .07em;
+      background: var(--cyan); color: #fff; border: none;
+      padding: 2px 6px; border-radius: 3px; text-transform: uppercase;
+    }
+    .badge-new-sm {
+      flex-shrink: 0; font-size: .52rem; font-weight: 600; letter-spacing: .07em;
+      background: rgba(139,195,74,.13); color: var(--green);
+      border: 1px solid rgba(139,195,74,.28); padding: 1px 5px;
+      border-radius: 3px; text-transform: uppercase;
+    }
+
+    /* Active engine bar */
+    .active-eng-bar {
+      flex-shrink: 0;
+      height: 34px;
+      background: rgba(184,151,90,.04);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 7px;
+    }
+    .active-eng-label {
+      font-size: .6rem;
+      font-family: var(--sans);
+      color: rgba(208,208,208,.35);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .active-eng-name {
+      font-size: .7rem;
+      font-family: var(--sans);
+      font-weight: 500;
+      color: var(--gold-lt);
+    }
+
+    /* Work area */
+    .work-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .work-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ══ MAIN BODY ══ */
+    #main {
+      position: fixed;
+      top: 58px;
+      left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    /* ══ LEFT CONTROLS PANEL ══ */
+    #left-panel {
+      width: 300px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .panel-section { display: flex; flex-direction: column; gap: 10px; }
+    .section-label {
+      font-size: .6rem;
+      font-weight: 500;
+      letter-spacing: .14em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed rgba(255,255,255,.1);
+      border-radius: 6px;
+      padding: 20px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .25s, background .25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .drop-zone:hover {
+      border-color: rgba(184,151,90,.5);
+      background: rgba(184,151,90,.02);
+    }
+    .drop-zone .dz-icon { font-size: 1.6rem; color: rgba(184,151,90,.55); }
+    .drop-zone .dz-main { font-size: .72rem; color: rgba(208,208,208,.45); line-height: 1.5; }
+    .drop-zone .dz-types { font-size: .62rem; color: rgba(208,208,208,.28); letter-spacing: .05em; }
+
+    /* Frame upload row */
+    .frame-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .frame-zone {
+      border: 1px dashed rgba(255,255,255,.1);
+      border-radius: 4px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: .58rem;
+      color: rgba(208,208,208,.35);
+    }
+    .frame-zone:hover { border-color: rgba(184,151,90,.4); color: rgba(184,151,90,.7); }
+    .frame-zone i { font-size: 1rem; color: rgba(184,151,90,.4); }
+
+    /* Chips */
+    .chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: .72rem;
+      letter-spacing: .03em;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.1);
+      background: transparent;
+      color: rgba(208,208,208,.55);
+      transition: all .2s;
+      font-family: var(--sans);
+    }
+    .chip:hover { border-color: rgba(184,151,90,.35); color: rgba(208,208,208,.85); }
+    .chip.active {
+      background: rgba(184,151,90,.12);
+      border-color: rgba(184,151,90,.45);
+      color: var(--gold-lt);
+    }
+
+    /* Prompt input */
+    .prompt-input {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .82rem;
+      padding: 10px 12px;
+      outline: none;
+      border-radius: 4px;
+      resize: vertical;
+      min-height: 72px;
+      transition: border-color .2s;
+    }
+    .prompt-input:focus { border-color: rgba(184,151,90,.5); }
+    .prompt-input::placeholder { color: rgba(208,208,208,.28); }
+
+    /* Generate button */
+    .btn-generate {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--gold), #9a7c47);
+      border: none;
+      border-radius: 4px;
+      color: #0a0a0a;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-generate:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-generate:active { transform: translateY(0); opacity: 1; }
+
+    /* Loading */
+    #loading-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0;
+    }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(184,151,90,.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading-msg { font-size: .72rem; color: rgba(208,208,208,.55); letter-spacing: .03em; }
+
+    /* Export buttons */
+    .btn-outline {
+      width: 100%;
+      padding: 11px;
+      background: transparent;
+      border: 1px solid rgba(184,151,90,.3);
+      border-radius: 4px;
+      color: var(--gold);
+      font-size: .76rem;
+      letter-spacing: .06em;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background .2s, border-color .2s;
+    }
+    .btn-outline:hover { background: rgba(184,151,90,.07); border-color: rgba(184,151,90,.55); }
+
+    /* ══ CENTER VIDEO AREA ══ */
+    #center-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #video-preview {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #video-preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(60,20,80,.4) 0%, rgba(10,20,50,.6) 50%, rgba(20,40,20,.3) 100%);
+      pointer-events: none;
+    }
+    .play-btn {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      border: 2px solid rgba(184,151,90,.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      transition: border-color .2s, background .2s;
+    }
+    .play-btn:hover { border-color: var(--gold); background: rgba(184,151,90,.08); }
+    .play-btn i { color: var(--gold); font-size: 1.2rem; margin-left: 4px; }
+    .timecode {
+      position: absolute;
+      bottom: 14px; right: 16px;
+      font-size: .65rem;
+      color: rgba(255,255,255,.5);
+      letter-spacing: .06em;
+      z-index: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .preview-badge {
+      position: absolute;
+      top: 14px; left: 16px;
+      background: rgba(0,0,0,.6);
+      padding: 4px 10px;
+      font-size: .6rem;
+      letter-spacing: .12em;
+      color: rgba(0,188,212,.9);
+      border-radius: 2px;
+      z-index: 1;
+      text-transform: uppercase;
+    }
+    .aspect-badge {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: rgba(0,0,0,.6);
+      padding: 4px 10px;
+      font-size: .6rem;
+      letter-spacing: .12em;
+      color: rgba(184,151,90,.7);
+      border-radius: 2px;
+      z-index: 1;
+      text-transform: uppercase;
+    }
+
+    /* Timeline */
+    #timeline-bar {
+      height: 52px;
+      flex-shrink: 0;
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+    }
+    .tl-label {
+      font-size: .62rem;
+      color: rgba(208,208,208,.4);
+      letter-spacing: .04em;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .tl-track {
+      flex: 1;
+      height: 14px;
+      background: rgba(255,255,255,.05);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .tl-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 30%;
+      background: linear-gradient(90deg, rgba(184,151,90,.6), rgba(184,151,90,.2));
+      border-radius: 2px;
+    }
+    .tl-playhead {
+      position: absolute;
+      left: 29%;
+      top: -2px; bottom: -2px;
+      width: 3px;
+      background: var(--gold);
+      border-radius: 1px;
+    }
+
+    /* ══ UPGRADE OVERLAY ══ */
+    #upgrade-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7,7,7,.96);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    #upgrade-overlay.visible { display: flex; }
+    .upgrade-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 360px;
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .upgrade-box .lock-icon { font-size: 2.4rem; color: rgba(184,151,90,.6); }
+    .upgrade-box h2 { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; color: var(--white); line-height: 1.4; }
+    .upgrade-box p { font-size: .78rem; color: dimgray; line-height: 1.7; }
+    .btn-upgrade {
+      margin-top: 8px;
+      padding: 13px 32px;
+      background: linear-gradient(135deg, var(--gold), #9a7c47);
+      border: none;
+      border-radius: 4px;
+      color: #0a0a0a;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: opacity .2s;
+    }
+    .btn-upgrade:hover { opacity: .88; }
+    .dismiss-link {
+      font-size: .72rem;
+      color: rgba(208,208,208,.35);
+      cursor: pointer;
+      letter-spacing: .04em;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .dismiss-link:hover { color: rgba(208,208,208,.65); }
+
+    /* ══ TOAST ══ */
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10,10,10,.95);
+      border: 1px solid rgba(184,151,90,.4);
+      color: var(--text);
+      font-size: .75rem;
+      letter-spacing: .04em;
+      padding: 10px 22px;
+      border-radius: 4px;
+      z-index: 300;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    #toast.show {
+      display: block;
+      animation: fadeInUp .25s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ─────────────────────────────────────────
+       ENGINE OPTIONS PANEL
+    ───────────────────────────────────────── */
+    .eng-options-panel {
+      margin: 6px 8px 4px;
+      background: rgba(184,151,90,.04);
+      border: 1px solid rgba(184,151,90,.2);
+      border-radius: 7px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .eng-options-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .2s;
+    }
+    .eng-options-header:hover { background: rgba(184,151,90,.06); }
+    .eng-options-title {
+      flex: 1; font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--gold);
+    }
+    .eng-options-arrow { font-size: .55rem; color: rgba(184,151,90,.6); transition: transform .25s; }
+    .eng-options-panel.collapsed .eng-options-arrow { transform: rotate(-90deg); }
+    .eng-options-body {
+      padding: 8px 12px 12px; display: flex; flex-direction: column;
+      gap: 10px; border-top: 1px solid rgba(184,151,90,.12);
+    }
+    .eng-options-panel.collapsed .eng-options-body { display: none; }
+    .opt-row { display: flex; flex-direction: column; gap: 5px; }
+    .opt-label { font-size: .54rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(208,208,208,.45); }
+    .opt-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .opt-chip {
+      padding: 3px 9px; border: 1px solid rgba(184,151,90,.25); border-radius: 3px;
+      background: transparent; color: rgba(208,208,208,.55);
+      font-family: var(--sans); font-size: .62rem; cursor: pointer; transition: all .18s;
+    }
+    .opt-chip:hover { border-color: rgba(184,151,90,.5); color: var(--gold); }
+    .opt-chip.selected { background: rgba(184,151,90,.15); border-color: var(--gold); color: var(--gold); }
+    .opt-toggle-row { display: flex; align-items: center; justify-content: space-between; }
+    .opt-toggle-label { font-size: .66rem; color: rgba(208,208,208,.6); }
+    .opt-toggle { position: relative; width: 34px; height: 18px; cursor: pointer; flex-shrink: 0; }
+    .opt-toggle input { opacity: 0; width: 0; height: 0; }
+    .opt-toggle-track { position: absolute; inset: 0; background: rgba(255,255,255,.1); border-radius: 18px; transition: background .2s; }
+    .opt-toggle input:checked + .opt-toggle-track { background: var(--gold); }
+    .opt-toggle-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform .2s; }
+    .opt-toggle input:checked ~ .opt-toggle-thumb { transform: translateX(16px); }
+    .opt-slider-wrap { display: flex; align-items: center; gap: 8px; }
+    .opt-slider {
+      flex: 1; -webkit-appearance: none; height: 3px;
+      background: rgba(255,255,255,.12); border-radius: 2px; outline: none;
+    }
+    .opt-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--gold); cursor: pointer;
+    }
+    .opt-slider-val { font-size: .65rem; color: var(--gold); min-width: 28px; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <!-- ══ FIXED HEADER ══ -->
+  <header id="header">
+    <div class="h-left">
+      <a href="javascript:void(0)" onclick="history.back()"><i class="fa-solid fa-arrow-left" style="font-size:.7rem;"></i> 뒤로가기</a>
+    </div>
+    <div class="h-center">AI 영상 제작</div>
+    <div class="h-right" id="header-right"></div>
+  </header>
+
+  <!-- ══ MAIN BODY ══ -->
+  <div id="main">
+
+    <!-- Engine Sidebar -->
+    <nav class="engine-sidebar">
+      <div class="eng-sidebar-title">AI 엔진</div>
+      <div class="eng-dropdown" id="engDropdown">
+        <div class="eng-dd-trigger" onclick="toggleEngDropdown()">
+          <div class="eng-icon" id="ddIcon">SD</div>
+          <div class="eng-info">
+            <div class="eng-name-row">
+              <span class="eng-name" id="ddName">Seedance 2.0</span>
+            </div>
+            <span class="eng-desc" id="ddDesc">Most advanced video model · max 15s</span>
+          </div>
+          <i class="fa-solid fa-chevron-down eng-dd-arrow"></i>
+        </div>
+        <div class="eng-dd-menu">
+          <div class="eng-dd-inner">
+
+            <div class="eng-group-label">영상 생성 모델</div>
+
+            <div class="eng-item active" data-tier="pro" data-icon="SD" data-desc="Most advanced video model · max 15s" onclick="selectEngine(this, 'Seedance 2.0')">
+              <div class="eng-icon">SD</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Seedance 2.0</span>
+                  <span class="badge-top">TOP</span>
+                </div>
+                <span class="eng-desc">Most advanced video model · max 15s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="KL" data-desc="시네마급 4K 영상 생성 · max 10s" onclick="selectEngine(this, 'Kling 3.0 4K')">
+              <div class="eng-icon">KL</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Kling 3.0 4K</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">시네마급 4K 영상 생성 · max 10s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="S2" data-desc="OpenAI 시네마틱 영상 · max 15s" onclick="selectEngine(this, 'Sora 2')">
+              <div class="eng-icon">S2</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Sora 2</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">OpenAI 시네마틱 영상 · max 15s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="V3" data-desc="Google 영상 모델 · max 8s" onclick="selectEngine(this, 'Veo 3.1')">
+              <div class="eng-icon">V3</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Veo 3.1</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">Google 영상 모델 · max 8s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="WN" data-desc="고품질 AI 영상 · max 5s" onclick="selectEngine(this, 'WAN 2.6')">
+              <div class="eng-icon">WN</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">WAN 2.6</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">고품질 AI 영상 · max 5s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="MX" data-desc="긴 영상 생성 특화 · max 5s" onclick="selectEngine(this, 'Minimax Video')">
+              <div class="eng-icon">MX</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Minimax Video</span>
+                </div>
+                <span class="eng-desc">긴 영상 생성 특화 · max 5s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="CS" data-desc="Higgsfield 시네마틱 · max 10s" onclick="selectEngine(this, 'Cinema Studio 3.5')">
+              <div class="eng-icon">CS</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Cinema Studio 3.5</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">Higgsfield 시네마틱 · max 10s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="RW" data-desc="크리에이티브 영상 · max 10s" onclick="selectEngine(this, 'Runway Gen-3 Alpha')">
+              <div class="eng-icon">RW</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Runway Gen-3 Alpha</span>
+                </div>
+                <span class="eng-desc">크리에이티브 영상 · max 10s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="PK" data-desc="크리에이티브 편집 · max 5s" onclick="selectEngine(this, 'Pika 2.0')">
+              <div class="eng-icon">PK</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Pika 2.0</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">크리에이티브 편집 · max 5s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="LM" data-desc="3D 시네마틱 · max 5s" onclick="selectEngine(this, 'Luma Dream Machine')">
+              <div class="eng-icon">LM</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Luma Dream Machine</span>
+                </div>
+                <span class="eng-desc">3D 시네마틱 · max 5s</span>
+              </div>
+            </div>
+
+            <div class="eng-divider"></div>
+            <div class="eng-group-label">영상 도구</div>
+
+            <div class="eng-item" data-tier="pro" data-icon="LS" data-desc="AI 립싱크 · max 15s" onclick="selectEngine(this, 'Lipsync Studio')">
+              <div class="eng-icon">LS</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Lipsync Studio</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">AI 립싱크 · max 15s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="TA" data-desc="AI 아바타 · max 15s" onclick="selectEngine(this, 'Talking Avatar')">
+              <div class="eng-icon">TA</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Talking Avatar</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">AI 아바타 · max 15s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="DV" data-desc="그림→영상 · max 10s" onclick="selectEngine(this, 'Draw to Video')">
+              <div class="eng-icon">DV</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Draw to Video</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">그림→영상 · max 10s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="UP" data-desc="해상도 업스케일 · max 15s" onclick="selectEngine(this, 'Video Upscale')">
+              <div class="eng-icon">UP</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Video Upscale</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">해상도 업스케일 · max 15s</span>
+              </div>
+            </div>
+
+            <div class="eng-item" data-tier="pro" data-icon="MC" data-desc="동작/표정 정밀 제어 · max 10s" onclick="selectEngine(this, 'Motion Control')">
+              <div class="eng-icon">MC</div>
+              <div class="eng-info">
+                <div class="eng-name-row">
+                  <span class="eng-name">Motion Control</span>
+                  <span class="badge-new-sm">NEW</span>
+                </div>
+                <span class="eng-desc">동작/표정 정밀 제어 · max 10s</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Engine Options Panel -->
+    <div id="engOptionsPanel" class="eng-options-panel" style="display:none;">
+      <div class="eng-options-header" onclick="toggleEngOptions()">
+        <i class="fa-solid fa-sliders" style="font-size:.58rem;color:var(--gold);"></i>
+        <span class="eng-options-title" id="engOptionsTitleText">Seedance 2.0 설정</span>
+        <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
+      </div>
+      <div class="eng-options-body" id="engOptionsBody"></div>
+    </div>
+
+    <!-- Work Area -->
+    <div class="work-area">
+      <div class="active-eng-bar">
+        <span class="active-eng-label">현재 엔진</span>
+        <span class="active-eng-name" id="active-eng-name">Seedance 2.0</span>
+      </div>
+      <div class="work-body">
+
+        <!-- LEFT CONTROLS PANEL -->
+        <aside id="left-panel">
+
+          <!-- 소스 업로드 -->
+          <div class="panel-section">
+            <div class="section-label">소스 업로드</div>
+            <div class="drop-zone" onclick="showToast('소스 업로드 기능은 곧 오픈됩니다.')">
+              <i class="fa-solid fa-film dz-icon"></i>
+              <div class="dz-main">이미지 또는 영상 파일 업로드</div>
+              <div class="dz-types">JPG, PNG, MP4, MOV</div>
+            </div>
+          </div>
+
+          <!-- 시작/끝 프레임 레퍼런스 -->
+          <div class="panel-section">
+            <div class="section-label">레퍼런스 프레임</div>
+            <div class="frame-row">
+              <div class="frame-zone" onclick="showToast('시작 프레임 업로드 기능은 곧 오픈됩니다.')">
+                <i class="fa-solid fa-image"></i>
+                <span>시작 프레임</span>
+              </div>
+              <div class="frame-zone" onclick="showToast('끝 프레임 업로드 기능은 곧 오픈됩니다.')">
+                <i class="fa-solid fa-image"></i>
+                <span>끝 프레임</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 영상 유형 -->
+          <div class="panel-section">
+            <div class="section-label">영상 유형</div>
+            <div class="chips-row" id="type-chips">
+              <button class="chip active" onclick="selectChip(this,'type-chips')">시네마틱</button>
+              <button class="chip" onclick="selectChip(this,'type-chips')">조감도</button>
+              <button class="chip" onclick="selectChip(this,'type-chips')">워킹스루</button>
+              <button class="chip" onclick="selectChip(this,'type-chips')">제품 영상</button>
+              <button class="chip" onclick="selectChip(this,'type-chips')">인터뷰</button>
+              <button class="chip" onclick="selectChip(this,'type-chips')">다큐멘터리</button>
+            </div>
+          </div>
+
+          <!-- 해상도 -->
+          <div class="panel-section">
+            <div class="section-label">해상도</div>
+            <div class="chips-row" id="res-chips">
+              <button class="chip" onclick="selectChip(this,'res-chips')">1080p</button>
+              <button class="chip active" onclick="selectChip(this,'res-chips')">4K</button>
+            </div>
+          </div>
+
+          <!-- 영상 길이 -->
+          <div class="panel-section">
+            <div class="section-label">영상 길이</div>
+            <div class="chips-row" id="length-chips">
+              <button class="chip" onclick="selectChip(this,'length-chips');updateTimecode()">5초</button>
+              <button class="chip" onclick="selectChip(this,'length-chips');updateTimecode()">7초</button>
+              <button class="chip" onclick="selectChip(this,'length-chips');updateTimecode()">10초</button>
+              <button class="chip active" onclick="selectChip(this,'length-chips');updateTimecode()">15초</button>
+            </div>
+          </div>
+
+          <!-- 프롬프트 -->
+          <div class="panel-section">
+            <div class="section-label">프롬프트</div>
+            <textarea class="prompt-input" id="prompt-input" placeholder="영상 내용, 분위기, 스타일을 입력하세요..."></textarea>
+          </div>
+
+          <!-- 생성 버튼 -->
+          <div class="panel-section">
+            <button class="btn-generate" onclick="wsGenerate()">✨ 영상 생성</button>
+          </div>
+
+          <!-- Loading -->
+          <div id="loading-wrap">
+            <div class="spinner"></div>
+            <span id="loading-msg">처리 중...</span>
+          </div>
+
+          <!-- Export -->
+          <div class="panel-section" style="gap:8px;">
+            <button class="btn-outline" onclick="showToast('MP4 다운로드 기능은 곧 오픈됩니다.')">
+              <i class="fa-solid fa-download" style="font-size:.72rem; margin-right:7px;"></i>MP4 다운로드
+            </button>
+            <button class="btn-outline" style="margin-top:6px;" onclick="showToast('공유 기능은 곧 오픈됩니다.')">
+              <i class="fa-solid fa-share-nodes" style="font-size:.72rem; margin-right:7px;"></i>공유
+            </button>
+          </div>
+
+        </aside>
+
+        <!-- CENTER VIDEO AREA -->
+        <div id="center-area">
+          <div id="video-preview">
+            <div class="preview-badge">4K · Cinematic</div>
+            <div class="aspect-badge">16:9</div>
+            <div class="play-btn">
+              <i class="fa-solid fa-play"></i>
+            </div>
+            <div class="timecode">00:00 / 00:10</div>
+          </div>
+          <div id="timeline-bar">
+            <span class="tl-label">0:00</span>
+            <div class="tl-track">
+              <div class="tl-fill"></div>
+              <div class="tl-playhead"></div>
+            </div>
+            <span class="tl-label">0:10</span>
+          </div>
+        </div>
+
+      </div><!-- /work-body -->
+    </div><!-- /work-area -->
+
+    <!-- Video History Panel -->
+    <div id="videoHistoryWrap" style="display:none;padding:12px 20px 10px;border-top:1px solid rgba(184,151,90,.13);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,151,90,.6);">이전 영상 기록</span>
+        <button onclick="clearVideoHistory()" style="background:none;border:1px solid rgba(220,80,80,.35);border-radius:3px;color:rgba(220,80,80,.6);font-size:.6rem;padding:3px 8px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-trash-can"></i> 전체 삭제</button>
+      </div>
+      <div id="videoHistoryList" style="display:flex;flex-direction:column;gap:7px;"></div>
+    </div>
+
+  </div><!-- /#main -->
+
+  <!-- ══ UPGRADE OVERLAY ══ -->
+  <div id="upgrade-overlay">
+    <div class="upgrade-box">
+      <i class="fa-solid fa-lock lock-icon"></i>
+      <h2>크레딧 부족</h2>
+      <p>크레딧이 부족합니다. 플랜을 업그레이드하세요.<br>영상 생성은 1회당 20 크레딧이 필요합니다.</p>
+      <button class="btn-upgrade" onclick="window.open('index.html#pricing','_blank')">요금제 보기</button>
+      <a class="dismiss-link" onclick="closeUpgrade()">나중에</a>
+    </div>
+  </div>
+
+  <!-- ══ TOAST ══ -->
+  <div id="toast"></div>
+
+  <script>
+    const OPENAI_API_KEY = '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';
+
+    let isAdmin = false;
+
+    (function init() {
+      if (localStorage.getItem('dagaon_admin') === '1') {
+        isAdmin = true;
+        renderHeaderRight('admin');
+      } else {
+        const raw = localStorage.getItem('dagaon_user');
+        let user = null;
+        try { user = raw ? JSON.parse(raw) : null; } catch(e) {}
+        if (user && user.loggedIn === true) {
+          renderHeaderRight('member');
+        } else {
+          window.location.href = 'index.html';
+        }
+      }
+    })();
+
+    window.addEventListener('DOMContentLoaded', function() {
+      updateLengthChips('Seedance 2.0');
+    });
+
+    function renderHeaderRight(mode) {
+      const el = document.getElementById('header-right');
+      if (mode === 'admin') {
+        el.innerHTML = '<span class="badge-unlimited">UNLIMITED</span>';
+      } else {
+        const left = Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10));
+        el.innerHTML = `<span class="usage-count">남은 크레딧 <span>${left}</span></span>`;
+      }
+    }
+
+    function refreshUsageDisplay() {
+      if (!isAdmin) renderHeaderRight('member');
+    }
+
+    /* ══════════════════════════════════════
+       CREDITS
+    ══════════════════════════════════════ */
+    function getCredits() {
+      return Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10));
+    }
+    function saveCredits(v) {
+      localStorage.setItem('dagaon_credits', String(Math.max(0, v)));
+    }
+
+    const ENGINE_MAX_LENGTH_V = {
+      'Seedance 2.0':       15,
+      'Kling 3.0 4K':       10,
+      'Sora 2':             15,
+      'Veo 3.1':             8,
+      'WAN 2.6':             5,
+      'Minimax Video':       5,
+      'Cinema Studio 3.5':  10,
+      'Runway Gen-3 Alpha': 10,
+      'Pika 2.0':            5,
+      'Luma Dream Machine':  5,
+      'Lipsync Studio':     15,
+      'Talking Avatar':     15,
+      'Draw to Video':      10,
+      'Video Upscale':      15,
+      'Motion Control':     10
+    };
+    const LENGTH_VALS_V = { '5초': 5, '7초': 7, '10초': 10, '15초': 15 };
+
+    function updateLengthChips(engineName) {
+      const maxSec = ENGINE_MAX_LENGTH_V[engineName] || 15;
+      const isVeo = (engineName === 'Veo 3.1');
+      const group = document.getElementById('length-chips');
+      if (!group) return;
+      const chips = group.querySelectorAll('.chip');
+      let activeFound = false;
+      chips.forEach(chip => {
+        const val = LENGTH_VALS_V[chip.textContent.trim()] || 0;
+        const allowed = isVeo ? (val === 5 || val === 8) : (val <= maxSec);
+        if (allowed) {
+          chip.disabled = false;
+          chip.style.opacity = '';
+          chip.style.cursor = '';
+          if (chip.classList.contains('active')) activeFound = true;
+        } else {
+          chip.disabled = true;
+          chip.style.opacity = '0.3';
+          chip.style.cursor = 'not-allowed';
+          chip.classList.remove('active');
+        }
+      });
+      if (!activeFound) {
+        let best = null;
+        chips.forEach(chip => {
+          const val = LENGTH_VALS_V[chip.textContent.trim()] || 0;
+          const allowed = isVeo ? (val === 5 || val === 8) : (val <= maxSec);
+          if (allowed && (!best || val > (LENGTH_VALS_V[best.textContent.trim()] || 0))) best = chip;
+        });
+        if (best) best.classList.add('active');
+      }
+      updateTimecode();
+    }
+
+    function updateTimecode() {
+      const active = document.querySelector('#length-chips .chip.active');
+      const len = active ? active.textContent.trim() : '15초';
+      const map = { '5초': '0:05', '7초': '0:07', '10초': '0:10', '15초': '0:15' };
+      const endLabel = map[len] || '0:15';
+      const tc = document.querySelector('.timecode');
+      if (tc) tc.textContent = `00:00 / 0${endLabel.slice(1)}`;
+      const tlLabels = document.querySelectorAll('.tl-label');
+      if (tlLabels.length >= 2) tlLabels[1].textContent = endLabel;
+    }
+
+    function selectEngine(el, name) {
+      if (el.classList.contains('locked')) { window._showEngLockToast && window._showEngLockToast(el.getAttribute('data-tier')); return; }
+      document.querySelectorAll('.eng-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('active-eng-name').textContent = name;
+      // Update dropdown trigger
+      var ddName = document.getElementById('ddName');
+      var ddDesc = document.getElementById('ddDesc');
+      var ddIcon = document.getElementById('ddIcon');
+      if (ddName) ddName.textContent = name;
+      if (ddDesc) ddDesc.textContent = el.dataset.desc || '';
+      if (ddIcon) ddIcon.textContent = el.dataset.icon || name.substring(0,2).toUpperCase();
+      var dd = document.getElementById('engDropdown');
+      if (dd) dd.classList.remove('open');
+      renderEngineOptions(name);
+      updateLengthChips(name);
+    }
+
+    function toggleEngDropdown() {
+      var dd = document.getElementById('engDropdown');
+      if (dd) dd.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('engDropdown');
+      if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+    });
+
+    function selectChip(el, groupId) {
+      if (el.disabled) return;
+      const group = document.getElementById(groupId);
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      if (groupId === 'length-chips') updateTimecode();
+    }
+
+    function calcVideoCost() {
+      const lenEl  = document.querySelector('#length-chips .chip.active');
+      const resEl  = document.querySelector('#res-chips .chip.active');
+      const len    = lenEl ? lenEl.textContent.trim() : '5초';
+      const res    = resEl ? resEl.textContent.trim() : '720p';
+      const baseMap = { '5초': 20, '7초': 28, '10초': 40, '15초': 60 };
+      const base   = baseMap[len] || 20;
+      const resMult = res === '4K' ? 2 : res === '1080p' ? 1.5 : 1;
+      return Math.round(base * resMult);
+    }
+
+    async function wsGenerate() {
+      if (isAdmin) {
+        await runGenerate();
+      } else {
+        const credits = getCredits();
+        const cost = calcVideoCost();
+        if (credits < cost) {
+          showUpgrade();
+        } else {
+          saveCredits(credits - cost);
+          refreshUsageDisplay();
+          await runGenerate();
+        }
+      }
+    }
+
+    async function runGenerate() {
+      const loadWrap  = document.getElementById('loading-wrap');
+      const loadMsg   = document.getElementById('loading-msg');
+      const genBtn    = document.querySelector('.btn-generate');
+      const currentEng = document.getElementById('active-eng-name').textContent;
+      const promptVal  = document.getElementById('prompt-input').value.trim();
+
+      genBtn.disabled = true;
+      loadWrap.style.display = 'flex';
+      loadMsg.textContent = '시나리오 생성 중...';
+
+      const activeType = document.querySelector('#type-chips .chip.active');
+      const activeLen  = document.querySelector('#length-chips .chip.active');
+      const activeRes  = document.querySelector('#res-chips .chip.active');
+      const videoType  = activeType ? activeType.textContent.trim() : '시네마틱';
+      const videoLen   = activeLen  ? activeLen.textContent.trim()  : '10초';
+      const videoRes   = activeRes  ? activeRes.textContent.trim()  : '4K';
+
+      showToast(currentEng + ' 엔진은 곧 연동 예정입니다 — AI 시나리오를 먼저 생성합니다.');
+
+      try {
+        const userPrompt = promptVal
+          ? `다음 내용으로 ${videoType} 유형의 ${videoLen} 분량 ${videoRes} 영상 시나리오를 작성해주세요: ${promptVal}`
+          : `${videoType} 유형의 ${videoLen} 분량 ${videoRes} 영상 시나리오를 작성해주세요. 공간 디자인 또는 인테리어 관련 내용으로 만들어주세요.`;
+
+        const scriptResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + OPENAI_API_KEY
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              { role: 'system', content: '당신은 영상 시나리오 작가입니다. 한국어로 작성하세요. 각 장면을 "장면 N:" 형식으로 번호를 매기고, 장면 설명, 카메라 앵글, 분위기를 포함하세요. 총 3-4개 장면을 작성하세요.' },
+              { role: 'user', content: userPrompt }
+            ]
+          })
+        });
+
+        if (!scriptResponse.ok) {
+          const err = await scriptResponse.json().catch(() => ({}));
+          throw new Error(err.error?.message || 'GPT API 오류 (' + scriptResponse.status + ')');
+        }
+
+        const scriptData = await scriptResponse.json();
+        const scriptText = scriptData.choices[0].message.content;
+
+        const preview = document.getElementById('video-preview');
+        preview.innerHTML = '';
+
+        const scriptBox = document.createElement('div');
+        scriptBox.id = 'script-display';
+        scriptBox.style.cssText = 'position:absolute;inset:0;overflow-y:auto;padding:20px;background:rgba(0,0,0,.82);text-align:left;';
+
+        const scriptTitle = document.createElement('div');
+        scriptTitle.style.cssText = 'font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,188,212,.8);margin-bottom:14px;font-family:\'Noto Serif KR\',serif;';
+        scriptTitle.textContent = '✨ AI 시나리오 — ' + videoType + ' ' + videoLen + ' ' + videoRes;
+        scriptBox.appendChild(scriptTitle);
+
+        const scriptContent = document.createElement('div');
+        scriptContent.style.cssText = 'font-size:.78rem;line-height:1.75;color:rgba(255,255,255,.82);white-space:pre-wrap;';
+        scriptContent.textContent = scriptText;
+        scriptBox.appendChild(scriptContent);
+        preview.appendChild(scriptBox);
+
+        const scenes = parseScenes(scriptText);
+        loadMsg.textContent = `스토리보드 이미지 생성 중 (0/${scenes.length})...`;
+        await generateStoryboardImages(scenes, loadMsg);
+
+        loadWrap.style.display = 'none';
+        genBtn.disabled = false;
+
+        if (isAdmin && !document.querySelector('.dagaon-brand')) {
+          const brand = document.createElement('div');
+          brand.className = 'dagaon-brand';
+          brand.style.cssText = 'position:absolute;bottom:10px;left:12px;display:flex;align-items:center;gap:6px;z-index:5;';
+          brand.innerHTML = '<span style="font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(184,151,90,.35);">Powered by</span><span style="font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(184,151,90,.6);font-family:\'Noto Serif KR\',serif;font-weight:500;">DAGAON AI</span>';
+          preview.appendChild(brand);
+        }
+
+        showToast('AI 시나리오 및 스토리보드 생성이 완료되었습니다!');
+        saveVideoHistory(scriptText, currentEng, videoType, videoLen, videoRes);
+        if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 1800);
+
+      } catch(err) {
+        loadWrap.style.display = 'none';
+        genBtn.disabled = false;
+        let msg = 'API 호출 중 오류가 발생했습니다.';
+        if (err.message && err.message.includes('401')) msg = 'API 키가 유효하지 않습니다.';
+        else if (err.message && err.message.includes('429')) msg = 'API 사용 한도를 초과했습니다. 잠시 후 다시 시도하세요.';
+        else if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('network'))) msg = '네트워크 오류가 발생했습니다.';
+        else if (err.message) msg = err.message;
+        showToast('오류: ' + msg);
+        if (!isAdmin) {
+          saveCredits(getCredits() + calcVideoCost());
+          refreshUsageDisplay();
+        }
+      }
+    }
+
+    function parseScenes(text) {
+      const scenes = [];
+      const regex = /장면\s*\d+[:\s]+([^\n장면]{20,})/g;
+      let m;
+      while ((m = regex.exec(text)) !== null) {
+        scenes.push(m[1].trim().slice(0, 200));
+      }
+      if (scenes.length === 0) {
+        const lines = text.split('\n\n').filter(l => l.trim().length > 20);
+        lines.slice(0, 3).forEach(l => scenes.push(l.trim().slice(0, 200)));
+      }
+      return scenes.slice(0, 4);
+    }
+
+    async function generateStoryboardImages(scenes, loadMsgEl) {
+      const timelineBar = document.getElementById('timeline-bar');
+      let storyboard = document.getElementById('storyboard-row');
+      if (!storyboard) {
+        storyboard = document.createElement('div');
+        storyboard.id = 'storyboard-row';
+        storyboard.style.cssText = 'display:flex;gap:10px;padding:12px 0;overflow-x:auto;flex-wrap:wrap;';
+        timelineBar.after(storyboard);
+      }
+      storyboard.innerHTML = '';
+
+      for (let i = 0; i < scenes.length; i++) {
+        if (loadMsgEl) loadMsgEl.textContent = `스토리보드 이미지 생성 중 (${i}/${scenes.length})...`;
+
+        const scenePrompt = `건축/인테리어 공간 영상 스토리보드 장면: ${scenes[i]}, cinematic, 4K, high quality, architectural visualization`;
+
+        const placeholder = document.createElement('div');
+        placeholder.style.cssText = 'width:140px;height:90px;background:rgba(0,188,212,.06);border:1px solid rgba(0,188,212,.2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.65rem;color:rgba(0,188,212,.5);';
+        placeholder.textContent = `장면 ${i + 1} 생성 중...`;
+        storyboard.appendChild(placeholder);
+
+        try {
+          const imgResp = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + OPENAI_API_KEY
+            },
+            body: JSON.stringify({
+              model: 'dall-e-3',
+              prompt: scenePrompt,
+              size: '1792x1024',
+              quality: 'standard',
+              n: 1
+            })
+          });
+
+          if (!imgResp.ok) {
+            const err = await imgResp.json().catch(() => ({}));
+            throw new Error(err.error?.message || 'DALL-E 오류');
+          }
+
+          const imgData = await imgResp.json();
+          const imgUrl = imgData.data[0].url;
+
+          placeholder.style.cssText = 'width:140px;height:90px;border-radius:6px;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;';
+          placeholder.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = imgUrl;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+          const label = document.createElement('div');
+          label.style.cssText = 'position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);font-size:.55rem;color:rgba(0,188,212,.8);padding:3px 6px;text-align:center;letter-spacing:.06em;';
+          label.textContent = `장면 ${i + 1}`;
+          placeholder.appendChild(img);
+          placeholder.appendChild(label);
+
+        } catch(e) {
+          placeholder.style.cssText = 'width:140px;height:90px;background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.6rem;color:rgba(255,100,100,.5);text-align:center;padding:4px;';
+          placeholder.textContent = `장면 ${i + 1} 이미지 오류`;
+        }
+      }
+    }
+
+    function showUpgrade() {
+      document.getElementById('upgrade-overlay').classList.add('visible');
+    }
+    function closeUpgrade() {
+      document.getElementById('upgrade-overlay').classList.remove('visible');
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3200);
+    }
+
+    // ── Engine Tier Lock ──────────────────────────────────────────────────────
+    (function initEngineLock() {
+      var TIER_ORDER = { free: 0, basic: 2, standard: 2, pro: 3, enterprise: 3 };
+      var plan = localStorage.getItem('dagaon_plan') || 'free';
+      var isAdmin = localStorage.getItem('dagaon_admin') === '1';
+      var userLevel = isAdmin ? 99 : (TIER_ORDER[plan] !== undefined ? TIER_ORDER[plan] : 0);
+      document.querySelectorAll('.eng-item, .model-item, .engine-item').forEach(function(item) {
+        var tier = item.getAttribute('data-tier');
+        if (!tier) return;
+        var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+        if (userLevel < required) {
+          item.classList.add('locked');
+          var nameEl = item.querySelector('.eng-name, .model-name, .engine-name');
+          if (nameEl && !nameEl.querySelector('.eng-lock')) {
+            var lockSpan = document.createElement('span');
+            lockSpan.className = 'eng-lock';
+            lockSpan.innerHTML = '<i class="fa-solid fa-lock"></i>';
+            nameEl.appendChild(lockSpan);
+          }
+          var descEl = item.querySelector('.eng-desc, .model-desc, .engine-desc');
+          if (descEl) {
+            descEl.textContent = (required >= 3) ? 'Pro 플랜부터' : 'Standard 플랜부터';
+          }
+        }
+      });
+      window._showEngLockToast = function(tier) {
+        var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+        var msg = (required >= 3) ? '이 엔진은 Pro 플랜부터 사용 가능합니다' : '이 엔진은 Standard 플랜부터 사용 가능합니다';
+        var toast = document.getElementById('engLockToast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'engLockToast';
+          toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(184,151,90,.4);color:#d0c090;font-size:.78rem;padding:10px 22px;border-radius:6px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap;';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._t);
+        toast._t = setTimeout(function() { toast.style.opacity = '0'; }, 2500);
+      };
+    })();
+    // ── End Engine Tier Lock ──────────────────────────────────────────────────
+
+  // ─── ENGINE OPTIONS ──────────────────────────────────────────────────────
+  var ENGINE_OPTIONS_VID = {
+    'Seedance 2.0': [
+      { type: 'chip', label: '모션 강도', key: 'motion', values: ['낮음', '중간', '높음'], default: '중간' },
+      { type: 'chip', label: '카메라 무브', key: 'camera', values: ['고정', '팬', '줌', '오빗'], default: '고정' },
+    ],
+    'Kling 3.0 4K': [
+      { type: 'chip', label: '프레임레이트', key: 'fps', values: ['24', '30', '60'], default: '24' },
+      { type: 'toggle', label: '모션 브러시', key: 'brush', default: false },
+    ],
+    'Sora 2': [
+      { type: 'toggle', label: '스토리보드', key: 'storyboard', default: false },
+      { type: 'chip', label: '장면 전환', key: 'transition', values: ['컷', '페이드', '디졸브'], default: '컷' },
+    ],
+    'Veo 3.1': [
+      { type: 'toggle', label: '오디오 동기화', key: 'audio_sync', default: true },
+      { type: 'toggle', label: '물리 시뮬레이션', key: 'physics', default: false },
+    ],
+    'Runway Gen-3': [
+      { type: 'slider', label: '모션 스코어', key: 'motion_score', min: 1, max: 10, step: 1, default: 5 },
+      { type: 'toggle', label: '스타일 전이', key: 'style_transfer', default: false },
+    ],
+    'Pika 2.0': [
+      { type: 'chip', label: '모션 방향', key: 'direction', values: ['상', '하', '좌', '우', '확대', '축소'], default: '상' },
+      { type: 'toggle', label: '루프', key: 'loop', default: false },
+    ],
+    'Luma Dream Machine': [
+      { type: 'chip', label: '카메라 궤적', key: 'trajectory', values: ['선형', '곡선', '원형'], default: '선형' },
+      { type: 'toggle', label: '안정화', key: 'stabilize', default: true },
+    ],
+    'Minimax Video': [
+      { type: 'chip', label: '해상도', key: 'res', values: ['720p', '1080p', '4K'], default: '1080p' },
+      { type: 'toggle', label: '노이즈 제거', key: 'denoise', default: true },
+    ],
+    'Wan 2.1': [
+      { type: 'chip', label: '스타일', key: 'style', values: ['실사', '애니메이션', '추상'], default: '실사' },
+      { type: 'toggle', label: '색보정', key: 'colorgrade', default: false },
+    ],
+    'CogVideoX': [
+      { type: 'chip', label: '길이', key: 'length', values: ['5초', '10초', '15초'], default: '10초' },
+      { type: 'toggle', label: '텍스트 오버레이', key: 'text_overlay', default: false },
+    ],
+    'HunyuanVideo': [
+      { type: 'chip', label: '화질', key: 'quality', values: ['보통', '고화질', '최고화질'], default: '고화질' },
+      { type: 'toggle', label: '자동 자막', key: 'auto_caption', default: false },
+    ],
+    'AnimateDiff': [
+      { type: 'chip', label: '애니메이션 속도', key: 'anim_speed', values: ['느림', '보통', '빠름'], default: '보통' },
+      { type: 'toggle', label: '루프 효과', key: 'loop_fx', default: true },
+    ],
+    'ModelScope': [
+      { type: 'chip', label: '장르', key: 'genre', values: ['자연', '도시', '인물', '추상'], default: '자연' },
+      { type: 'toggle', label: '배경 분리', key: 'bg_sep', default: false },
+    ],
+    'ZeroScope': [
+      { type: 'chip', label: '색조', key: 'tone', values: ['따뜻', '차가운', '중립'], default: '중립' },
+      { type: 'toggle', label: '흑백 모드', key: 'bw', default: false },
+    ],
+    'Stable Video Diffusion': [
+      { type: 'slider', label: 'Motion Bucket', key: 'motion_bucket', min: 1, max: 255, step: 1, default: 127 },
+      { type: 'toggle', label: '증강 노이즈', key: 'aug_noise', default: false },
+    ],
+  };
+  var currentVidEngOpts = {};
+
+  function renderEngineOptions(engineName) {
+    var panel = document.getElementById('engOptionsPanel');
+    var body = document.getElementById('engOptionsBody');
+    var titleEl = document.getElementById('engOptionsTitleText');
+    var opts = ENGINE_OPTIONS_VID[engineName];
+    if (!opts || opts.length === 0) { panel.style.display = 'none'; return; }
+    panel.style.display = '';
+    titleEl.textContent = engineName + ' 설정';
+    body.innerHTML = '';
+    currentVidEngOpts = {};
+    opts.forEach(function(opt) {
+      currentVidEngOpts[opt.key] = opt.default !== undefined ? opt.default : (opt.values ? opt.values[0] : false);
+      var row = document.createElement('div');
+      row.className = 'opt-row';
+      if (opt.type === 'chip') {
+        row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-chips" data-key="' + opt.key + '"></div>';
+        body.appendChild(row);
+        var chipsEl = row.querySelector('.opt-chips');
+        opt.values.forEach(function(v) {
+          var btn = document.createElement('button');
+          btn.className = 'opt-chip' + (v === (opt.default || opt.values[0]) ? ' selected' : '');
+          btn.textContent = v;
+          (function(key, val, chips) {
+            btn.onclick = function() {
+              chips.querySelectorAll('.opt-chip').forEach(function(c) { c.classList.remove('selected'); });
+              btn.classList.add('selected');
+              currentVidEngOpts[key] = val;
+            };
+          })(opt.key, v, chipsEl);
+          chipsEl.appendChild(btn);
+        });
+      } else if (opt.type === 'toggle') {
+        var id = 'opt_toggle_' + opt.key;
+        row.innerHTML = '<div class="opt-toggle-row"><span class="opt-toggle-label">' + opt.label + '</span><label class="opt-toggle"><input type="checkbox" id="' + id + '"' + (opt.default ? ' checked' : '') + '><span class="opt-toggle-track"></span><span class="opt-toggle-thumb"></span></label></div>';
+        body.appendChild(row);
+        (function(key) { row.querySelector('input').onchange = function() { currentVidEngOpts[key] = this.checked; }; })(opt.key);
+      } else if (opt.type === 'slider') {
+        var sid = 'opt_slider_' + opt.key;
+        var val = opt.default !== undefined ? opt.default : opt.min;
+        row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-slider-wrap"><input class="opt-slider" type="range" id="' + sid + '" min="' + opt.min + '" max="' + opt.max + '" step="' + (opt.step || 1) + '" value="' + val + '"><span class="opt-slider-val" id="' + sid + '_val">' + val + '</span></div>';
+        body.appendChild(row);
+        (function(key) { var inp = row.querySelector('input'); var valEl = row.querySelector('.opt-slider-val'); inp.oninput = function() { valEl.textContent = this.value; currentVidEngOpts[key] = this.value; }; })(opt.key);
+      }
+    });
+  }
+
+  function toggleEngOptions() {
+    document.getElementById('engOptionsPanel').classList.toggle('collapsed');
+  }
+
+  function getEngineOptionsPromptVid() {
+    var parts = [];
+    Object.keys(currentVidEngOpts).forEach(function(k) {
+      var v = currentVidEngOpts[k];
+      if (v !== false && v !== '' && v !== null) { parts.push('[' + k + ': ' + v + ']'); }
+    });
+    return parts.length ? ' ' + parts.join(' ') : '';
+  }
+
+  // Init with default engine
+  renderEngineOptions('Seedance 2.0');
+
+  // ─── VIDEO HISTORY (localStorage) ─────────────────────────
+  var VIDEO_HISTORY_KEY = 'dagaon_video_history';
+
+  function loadVideoHistory() {
+    try { return JSON.parse(localStorage.getItem(VIDEO_HISTORY_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveVideoHistory(text, engine, videoType, videoLen, videoRes) {
+    var history = loadVideoHistory();
+    var promptEl = document.getElementById('promptInput') || document.getElementById('videoPrompt');
+    var prompt = (promptEl && promptEl.value.trim()) || '영상';
+    var entry = { id: 'vid_' + Date.now(), timestamp: Date.now(), engine: engine || '', videoType: videoType || '', videoLen: videoLen || '', videoRes: videoRes || '', prompt: prompt, result: text || '' };
+    history.unshift(entry);
+    if (history.length > 20) history = history.slice(0, 20);
+    localStorage.setItem(VIDEO_HISTORY_KEY, JSON.stringify(history));
+    renderVideoHistory();
+  }
+  function deleteVideoHistoryItem(id) {
+    var history = loadVideoHistory().filter(function(e) { return e.id !== id; });
+    localStorage.setItem(VIDEO_HISTORY_KEY, JSON.stringify(history));
+    renderVideoHistory();
+  }
+  function clearVideoHistory() {
+    if (!confirm('영상 생성 기록을 모두 삭제하시겠습니까?')) return;
+    localStorage.removeItem(VIDEO_HISTORY_KEY);
+    renderVideoHistory();
+  }
+  function renderVideoHistory() {
+    var history = loadVideoHistory();
+    var wrap = document.getElementById('videoHistoryWrap');
+    if (!wrap) return;
+    if (history.length === 0) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    var list = document.getElementById('videoHistoryList');
+    if (!list) return;
+    list.innerHTML = '';
+    history.forEach(function(entry) {
+      var card = document.createElement('div');
+      card.style.cssText = 'border:1px solid rgba(184,151,90,.18);border-radius:5px;padding:9px 12px;background:rgba(255,255,255,.02);';
+      var ts = new Date(entry.timestamp).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+      var header = document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;gap:5px;margin-bottom:4px;';
+      header.innerHTML = '<span style="font-size:.62rem;color:rgba(184,151,90,.7);">' + escHtml(entry.engine) + '</span><span style="font-size:.58rem;color:rgba(208,208,208,.4);">' + escHtml(entry.videoType) + ' · ' + escHtml(entry.videoLen) + '</span><span style="margin-left:auto;font-size:.58rem;color:rgba(208,208,208,.3);">' + ts + '</span>';
+      var delBtn = document.createElement('button');
+      delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      delBtn.style.cssText = 'background:none;border:none;color:rgba(208,208,208,.3);cursor:pointer;font-size:.65rem;padding:2px 4px;';
+      delBtn.onmouseover = function() { this.style.color='#e07070'; };
+      delBtn.onmouseout = function() { this.style.color='rgba(208,208,208,.3)'; };
+      (function(id) { delBtn.onclick = function() { deleteVideoHistoryItem(id); }; })(entry.id);
+      header.appendChild(delBtn);
+      card.appendChild(header);
+      var preview = document.createElement('div');
+      preview.style.cssText = 'font-size:.65rem;color:rgba(208,208,208,.4);max-height:36px;overflow:hidden;white-space:pre-wrap;word-break:break-all;margin-bottom:7px;';
+      preview.textContent = entry.result ? entry.result.slice(0,120) + '…' : entry.prompt;
+      card.appendChild(preview);
+      var restoreBtn = document.createElement('button');
+      restoreBtn.textContent = '불러오기';
+      restoreBtn.style.cssText = 'background:none;border:1px solid rgba(184,151,90,.3);border-radius:3px;color:rgba(184,151,90,.7);font-size:.6rem;padding:3px 9px;cursor:pointer;font-family:inherit;';
+      (function(e) {
+        restoreBtn.onclick = function() {
+          var preview2 = document.getElementById('video-preview');
+          if (preview2) {
+            preview2.innerHTML = '';
+            var box = document.createElement('div');
+            box.style.cssText = 'position:absolute;inset:0;overflow-y:auto;padding:20px;background:rgba(0,0,0,.82);text-align:left;';
+            var title = document.createElement('div');
+            title.style.cssText = 'font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,188,212,.8);margin-bottom:14px;';
+            title.textContent = '불러온 시나리오 — ' + e.videoType + ' ' + e.videoLen;
+            box.appendChild(title);
+            var content = document.createElement('div');
+            content.style.cssText = 'font-size:.78rem;line-height:1.75;color:rgba(255,255,255,.82);white-space:pre-wrap;';
+            content.textContent = e.result;
+            box.appendChild(content);
+            preview2.appendChild(box);
+          }
+          showToast('이전 영상 시나리오를 불러왔습니다.');
+        };
+      })(entry);
+      card.appendChild(restoreBtn);
+      list.appendChild(card);
+    });
+  }
+  function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  renderVideoHistory();
+  </script>
+</body>
+</html>

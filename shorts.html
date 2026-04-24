@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Higgsfield Marketing Studio — DAGAON AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --black:    #060607;
+      --deep:     #0b0b0d;
+      --surface:  #101013;
+      --panel:    #0e0e11;
+      --border:   rgba(255,255,255,0.07);
+      --border2:  rgba(255,255,255,0.04);
+      --white:    #ffffff;
+      --gold:     #c9a84c;
+      --gold-lt:  #e2c276;
+      --gold-dk:  #9a7534;
+      --text:     #c8c8cc;
+      --text-dim: rgba(200,200,204,0.45);
+      --cyan:     #00C8D7;
+      --green:    #6fcf47;
+      --red:      #f05050;
+      --serif:    'Noto Serif KR', serif;
+      --sans:     'Noto Sans KR', sans-serif;
+      --sidebar-w: 250px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 3px; height: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,.55); }
+
+    /* ═══ HEADER ═══ */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 54px;
+      background: rgba(6,6,7,.97);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 200;
+      backdrop-filter: blur(12px);
+    }
+    .h-left a {
+      text-decoration: none;
+      color: var(--text-dim);
+      font-size: .72rem;
+      letter-spacing: .04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .h-left a:hover { color: var(--gold-lt); }
+    .h-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .h-center .studio-logo {
+      font-family: var(--serif);
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: .04em;
+    }
+    .h-center .studio-logo span { color: var(--gold); }
+    .badge-top {
+      font-size: .5rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      background: var(--cyan);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .h-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge-unlimited {
+      background: linear-gradient(135deg, rgba(201,168,76,.22), rgba(226,194,118,.1));
+      border: 1px solid rgba(201,168,76,.4);
+      color: var(--gold-lt);
+      font-size: .58rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    .credit-display {
+      color: var(--text-dim);
+      font-size: .72rem;
+      letter-spacing: .03em;
+    }
+    .credit-display span { color: var(--gold); font-weight: 600; }
+
+    /* ═══ APP SHELL ═══ */
+    #app {
+      position: fixed;
+      top: 54px; left: 0; right: 0; bottom: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ═══ LEFT SIDEBAR ═══ */
+    #sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--deep);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sb-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 0 16px;
+    }
+    .sb-group-hdr {
+      font-size: .56rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,.6);
+      padding: 12px 14px 6px;
+    }
+    .sb-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 8px 0;
+    }
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: background .15s, border-color .15s;
+      position: relative;
+    }
+    .sb-item:hover {
+      background: rgba(255,255,255,.025);
+    }
+    .sb-item.active {
+      background: rgba(201,168,76,.06);
+      border-left-color: var(--gold);
+    }
+    .sb-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .65rem;
+      color: var(--text-dim);
+      transition: all .15s;
+    }
+    .sb-item.active .sb-icon {
+      background: rgba(201,168,76,.12);
+      border-color: rgba(201,168,76,.3);
+      color: var(--gold-lt);
+    }
+    .sb-item-info { flex: 1; min-width: 0; }
+    .sb-item-name {
+      font-size: .72rem;
+      font-weight: 500;
+      color: rgba(200,200,204,.75);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sb-item.active .sb-item-name { color: var(--gold-lt); }
+    .sb-badge {
+      flex-shrink: 0;
+      font-size: .5rem;
+      font-weight: 700;
+      letter-spacing: .09em;
+      padding: 2px 5px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .sb-badge.new {
+      background: rgba(111,207,71,.12);
+      color: var(--green);
+      border: 1px solid rgba(111,207,71,.25);
+    }
+    .sb-badge.top {
+      background: rgba(0,200,215,.15);
+      color: var(--cyan);
+      border: 1px solid rgba(0,200,215,.3);
+    }
+
+    /* Engine dropdown in sidebar */
+    .eng-dropdown { padding: 8px 10px; position: relative; flex-shrink: 0; }
+    .eng-dd-trigger {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 10px; background: #111;
+      border: 1px solid rgba(0,200,215,.35); border-radius: 6px;
+      cursor: pointer; transition: border-color .2s, background .2s; user-select: none;
+    }
+    .eng-dd-trigger:hover { border-color: rgba(0,200,215,.6); background: rgba(0,200,215,.03); }
+    .eng-dd-arrow {
+      margin-left: auto; font-size: .6rem;
+      color: rgba(0,200,215,.6); transition: transform .25s; flex-shrink: 0;
+    }
+    .eng-dropdown.open .eng-dd-arrow { transform: rotate(180deg); }
+    .eng-dd-menu {
+      overflow: hidden; max-height: 0;
+      transition: max-height .3s ease;
+      background: #0d0d10;
+      border: 1px solid rgba(0,200,215,.2); border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+    .eng-dropdown.open .eng-dd-menu { max-height: 400px; }
+    .eng-dd-inner { padding: 4px 5px 5px; }
+    .eng-dd-icon {
+      width: 26px; height: 26px; flex-shrink: 0; border-radius: 5px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .62rem; font-weight: 700; color: var(--cyan);
+    }
+    .eng-sb-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 8px; cursor: pointer;
+      border: 1px solid transparent; border-radius: 4px;
+      transition: background .15s, border-color .15s; margin-bottom: 1px;
+    }
+    .eng-sb-item:hover { background: rgba(255,255,255,.02); }
+    .eng-sb-item.eng-active {
+      background: rgba(0,200,215,.05);
+      border-color: rgba(0,200,215,.3);
+    }
+    .eng-sb-item.eng-active .eng-dd-icon { background: rgba(0,200,215,.12); border-color: rgba(0,200,215,.3); }
+    .eng-sb-name {
+      font-size: .7rem; color: var(--text-dim); flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .eng-sb-item.eng-active .eng-sb-name { color: var(--cyan); }
+    .eng-sb-desc {
+      font-size: .58rem; color: rgba(200,200,200,.28);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .eng-sb-info { flex: 1; min-width: 0; }
+    /* Engine lock */
+    .eng-sb-item.locked { opacity: 0.4; }
+    .eng-sb-item.locked .eng-lock { display: inline-flex; align-items: center; color: #888; margin-left: 4px; font-size: .58rem; }
+    .eng-sb-item:not(.locked) .eng-lock { display: none; }
+
+    /* ═══ MAIN WORKSPACE ═══ */
+    #workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    /* Top bar */
+    .ws-topbar {
+      height: 42px;
+      flex-shrink: 0;
+      background: rgba(14,14,17,.8);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      gap: 12px;
+    }
+    .ws-format-name {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: .02em;
+    }
+    .ws-sep { color: var(--border); font-size: .9rem; }
+    .ws-engine-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(0,200,215,.08);
+      border: 1px solid rgba(0,200,215,.2);
+      border-radius: 12px;
+      padding: 3px 10px;
+    }
+    .ws-engine-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 5px rgba(0,200,215,.8);
+    }
+    .ws-engine-label {
+      font-size: .65rem;
+      color: var(--cyan);
+      letter-spacing: .06em;
+    }
+    .ws-topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+    /* Workspace body */
+    .ws-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ═══ CENTER INPUT PANEL ═══ */
+    #center-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: var(--surface);
+    }
+
+    /* Mode panels */
+    .mode-panel { display: none; flex-direction: column; gap: 18px; }
+    .mode-panel.visible { display: flex; }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 1.5px dashed rgba(255,255,255,.1);
+      border-radius: 10px;
+      background: rgba(255,255,255,.02);
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-zone:hover {
+      border-color: rgba(201,168,76,.35);
+      background: rgba(201,168,76,.03);
+    }
+    .upload-zone.drag-over {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.06);
+    }
+    .upload-zone.has-image { border-style: solid; border-color: rgba(201,168,76,.3); }
+    .upload-preview {
+      width: 100%;
+      height: 100%;
+      min-height: 130px;
+      object-fit: cover;
+      border-radius: 8px;
+      display: none;
+    }
+    .upload-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .upload-icon { font-size: 1.4rem; color: rgba(201,168,76,.4); }
+    .upload-title { font-size: .78rem; font-weight: 500; color: rgba(200,200,204,.55); }
+    .upload-hint { font-size: .64rem; color: var(--text-dim); }
+    #product-file-input { display: none; }
+
+    /* URL input mode */
+    .url-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px;
+      overflow: hidden;
+      background: rgba(255,255,255,.03);
+      transition: border-color .2s;
+    }
+    .url-input-wrap:focus-within { border-color: rgba(201,168,76,.45); }
+    .url-prefix {
+      padding: 0 12px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,.03);
+      border-right: 1px solid rgba(255,255,255,.06);
+      color: var(--text-dim);
+      font-size: .72rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .url-field {
+      flex: 1;
+      height: 42px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .8rem;
+      padding: 0 12px;
+    }
+    .url-field::placeholder { color: var(--text-dim); }
+    .url-analyze-btn {
+      height: 42px;
+      padding: 0 16px;
+      background: rgba(201,168,76,.12);
+      border: none;
+      border-left: 1px solid rgba(201,168,76,.25);
+      color: var(--gold-lt);
+      font-family: var(--sans);
+      font-size: .72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+    .url-analyze-btn:hover { background: rgba(201,168,76,.22); }
+
+    /* Avatar grid */
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .avatar-card {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color .2s, transform .15s;
+      position: relative;
+    }
+    .avatar-card:hover { transform: scale(1.05); border-color: rgba(201,168,76,.4); }
+    .avatar-card.selected { border-color: var(--gold); }
+    .avatar-card img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text-dim);
+    }
+    .avatar-new-card {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(255,255,255,.12);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color .2s, background .2s;
+      background: rgba(255,255,255,.02);
+    }
+    .avatar-new-card:hover { border-color: rgba(201,168,76,.4); background: rgba(201,168,76,.04); }
+    .avatar-new-card i { font-size: .9rem; color: var(--text-dim); }
+    .avatar-new-card span { font-size: .55rem; color: var(--text-dim); text-align: center; }
+
+    /* Form elements */
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-label {
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: .8;
+    }
+    .field-input {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .8rem;
+      padding: 10px 12px;
+      outline: none;
+      border-radius: 6px;
+      transition: border-color .2s;
+    }
+    .field-input:focus { border-color: rgba(201,168,76,.45); }
+    .field-input::placeholder { color: var(--text-dim); }
+    textarea.field-input {
+      resize: vertical;
+      min-height: 72px;
+      line-height: 1.6;
+    }
+
+    /* Options row */
+    .opts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .opts-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .opt-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: .68rem;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.09);
+      background: transparent;
+      color: rgba(200,200,204,.5);
+      transition: all .18s;
+      font-family: var(--sans);
+      letter-spacing: .02em;
+    }
+    .chip:hover { border-color: rgba(201,168,76,.3); color: rgba(200,200,204,.8); }
+    .chip.active {
+      background: rgba(201,168,76,.1);
+      border-color: rgba(201,168,76,.4);
+      color: var(--gold-lt);
+    }
+
+    /* Generate button */
+    .btn-generate {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dk) 100%);
+      border: none;
+      border-radius: 6px;
+      color: #0a0905;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-generate:hover {
+      opacity: .92;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(201,168,76,.25);
+    }
+    .btn-generate:disabled { opacity: .45; transform: none; cursor: not-allowed; box-shadow: none; }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px;
+      color: var(--text-dim);
+      font-size: .74rem;
+      letter-spacing: .04em;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: border-color .2s, color .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .btn-secondary:hover { border-color: rgba(201,168,76,.35); color: var(--gold-lt); }
+
+    /* Analysis result */
+    #url-analysis-result {
+      display: none;
+      background: rgba(0,200,215,.05);
+      border: 1px solid rgba(0,200,215,.15);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .url-result-label {
+      font-size: .58rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      opacity: .75;
+      margin-bottom: 6px;
+    }
+    #url-analysis-text {
+      font-size: .76rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,.75);
+      white-space: pre-wrap;
+    }
+
+    /* ═══ SCENARIO / OUTPUT PANE ═══ */
+    #output-pane {
+      width: 300px;
+      flex-shrink: 0;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .out-header {
+      height: 38px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+    }
+    .out-header-label {
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,.65);
+    }
+    .out-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #output-placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: rgba(200,200,204,.18);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    #output-placeholder i { font-size: 2rem; }
+    #output-placeholder p { font-size: .74rem; line-height: 1.7; }
+    #scenario-text {
+      font-size: .78rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,.78);
+      white-space: pre-wrap;
+      display: none;
+    }
+
+    /* 9:16 Preview */
+    .preview-wrap {
+      flex-shrink: 0;
+      padding: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .preview-label {
+      font-size: .58rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .preview-frame {
+      width: 100%;
+      aspect-ratio: 9/16;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 200px;
+    }
+    .preview-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(20,5,40,.7) 0%, rgba(5,5,25,.85) 100%);
+      pointer-events: none;
+    }
+    .preview-ratio-tag {
+      position: absolute;
+      top: 8px; right: 8px;
+      font-size: .52rem;
+      letter-spacing: .1em;
+      color: rgba(201,168,76,.55);
+      background: rgba(0,0,0,.6);
+      padding: 2px 6px;
+      border-radius: 2px;
+      z-index: 1;
+    }
+    .preview-play {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(201,168,76,.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      transition: border-color .2s;
+    }
+    .preview-play:hover { border-color: var(--gold); }
+    .preview-play i { color: var(--gold); font-size: .8rem; margin-left: 3px; }
+
+    /* Timeline */
+    .tl-bar {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tl-time { font-size: .58rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+    .tl-track {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,.06);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .tl-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), rgba(201,168,76,.3));
+      border-radius: 2px;
+      transition: width .4s ease;
+    }
+
+    /* Storyboard */
+    .storyboard-section {
+      flex-shrink: 0;
+      border-top: 1px solid var(--border);
+      padding: 8px 14px 14px;
+      display: none;
+    }
+    .storyboard-label {
+      font-size: .56rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .storyboard-row {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+    }
+
+    /* Loading */
+    #loading-wrap {
+      display: none;
+      align-items: center;
+      gap: 9px;
+    }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 1.5px solid rgba(201,168,76,.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading-msg { font-size: .7rem; color: var(--text-dim); }
+
+    /* ═══ UPGRADE OVERLAY ═══ */
+    #upgrade-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6,6,7,.95);
+      backdrop-filter: blur(10px);
+      z-index: 400;
+      align-items: center;
+      justify-content: center;
+    }
+    #upgrade-overlay.visible { display: flex; }
+    .upgrade-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 360px;
+      padding: 44px 36px;
+      text-align: center;
+      background: rgba(14,14,17,.9);
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: 14px;
+    }
+    .upgrade-box .lock-icon { font-size: 2.2rem; color: rgba(201,168,76,.55); }
+    .upgrade-box h2 { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--white); }
+    .upgrade-box p { font-size: .76rem; color: rgba(200,200,204,.5); line-height: 1.7; }
+    .btn-upgrade {
+      margin-top: 6px;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dk));
+      border: none;
+      border-radius: 6px;
+      color: #0a0905;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: opacity .2s;
+    }
+    .btn-upgrade:hover { opacity: .88; }
+    .dismiss-link {
+      font-size: .7rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      letter-spacing: .04em;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .dismiss-link:hover { color: var(--text); }
+
+    /* ═══ TOAST ═══ */
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 26px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10,10,12,.97);
+      border: 1px solid rgba(201,168,76,.35);
+      color: var(--text);
+      font-size: .73rem;
+      letter-spacing: .04em;
+      padding: 9px 20px;
+      border-radius: 5px;
+      z-index: 500;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    #toast.show { display: block; animation: fadeInUp .22s ease; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ═══ VISION RESULT (product image analysis) ═══ */
+    #vision-result {
+      display: none;
+      background: rgba(111,207,71,.04);
+      border: 1px solid rgba(111,207,71,.12);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .vision-label {
+      font-size: .58rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--green);
+      opacity: .75;
+      margin-bottom: 6px;
+    }
+    #vision-text {
+      font-size: .76rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,.75);
+      white-space: pre-wrap;
+    }
+
+    /* ═══ ENGINE OPTIONS PANEL ═══ */
+    .eng-options-panel {
+      margin: 6px 8px 4px;
+      background: rgba(201,168,76,.04);
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: 7px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .eng-options-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 11px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .2s;
+    }
+    .eng-options-header:hover { background: rgba(201,168,76,.06); }
+    .eng-options-title {
+      flex: 1;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .eng-options-arrow {
+      font-size: .55rem;
+      color: rgba(201,168,76,.6);
+      transition: transform .25s;
+    }
+    .eng-options-panel.collapsed .eng-options-arrow { transform: rotate(-90deg); }
+    .eng-options-body {
+      padding: 8px 11px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      border-top: 1px solid rgba(201,168,76,.12);
+    }
+    .eng-options-panel.collapsed .eng-options-body { display: none; }
+    .opt-row { display: flex; flex-direction: column; gap: 4px; }
+    .opt-label {
+      font-size: .56rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(200,200,204,.45);
+    }
+    .opt-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .opt-chip {
+      padding: 4px 9px;
+      border: 1px solid rgba(201,168,76,.25);
+      border-radius: 3px;
+      background: transparent;
+      color: rgba(200,200,204,.55);
+      font-family: var(--sans);
+      font-size: .64rem;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .opt-chip:hover { border-color: rgba(201,168,76,.5); color: var(--gold); }
+    .opt-chip.selected {
+      background: rgba(201,168,76,.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .opt-toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .opt-toggle-label { font-size: .67rem; color: rgba(200,200,204,.6); }
+    .opt-toggle {
+      position: relative;
+      width: 34px; height: 18px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .opt-toggle input { opacity: 0; width: 0; height: 0; }
+    .opt-toggle-track {
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.1);
+      border-radius: 18px;
+      transition: background .2s;
+    }
+    .opt-toggle input:checked + .opt-toggle-track { background: var(--gold); }
+    .opt-toggle-thumb {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .opt-toggle input:checked ~ .opt-toggle-thumb { transform: translateX(16px); }
+    .opt-slider-wrap { display: flex; align-items: center; gap: 8px; }
+    .opt-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 3px;
+      background: rgba(255,255,255,.12);
+      border-radius: 2px;
+      outline: none;
+    }
+    .opt-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+    }
+    .opt-slider-val {
+      font-size: .65rem;
+      color: var(--gold);
+      min-width: 28px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header id="header">
+    <div class="h-left">
+      <a href="javascript:void(0)" onclick="history.back()"><i class="fa-solid fa-arrow-left" style="font-size:.65rem;"></i> 뒤로가기</a>
+    </div>
+    <div class="h-center">
+      <span class="studio-logo">Higgsfield <span>Marketing</span> Studio</span>
+      <span class="badge-top">DAGAON AI</span>
+    </div>
+    <div class="h-right" id="header-right"></div>
+  </header>
+
+  <!-- ═══ APP ═══ -->
+  <div id="app">
+
+    <!-- ═══ LEFT SIDEBAR ═══ -->
+    <nav id="sidebar">
+      <div class="sb-scroll">
+
+        <!-- 영상 포맷 -->
+        <div class="sb-group-hdr">영상 포맷</div>
+        <div class="sb-item active" onclick="selectFormat(this,'ugc')" data-mode="ugc">
+          <div class="sb-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">UGC</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'hyper')" data-mode="hyper">
+          <div class="sb-icon"><i class="fa-solid fa-bolt"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Hyper Motion</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'unboxing')" data-mode="unboxing">
+          <div class="sb-icon"><i class="fa-solid fa-box-open"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Unboxing</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'tvspot')" data-mode="tvspot">
+          <div class="sb-icon"><i class="fa-solid fa-tv"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">TV Spot</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'tutorial')" data-mode="tutorial">
+          <div class="sb-icon"><i class="fa-solid fa-circle-play"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Tutorial</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'vto-ugc')" data-mode="vto-ugc">
+          <div class="sb-icon"><i class="fa-solid fa-person"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Virtual Try On (UGC)</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'vto-pro')" data-mode="vto-pro">
+          <div class="sb-icon"><i class="fa-solid fa-star"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Virtual Try On (Pro)</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'cgi')" data-mode="cgi">
+          <div class="sb-icon"><i class="fa-solid fa-cube"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">CGI Commercial</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+
+        <div class="sb-divider"></div>
+
+        <!-- 마케팅 도구 -->
+        <div class="sb-group-hdr">마케팅 도구</div>
+        <div class="sb-item" onclick="selectFormat(this,'avatar')" data-mode="avatar">
+          <div class="sb-icon"><i class="fa-solid fa-user-astronaut"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Avatar Library</div></div>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'url2ad')" data-mode="url2ad">
+          <div class="sb-icon"><i class="fa-solid fa-link"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">URL to Ad</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+        <div class="sb-item" onclick="selectFormat(this,'product2ad')" data-mode="product2ad">
+          <div class="sb-icon"><i class="fa-solid fa-image"></i></div>
+          <div class="sb-item-info"><div class="sb-item-name">Product to Ad</div></div>
+          <span class="sb-badge new">NEW</span>
+        </div>
+
+        <div class="sb-divider"></div>
+
+        <!-- AI 엔진 -->
+        <div class="sb-group-hdr">AI 엔진</div>
+        <div class="eng-dropdown" id="engDropdown">
+          <div class="eng-dd-trigger" onclick="toggleEngDropdown()">
+            <div class="eng-dd-icon" id="ddIcon">SD</div>
+            <div class="eng-sb-info">
+              <div class="eng-sb-name" id="ddName">Seedance 2.0</div>
+              <div class="eng-sb-desc" id="ddDesc">max 15s</div>
+            </div>
+            <i class="fa-solid fa-chevron-down eng-dd-arrow"></i>
+          </div>
+          <div class="eng-dd-menu">
+            <div class="eng-dd-inner">
+
+              <div class="eng-sb-item eng-active" data-tier="pro" data-icon="SD" data-desc="max 15s" onclick="selectEngine(this,'Seedance 2.0')">
+                <div class="eng-dd-icon">SD</div>
+                <div class="eng-sb-info">
+                  <div class="eng-sb-name">Seedance 2.0</div>
+                  <div class="eng-sb-desc">max 15s</div>
+                </div>
+                <span class="sb-badge top">TOP</span>
+              </div>
+
+              <div class="eng-sb-item" data-tier="pro" data-icon="SL" data-desc="max 10s" onclick="selectEngine(this,'Soul 2.0')">
+                <div class="eng-dd-icon">SL</div>
+                <div class="eng-sb-info">
+                  <div class="eng-sb-name">Soul 2.0</div>
+                  <div class="eng-sb-desc">max 10s</div>
+                </div>
+                <span class="sb-badge new">NEW</span>
+              </div>
+
+              <div class="eng-sb-item" data-tier="pro" data-icon="KL" data-desc="max 10s" onclick="selectEngine(this,'Kling 3.0')">
+                <div class="eng-dd-icon">KL</div>
+                <div class="eng-sb-info">
+                  <div class="eng-sb-name">Kling 3.0</div>
+                  <div class="eng-sb-desc">max 10s</div>
+                </div>
+                <span class="sb-badge new">NEW</span>
+              </div>
+
+              <div class="eng-sb-item" data-tier="pro" data-icon="CS" data-desc="max 10s" onclick="selectEngine(this,'Cinema Studio 3.5')">
+                <div class="eng-dd-icon">CS</div>
+                <div class="eng-sb-info">
+                  <div class="eng-sb-name">Cinema Studio 3.5</div>
+                  <div class="eng-sb-desc">max 10s</div>
+                </div>
+                <span class="sb-badge new">NEW</span>
+              </div>
+
+              <div class="eng-sb-item" data-tier="pro" data-icon="RW" data-desc="max 10s" onclick="selectEngine(this,'Runway Gen-3')">
+                <div class="eng-dd-icon">RW</div>
+                <div class="eng-sb-info">
+                  <div class="eng-sb-name">Runway Gen-3</div>
+                  <div class="eng-sb-desc">max 10s</div>
+                </div>
+              </div>
+
+              <div class="eng-sb-item" data-tier="pro" data-icon="PK" data-desc="max 5s" onclick="selectEngine(this,'Pika 2.0')">
+                <div class="eng-dd-icon">PK</div>
+                <div class="eng-sb-info">
+                  <div class="eng-sb-name">Pika 2.0</div>
+                  <div class="eng-sb-desc">max 5s</div>
+                </div>
+                <span class="sb-badge new">NEW</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Engine Options Panel -->
+      <div id="engOptionsPanel" class="eng-options-panel" style="display:none;">
+        <div class="eng-options-header" onclick="toggleEngOptions()">
+          <i class="fa-solid fa-sliders" style="font-size:.58rem;color:var(--gold);"></i>
+          <span class="eng-options-title" id="engOptionsTitleText">엔진 설정</span>
+          <i class="fa-solid fa-chevron-down eng-options-arrow"></i>
+        </div>
+        <div class="eng-options-body" id="engOptionsBody"></div>
+      </div>
+    </nav>
+
+    <!-- ═══ WORKSPACE ═══ -->
+    <div id="workspace">
+
+      <!-- Top Bar -->
+      <div class="ws-topbar">
+        <span class="ws-format-name" id="ws-format-name">UGC</span>
+        <span class="ws-sep">/</span>
+        <div class="ws-engine-badge">
+          <div class="ws-engine-dot"></div>
+          <span class="ws-engine-label" id="ws-engine-label">Seedance 2.0</span>
+        </div>
+        <div class="ws-topbar-right">
+          <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:.68rem;" onclick="showToast('MP4 다운로드 기능은 곧 오픈됩니다.')">
+            <i class="fa-solid fa-download"></i> 내보내기
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="ws-body">
+
+        <!-- Center Panel -->
+        <div id="center-panel">
+
+          <!-- ── UGC / Hyper Motion / Unboxing / TV Spot / Tutorial / VTO / CGI 공통 패널 ── -->
+          <div class="mode-panel visible" id="panel-video">
+
+            <!-- 제품 이미지 업로드 -->
+            <div class="field-group">
+              <div class="field-label">제품 이미지</div>
+              <div class="upload-zone" id="upload-zone" onclick="document.getElementById('product-file-input').click()"
+                   ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                <img id="upload-preview" class="upload-preview" alt="제품 이미지 미리보기" />
+                <div class="upload-overlay" id="upload-overlay">
+                  <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                  <span class="upload-title">이미지를 드래그하거나 클릭하여 업로드</span>
+                  <span class="upload-hint">JPG, PNG, WEBP — 최대 10MB</span>
+                </div>
+              </div>
+              <input type="file" id="product-file-input" accept="image/*" onchange="handleFileSelect(event)" />
+            </div>
+
+            <!-- GPT-4o Vision 분석 결과 -->
+            <div id="vision-result">
+              <div class="vision-label">GPT-4o Vision 분석</div>
+              <div id="vision-text"></div>
+            </div>
+
+            <!-- 제품명 / 브랜드명 -->
+            <div class="opts-grid">
+              <div class="field-group">
+                <div class="field-label">제품명</div>
+                <input class="field-input" type="text" id="product-name" placeholder="예: 아이오페 레티놀 크림" />
+              </div>
+              <div class="field-group">
+                <div class="field-label">브랜드명</div>
+                <input class="field-input" type="text" id="brand-name" placeholder="예: IOPE" />
+              </div>
+            </div>
+
+            <!-- 광고 문구 -->
+            <div class="field-group">
+              <div class="field-label">광고 문구 / 슬로건</div>
+              <input class="field-input" type="text" id="ad-copy" placeholder="예: 피부 탄력의 시작, 지금 경험하세요" />
+            </div>
+
+            <!-- 타겟 / 메시지 -->
+            <div class="field-group">
+              <div class="field-label">추가 지시사항</div>
+              <textarea class="field-input" id="extra-prompt" placeholder="예: 20~30대 여성 대상, 밝고 화사한 분위기, 봄 시즌..."></textarea>
+            </div>
+
+            <!-- 설정 옵션 -->
+            <div class="opts-grid-3">
+              <div class="opt-group">
+                <div class="field-label">비율</div>
+                <div class="chips-row" id="ratio-chips">
+                  <button class="chip active" onclick="selectChip(this,'ratio-chips')">9:16</button>
+                  <button class="chip" onclick="selectChip(this,'ratio-chips')">1:1</button>
+                  <button class="chip" onclick="selectChip(this,'ratio-chips')">16:9</button>
+                </div>
+              </div>
+              <div class="opt-group">
+                <div class="field-label">해상도</div>
+                <div class="chips-row" id="res-chips">
+                  <button class="chip active" onclick="selectChip(this,'res-chips')">1080p</button>
+                  <button class="chip" onclick="selectChip(this,'res-chips')">720p</button>
+                </div>
+              </div>
+              <div class="opt-group">
+                <div class="field-label">길이</div>
+                <div class="chips-row" id="length-chips">
+                  <button class="chip" onclick="selectChip(this,'length-chips');updateTimecode()">5초</button>
+                  <button class="chip" onclick="selectChip(this,'length-chips');updateTimecode()">7초</button>
+                  <button class="chip" onclick="selectChip(this,'length-chips');updateTimecode()">10초</button>
+                  <button class="chip active" onclick="selectChip(this,'length-chips');updateTimecode()">15초</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 플랫폼 -->
+            <div class="opt-group">
+              <div class="field-label">플랫폼</div>
+              <div class="chips-row" id="platform-chips">
+                <button class="chip active" onclick="selectChip(this,'platform-chips')">인스타 릴스</button>
+                <button class="chip" onclick="selectChip(this,'platform-chips')">유튜브 쇼츠</button>
+                <button class="chip" onclick="selectChip(this,'platform-chips')">틱톡</button>
+              </div>
+            </div>
+
+            <!-- 생성 버튼 -->
+            <button class="btn-generate" id="gen-btn" onclick="doGenerate()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> AI 광고 영상 시나리오 생성
+            </button>
+
+            <div id="loading-wrap">
+              <div class="spinner"></div>
+              <span id="loading-msg">시나리오 생성 중...</span>
+            </div>
+
+            <!-- 스토리보드 -->
+            <button class="btn-secondary" id="storyboard-btn" onclick="doStoryboard()" disabled>
+              <i class="fa-solid fa-images"></i> 스토리보드 이미지 생성 (DALL-E 3)
+            </button>
+
+          </div><!-- /panel-video -->
+
+          <!-- ── Avatar Library 패널 ── -->
+          <div class="mode-panel" id="panel-avatar">
+
+            <div class="field-group">
+              <div class="field-label">AI 아바타 선택 (Soul 2.0)</div>
+              <div class="avatar-grid" id="avatar-grid">
+                <!-- 8개 placeholder avatars -->
+                <div class="avatar-card" onclick="selectAvatar(this,1)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-card" onclick="selectAvatar(this,2)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-card" onclick="selectAvatar(this,3)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-card" onclick="selectAvatar(this,4)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-card" onclick="selectAvatar(this,5)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-card" onclick="selectAvatar(this,6)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-card" onclick="selectAvatar(this,7)"><div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div></div>
+                <div class="avatar-new-card" onclick="showToast('새 아바타 생성 기능은 곧 오픈됩니다.')">
+                  <i class="fa-solid fa-plus"></i>
+                  <span>새 아바타<br>생성</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">아바타 프롬프트</div>
+              <textarea class="field-input" id="avatar-prompt" placeholder="예: 30대 한국 여성, 전문적인 인상, 밝은 배경, 비즈니스 캐주얼..."></textarea>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">대본 / 스크립트</div>
+              <textarea class="field-input" id="avatar-script" placeholder="아바타가 말할 스크립트를 입력하세요..."></textarea>
+            </div>
+
+            <button class="btn-generate" onclick="doAvatarGenerate()">
+              <i class="fa-solid fa-person-rays"></i> 아바타 영상 생성
+            </button>
+          </div><!-- /panel-avatar -->
+
+          <!-- ── URL to Ad 패널 ── -->
+          <div class="mode-panel" id="panel-url2ad">
+
+            <div class="field-group">
+              <div class="field-label">제품 / 브랜드 URL</div>
+              <div class="url-input-wrap">
+                <span class="url-prefix"><i class="fa-solid fa-link"></i></span>
+                <input class="url-field" type="url" id="ad-url" placeholder="https://example.com/product" />
+                <button class="url-analyze-btn" onclick="doUrlAnalyze()">AI 분석</button>
+              </div>
+            </div>
+
+            <div id="url-analysis-result">
+              <div class="url-result-label">AI 분석 결과</div>
+              <div id="url-analysis-text"></div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">광고 방향 / 추가 지시</div>
+              <textarea class="field-input" id="url-extra" placeholder="예: 젊고 활기찬 이미지, 할인 강조, 무료배송 언급..."></textarea>
+            </div>
+
+            <div class="opts-grid-3">
+              <div class="opt-group">
+                <div class="field-label">비율</div>
+                <div class="chips-row" id="ratio-chips-url">
+                  <button class="chip active" onclick="selectChip(this,'ratio-chips-url')">9:16</button>
+                  <button class="chip" onclick="selectChip(this,'ratio-chips-url')">1:1</button>
+                  <button class="chip" onclick="selectChip(this,'ratio-chips-url')">16:9</button>
+                </div>
+              </div>
+              <div class="opt-group">
+                <div class="field-label">길이</div>
+                <div class="chips-row" id="length-chips-url">
+                  <button class="chip" onclick="selectChip(this,'length-chips-url')">5초</button>
+                  <button class="chip" onclick="selectChip(this,'length-chips-url')">7초</button>
+                  <button class="chip" onclick="selectChip(this,'length-chips-url')">10초</button>
+                  <button class="chip active" onclick="selectChip(this,'length-chips-url')">15초</button>
+                </div>
+              </div>
+              <div class="opt-group">
+                <div class="field-label">플랫폼</div>
+                <div class="chips-row" id="platform-chips-url">
+                  <button class="chip active" onclick="selectChip(this,'platform-chips-url')">릴스</button>
+                  <button class="chip" onclick="selectChip(this,'platform-chips-url')">쇼츠</button>
+                  <button class="chip" onclick="selectChip(this,'platform-chips-url')">틱톡</button>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-generate" id="gen-btn-url" onclick="doUrlToAd()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> URL → 광고 영상 생성
+            </button>
+
+            <div id="loading-wrap-url" style="display:none; align-items:center; gap:9px;">
+              <div class="spinner"></div>
+              <span id="loading-msg-url">URL 분석 중...</span>
+            </div>
+          </div><!-- /panel-url2ad -->
+
+          <!-- ── Product to Ad 패널 ── -->
+          <div class="mode-panel" id="panel-product2ad">
+
+            <div class="field-group">
+              <div class="field-label">제품 이미지 업로드</div>
+              <div class="upload-zone" id="upload-zone-p2a" onclick="document.getElementById('product-file-input-p2a').click()"
+                   ondragover="handleDragOver2(event)" ondragleave="handleDragLeave2(event)" ondrop="handleDrop2(event)">
+                <img id="upload-preview-p2a" class="upload-preview" alt="제품 이미지" />
+                <div class="upload-overlay" id="upload-overlay-p2a">
+                  <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                  <span class="upload-title">제품 이미지를 업로드하세요</span>
+                  <span class="upload-hint">JPG, PNG — AI가 자동으로 광고 콘셉트 생성</span>
+                </div>
+              </div>
+              <input type="file" id="product-file-input-p2a" accept="image/*" onchange="handleFileSelectP2A(event)" />
+            </div>
+
+            <div id="vision-result-p2a" style="display:none; background:rgba(111,207,71,.04); border:1px solid rgba(111,207,71,.12); border-radius:6px; padding:12px;">
+              <div class="vision-label">GPT-4o Vision 분석</div>
+              <div id="vision-text-p2a" style="font-size:.76rem; line-height:1.7; color:rgba(255,255,255,.75); white-space:pre-wrap;"></div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">추가 지시사항</div>
+              <textarea class="field-input" id="p2a-extra" placeholder="예: 프리미엄 이미지, 특정 타겟, 특별 할인 강조..."></textarea>
+            </div>
+
+            <div class="opts-grid">
+              <div class="opt-group">
+                <div class="field-label">비율</div>
+                <div class="chips-row" id="ratio-chips-p2a">
+                  <button class="chip active" onclick="selectChip(this,'ratio-chips-p2a')">9:16</button>
+                  <button class="chip" onclick="selectChip(this,'ratio-chips-p2a')">1:1</button>
+                  <button class="chip" onclick="selectChip(this,'ratio-chips-p2a')">16:9</button>
+                </div>
+              </div>
+              <div class="opt-group">
+                <div class="field-label">플랫폼</div>
+                <div class="chips-row" id="platform-chips-p2a">
+                  <button class="chip active" onclick="selectChip(this,'platform-chips-p2a')">릴스</button>
+                  <button class="chip" onclick="selectChip(this,'platform-chips-p2a')">쇼츠</button>
+                  <button class="chip" onclick="selectChip(this,'platform-chips-p2a')">틱톡</button>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-generate" id="gen-btn-p2a" onclick="doProductToAd()">
+              <i class="fa-solid fa-magic-wand-sparkles"></i> 제품 이미지 → 광고 콘셉트 생성
+            </button>
+
+            <div id="loading-wrap-p2a" style="display:none; align-items:center; gap:9px;">
+              <div class="spinner"></div>
+              <span id="loading-msg-p2a">이미지 분석 중...</span>
+            </div>
+          </div><!-- /panel-product2ad -->
+
+        </div><!-- /#center-panel -->
+
+        <!-- ═══ OUTPUT PANE ═══ -->
+        <div id="output-pane">
+
+          <div class="out-header">
+            <span class="out-header-label">AI 시나리오 / 결과</span>
+          </div>
+
+          <div class="out-body">
+            <div id="output-placeholder">
+              <i class="fa-solid fa-film"></i>
+              <p>포맷을 선택하고<br>필요한 정보를 입력한 뒤<br>'생성' 버튼을 눌러주세요.</p>
+            </div>
+            <div id="scenario-text"></div>
+          </div>
+
+          <!-- 9:16 Preview -->
+          <div class="preview-wrap">
+            <div class="preview-label">미리보기</div>
+            <div class="preview-frame" id="preview-frame">
+              <div class="preview-ratio-tag" id="ratio-badge">9:16</div>
+              <div class="preview-play"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="tl-bar">
+              <span class="tl-time">0:00</span>
+              <div class="tl-track"><div class="tl-fill" id="tl-fill"></div></div>
+              <span class="tl-time" id="tl-end">0:15</span>
+            </div>
+          </div>
+
+          <!-- Storyboard -->
+          <div class="storyboard-section" id="storyboard-section">
+            <div class="storyboard-label">스토리보드</div>
+            <div class="storyboard-row" id="storyboard-row"></div>
+          </div>
+
+        </div><!-- /#output-pane -->
+
+      </div><!-- /.ws-body -->
+    </div><!-- /#workspace -->
+
+    <!-- Shorts History Panel -->
+    <div id="shortsHistoryWrap" style="display:none;padding:12px 20px 10px;border-top:1px solid rgba(201,168,76,.13);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,168,76,.6);">이전 숏폼 기록</span>
+        <button onclick="clearShortsHistory()" style="background:none;border:1px solid rgba(220,80,80,.35);border-radius:3px;color:rgba(220,80,80,.6);font-size:.6rem;padding:3px 8px;cursor:pointer;font-family:var(--sans);"><i class="fa-solid fa-trash-can"></i> 전체 삭제</button>
+      </div>
+      <div id="shortsHistoryList" style="display:flex;flex-direction:column;gap:7px;"></div>
+    </div>
+
+  </div><!-- /#app -->
+
+  <!-- ═══ UPGRADE OVERLAY ═══ -->
+  <div id="upgrade-overlay">
+    <div class="upgrade-box">
+      <i class="fa-solid fa-lock lock-icon"></i>
+      <h2>크레딧 부족</h2>
+      <p>AI 광고 생성은 1회당 10 크레딧이 필요합니다.<br>플랜을 업그레이드하여 더 많은 크레딧을 받아보세요.</p>
+      <button class="btn-upgrade" onclick="window.open('index.html#pricing','_blank')">요금제 보기</button>
+      <a class="dismiss-link" onclick="closeUpgrade()">나중에</a>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div id="toast"></div>
+
+  <script>
+    const OPENAI_API_KEY = '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';
+
+    let isAdmin = false;
+    let currentMode = 'ugc';
+    let currentEngine = 'Seedance 2.0';
+    let currentScenario = '';
+    let parsedScenes = [];
+    let productImageBase64 = null;
+    let productImageBase64P2A = null;
+    let selectedAvatarId = null;
+
+    /* ──── INIT ──── */
+    (function init() {
+      if (localStorage.getItem('dagaon_admin') === '1') {
+        isAdmin = true;
+        renderHeaderRight('admin');
+      } else {
+        const raw = localStorage.getItem('dagaon_user');
+        let user = null;
+        try { user = raw ? JSON.parse(raw) : null; } catch(e) {}
+        if (user && user.loggedIn === true) {
+          renderHeaderRight('member');
+        } else {
+          window.location.href = 'index.html';
+        }
+      }
+    })();
+
+    window.addEventListener('DOMContentLoaded', function() {
+      updateLengthChipsS('Seedance 2.0');
+    });
+
+    function renderHeaderRight(mode) {
+      const el = document.getElementById('header-right');
+      if (mode === 'admin') {
+        el.innerHTML = '<span class="badge-unlimited">UNLIMITED</span>';
+      } else {
+        const left = Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10));
+        el.innerHTML = `<span class="credit-display">크레딧 <span>${left}</span></span>`;
+      }
+    }
+    function refreshCredits() { if (!isAdmin) renderHeaderRight('member'); }
+    function getCredits() { return Math.max(0, parseInt(localStorage.getItem('dagaon_credits') || '0', 10)); }
+    function saveCredits(v) { localStorage.setItem('dagaon_credits', String(Math.max(0, v))); }
+    function calcShortsCost() {
+      const active = document.querySelector('#length-chips .chip.active');
+      const len = active ? active.textContent.trim() : '15초';
+      const map = { '5초': 20, '7초': 28, '10초': 40, '15초': 60 };
+      return map[len] || 20;
+    }
+
+    /* ──── SIDEBAR SELECTION ──── */
+    const FORMAT_LABELS = {
+      ugc: 'UGC', hyper: 'Hyper Motion', unboxing: 'Unboxing',
+      tvspot: 'TV Spot', tutorial: 'Tutorial', 'vto-ugc': 'Virtual Try On (UGC)',
+      'vto-pro': 'Virtual Try On (Pro)', cgi: 'CGI Commercial',
+      avatar: 'Avatar Library', url2ad: 'URL to Ad', product2ad: 'Product to Ad'
+    };
+
+    function selectFormat(el, mode) {
+      document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      currentMode = mode;
+      document.getElementById('ws-format-name').textContent = FORMAT_LABELS[mode] || mode;
+
+      // Switch panels
+      document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('visible'));
+      if (mode === 'avatar') {
+        document.getElementById('panel-avatar').classList.add('visible');
+      } else if (mode === 'url2ad') {
+        document.getElementById('panel-url2ad').classList.add('visible');
+      } else if (mode === 'product2ad') {
+        document.getElementById('panel-product2ad').classList.add('visible');
+      } else {
+        document.getElementById('panel-video').classList.add('visible');
+      }
+
+      // Reset output
+      clearOutput();
+    }
+
+    const ENGINE_MAX_LENGTH_S = {
+      'Seedance 2.0':      15,
+      'Soul 2.0':          10,
+      'Kling 3.0':         10,
+      'Cinema Studio 3.5': 10,
+      'Runway Gen-3':      10,
+      'Pika 2.0':           5
+    };
+    const LENGTH_VALS_S = { '5초': 5, '7초': 7, '10초': 10, '15초': 15 };
+
+    function updateLengthChipsS(engineName) {
+      const maxSec = ENGINE_MAX_LENGTH_S[engineName] || 15;
+      ['length-chips', 'length-chips-url'].forEach(groupId => {
+        const group = document.getElementById(groupId);
+        if (!group) return;
+        const chips = group.querySelectorAll('.chip');
+        let activeFound = false;
+        chips.forEach(chip => {
+          const val = LENGTH_VALS_S[chip.textContent.trim()] || 0;
+          const allowed = val <= maxSec;
+          if (allowed) {
+            chip.disabled = false;
+            chip.style.opacity = '';
+            chip.style.cursor = '';
+            if (chip.classList.contains('active')) activeFound = true;
+          } else {
+            chip.disabled = true;
+            chip.style.opacity = '0.3';
+            chip.style.cursor = 'not-allowed';
+            chip.classList.remove('active');
+          }
+        });
+        if (!activeFound) {
+          let best = null;
+          chips.forEach(chip => {
+            const val = LENGTH_VALS_S[chip.textContent.trim()] || 0;
+            if (val <= maxSec && (!best || val > (LENGTH_VALS_S[best.textContent.trim()] || 0))) best = chip;
+          });
+          if (best) best.classList.add('active');
+        }
+      });
+      updateTimecode();
+    }
+
+    function selectEngine(el, name) {
+      if (el.classList.contains('locked')) { window._showEngLockToast && window._showEngLockToast(el.getAttribute('data-tier')); return; }
+      document.querySelectorAll('.eng-sb-item').forEach(i => i.classList.remove('eng-active'));
+      el.classList.add('eng-active');
+      currentEngine = name;
+      document.getElementById('ws-engine-label').textContent = name;
+      // Update dropdown trigger
+      var ddName = document.getElementById('ddName');
+      var ddDesc = document.getElementById('ddDesc');
+      var ddIcon = document.getElementById('ddIcon');
+      if (ddName) ddName.textContent = name;
+      if (ddDesc) ddDesc.textContent = el.dataset.desc || '';
+      if (ddIcon) ddIcon.textContent = el.dataset.icon || name.substring(0,2).toUpperCase();
+      var dd = document.getElementById('engDropdown');
+      if (dd) dd.classList.remove('open');
+      showToast(`엔진 변경: ${name}`);
+      updateLengthChipsS(name);
+      renderEngineOptions(name);
+    }
+
+    function toggleEngDropdown() {
+      var dd = document.getElementById('engDropdown');
+      if (dd) dd.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('engDropdown');
+      if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+    });
+
+    function clearOutput() {
+      document.getElementById('output-placeholder').style.display = 'flex';
+      document.getElementById('scenario-text').textContent = '';
+      document.getElementById('scenario-text').style.display = 'none';
+      document.getElementById('tl-fill').style.width = '0%';
+      document.getElementById('storyboard-section').style.display = 'none';
+      document.getElementById('storyboard-row').innerHTML = '';
+      parsedScenes = [];
+      currentScenario = '';
+      const sb = document.getElementById('storyboard-btn');
+      if (sb) sb.disabled = true;
+    }
+
+    /* ──── CHIPS ──── */
+    function selectChip(el, groupId) {
+      if (el.disabled) return;
+      const group = document.getElementById(groupId);
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      if (groupId === 'ratio-chips') {
+        const badge = document.getElementById('ratio-badge');
+        if (badge) badge.textContent = el.textContent.trim();
+      }
+    }
+
+    function updateTimecode() {
+      const active = document.querySelector('#length-chips .chip.active');
+      const len = active ? active.textContent.trim() : '15초';
+      const map = { '5초': '0:05', '7초': '0:07', '10초': '0:10', '15초': '0:15' };
+      const el = document.getElementById('tl-end');
+      if (el) el.textContent = map[len] || '0:15';
+    }
+
+    /* ──── IMAGE UPLOAD (panel-video) ──── */
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('upload-zone').classList.add('drag-over');
+    }
+    function handleDragLeave(e) {
+      document.getElementById('upload-zone').classList.remove('drag-over');
+    }
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('upload-zone').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImage(file, 'main');
+    }
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (file) processImage(file, 'main');
+    }
+    function processImage(file, target) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const base64 = ev.target.result;
+        if (target === 'main') {
+          productImageBase64 = base64;
+          const preview = document.getElementById('upload-preview');
+          preview.src = base64;
+          preview.style.display = 'block';
+          document.getElementById('upload-overlay').style.display = 'none';
+          document.getElementById('upload-zone').classList.add('has-image');
+          analyzeImageWithVision(base64, 'main');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ──── IMAGE UPLOAD (panel-product2ad) ──── */
+    function handleDragOver2(e) { e.preventDefault(); document.getElementById('upload-zone-p2a').classList.add('drag-over'); }
+    function handleDragLeave2(e) { document.getElementById('upload-zone-p2a').classList.remove('drag-over'); }
+    function handleDrop2(e) {
+      e.preventDefault();
+      document.getElementById('upload-zone-p2a').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImageP2A(file);
+    }
+    function handleFileSelectP2A(e) {
+      const file = e.target.files[0];
+      if (file) processImageP2A(file);
+    }
+    function processImageP2A(file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const base64 = ev.target.result;
+        productImageBase64P2A = base64;
+        const preview = document.getElementById('upload-preview-p2a');
+        preview.src = base64;
+        preview.style.display = 'block';
+        document.getElementById('upload-overlay-p2a').style.display = 'none';
+        document.getElementById('upload-zone-p2a').classList.add('has-image');
+        analyzeImageWithVision(base64, 'p2a');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ──── GPT-4o VISION ANALYSIS ──── */
+    async function analyzeImageWithVision(base64, target) {
+      const resultEl = target === 'main' ? document.getElementById('vision-result') : document.getElementById('vision-result-p2a');
+      const textEl = target === 'main' ? document.getElementById('vision-text') : document.getElementById('vision-text-p2a');
+      resultEl.style.display = 'block';
+      textEl.textContent = '이미지 분석 중...';
+
+      const base64Data = base64.split(',')[1];
+      const mimeType = base64.split(';')[0].split(':')[1];
+
+      try {
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + OPENAI_API_KEY
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'image_url',
+                  image_url: { url: `data:${mimeType};base64,${base64Data}`, detail: 'low' }
+                },
+                {
+                  type: 'text',
+                  text: '이 제품 이미지를 분석하여 한국어로 간결하게 답해주세요:\n1. 제품 종류\n2. 주요 특징 (색상, 소재, 디자인)\n3. 예상 타겟 고객\n4. 추천 광고 메시지 (1줄)'
+                }
+              ]
+            }],
+            max_tokens: 300
+          })
+        });
+        if (!resp.ok) throw new Error('Vision API 오류');
+        const data = await resp.json();
+        textEl.textContent = data.choices[0].message.content;
+      } catch(e) {
+        textEl.textContent = '이미지 분석 실패: ' + e.message;
+      }
+    }
+
+    /* ──── AVATAR ──── */
+    function selectAvatar(el, id) {
+      document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedAvatarId = id;
+      showToast(`아바타 ${id} 선택됨`);
+    }
+
+    async function doAvatarGenerate() {
+      if (!isAdmin) {
+        if (getCredits() < calcShortsCost()) { showUpgrade(); return; }
+        saveCredits(getCredits() - calcShortsCost());
+        refreshCredits();
+      }
+      const script = document.getElementById('avatar-script').value.trim();
+      if (!script) { showToast('대본을 입력해주세요.'); return; }
+
+      showOutput('생성 중...', true);
+      try {
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              { role: 'system', content: 'AI 아바타 영상 기획 전문가입니다. 한국어로 답하세요.' },
+              { role: 'user', content: `Soul 2.0 AI 아바타(#${selectedAvatarId || 1})를 이용한 영상 기획안을 작성해주세요.\n대본: ${script}\n\n형식:\n[아바타 설정]: 외모/의상/배경\n[촬영 각도]: 구도 제안\n[자막]: 핵심 자막 타이밍\n[배경음악]: 분위기 제안` }
+            ],
+            stream: true,
+            max_tokens: 600
+          })
+        });
+        await streamToOutput(resp);
+        showToast('아바타 영상 기획 완료!');
+      } catch(e) {
+        showToast('오류: ' + e.message);
+        if (!isAdmin) { saveCredits(getCredits() + calcShortsCost()); refreshCredits(); }
+        clearOutput();
+      }
+    }
+
+    /* ──── MAIN VIDEO GENERATE ──── */
+    async function doGenerate() {
+      if (!isAdmin) {
+        if (getCredits() < calcShortsCost()) { showUpgrade(); return; }
+        saveCredits(getCredits() - calcShortsCost());
+        refreshCredits();
+      }
+
+      const productName = document.getElementById('product-name').value.trim();
+      const brandName = document.getElementById('brand-name').value.trim();
+      const adCopy = document.getElementById('ad-copy').value.trim();
+      const extra = document.getElementById('extra-prompt').value.trim();
+
+      if (!productName && !brandName && !extra) {
+        showToast('제품명 또는 브랜드명을 입력해주세요.');
+        return;
+      }
+
+      const platform = document.querySelector('#platform-chips .chip.active')?.textContent.trim() || '인스타 릴스';
+      const length   = document.querySelector('#length-chips .chip.active')?.textContent.trim() || '15초';
+      const ratio    = document.querySelector('#ratio-chips .chip.active')?.textContent.trim() || '9:16';
+
+      const btn = document.getElementById('gen-btn');
+      const loadWrap = document.getElementById('loading-wrap');
+      btn.disabled = true;
+      loadWrap.style.display = 'flex';
+      document.getElementById('loading-msg').textContent = '시나리오 생성 중...';
+
+      document.getElementById('output-placeholder').style.display = 'none';
+      const scenarioEl = document.getElementById('scenario-text');
+      scenarioEl.style.display = 'block';
+      scenarioEl.textContent = '';
+
+      const formatLabel = FORMAT_LABELS[currentMode] || currentMode;
+
+      const sysMsg = `당신은 SNS 마케팅 광고 영상 시나리오 전문 작가입니다. Higgsfield Marketing Studio의 ${formatLabel} 포맷과 ${currentEngine} 엔진에 최적화된 시나리오를 한국어로 작성하세요.
+포맷: ${formatLabel} | 엔진: ${currentEngine} | 플랫폼: ${platform} | 길이: ${length} | 비율: ${ratio}
+
+시나리오 형식:
+[컨셉]: 전체 광고 콘셉트 (1~2줄)
+[인트로] (0~2초): 후킹 오프닝 장면
+[장면 1]: 상세 묘사 + 자막 텍스트
+[장면 2]: 상세 묘사 + 자막 텍스트
+[장면 3]: 상세 묘사 + 자막 텍스트
+[아웃트로]: CTA + 마무리 장면
+[배경음악]: 분위기 / 장르 제안
+[AI 영상 프롬프트]: ${currentEngine}에 입력할 최적 영상 생성 프롬프트 (영어)`;
+
+      const userMsg = `제품명: ${productName || '(미입력)'}
+브랜드: ${brandName || '(미입력)'}
+광고 문구: ${adCopy || '(미입력)'}
+추가 지시: ${extra || '없음'}
+${productImageBase64 ? '\n[제품 이미지 분석 완료 — 이미지 특성을 반영해주세요]' : ''}`;
+
+      let fullText = '';
+      try {
+        const messages = [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }];
+
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+          body: JSON.stringify({ model: 'gpt-4o', messages, stream: true, max_tokens: 1000 })
+        });
+
+        if (!resp.ok) { const e = await resp.json().catch(() => ({})); throw new Error(e.error?.message || 'API 오류'); }
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const lines = decoder.decode(value).split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const d = line.slice(6).trim();
+              if (d === '[DONE]') continue;
+              try {
+                const delta = JSON.parse(d).choices?.[0]?.delta?.content;
+                if (delta) { fullText += delta; scenarioEl.textContent = fullText; }
+              } catch(e) {}
+            }
+          }
+        }
+
+        currentScenario = fullText;
+        parsedScenes = parseScenes(fullText);
+        document.getElementById('tl-fill').style.width = '100%';
+        document.getElementById('storyboard-btn').disabled = false;
+        loadWrap.style.display = 'none';
+        btn.disabled = false;
+        showToast('AI 시나리오 생성 완료!');
+        saveShortsHistory(fullText, currentEngine);
+        if (!isAdmin && getCredits() <= 0) setTimeout(() => showUpgrade(), 2000);
+
+      } catch(err) {
+        loadWrap.style.display = 'none';
+        btn.disabled = false;
+        clearOutput();
+        let msg = err.message || 'API 오류';
+        if (msg.includes('401')) msg = 'API 키가 유효하지 않습니다.';
+        else if (msg.includes('429')) msg = 'API 한도 초과. 잠시 후 다시 시도하세요.';
+        showToast('오류: ' + msg);
+        if (!isAdmin) { saveCredits(getCredits() + calcShortsCost()); refreshCredits(); }
+      }
+    }
+
+    /* ──── URL TO AD ──── */
+    async function doUrlAnalyze() {
+      const url = document.getElementById('ad-url').value.trim();
+      if (!url) { showToast('URL을 입력해주세요.'); return; }
+
+      const resultEl = document.getElementById('url-analysis-result');
+      const textEl = document.getElementById('url-analysis-text');
+      resultEl.style.display = 'block';
+      textEl.textContent = 'URL 분석 중...';
+
+      try {
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [{
+              role: 'user',
+              content: `다음 URL의 제품/브랜드를 분석하고 한국어로 요약해주세요: ${url}\n\n1. 제품/서비스명\n2. 주요 특징 및 혜택\n3. 타겟 고객\n4. 핵심 USP (Unique Selling Point)\n5. 권장 광고 메시지 (3가지)`
+            }],
+            max_tokens: 400
+          })
+        });
+        if (!resp.ok) throw new Error('URL 분석 실패');
+        const data = await resp.json();
+        textEl.textContent = data.choices[0].message.content;
+        showToast('URL 분석 완료! 광고 생성을 진행해주세요.');
+      } catch(e) {
+        textEl.textContent = '분석 실패: ' + e.message;
+      }
+    }
+
+    async function doUrlToAd() {
+      if (!isAdmin) {
+        if (getCredits() < calcShortsCost()) { showUpgrade(); return; }
+        saveCredits(getCredits() - calcShortsCost());
+        refreshCredits();
+      }
+      const url = document.getElementById('ad-url').value.trim();
+      if (!url) { showToast('URL을 입력해주세요.'); return; }
+
+      const extra = document.getElementById('url-extra').value.trim();
+      const platform = document.querySelector('#platform-chips-url .chip.active')?.textContent.trim() || '릴스';
+      const length   = document.querySelector('#length-chips-url .chip.active')?.textContent.trim() || '15초';
+      const analysis = document.getElementById('url-analysis-text').textContent;
+
+      const btn = document.getElementById('gen-btn-url');
+      const loadWrap = document.getElementById('loading-wrap-url');
+      btn.disabled = true;
+      loadWrap.style.display = 'flex';
+      document.getElementById('loading-msg-url').textContent = '광고 영상 시나리오 생성 중...';
+
+      document.getElementById('output-placeholder').style.display = 'none';
+      const scenarioEl = document.getElementById('scenario-text');
+      scenarioEl.style.display = 'block';
+      scenarioEl.textContent = '';
+
+      let fullText = '';
+      try {
+        const sysMsg = `Higgsfield Marketing Studio URL to Ad 전문가. URL 분석 결과를 바탕으로 ${platform} 최적화 광고 영상 시나리오를 한국어로 작성하세요. 길이: ${length}.`;
+        const userMsg = `URL: ${url}\n분석 결과:\n${analysis}\n\n추가 지시: ${extra || '없음'}\n\n[컨셉], [인트로], [장면1~3], [아웃트로], [배경음악], [AI 프롬프트] 형식으로 작성해주세요.`;
+
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }],
+            stream: true, max_tokens: 900
+          })
+        });
+        if (!resp.ok) throw new Error('API 오류');
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const lines = decoder.decode(value).split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const d = line.slice(6).trim();
+              if (d === '[DONE]') continue;
+              try {
+                const delta = JSON.parse(d).choices?.[0]?.delta?.content;
+                if (delta) { fullText += delta; scenarioEl.textContent = fullText; }
+              } catch(e) {}
+            }
+          }
+        }
+
+        currentScenario = fullText;
+        parsedScenes = parseScenes(fullText);
+        document.getElementById('tl-fill').style.width = '100%';
+        loadWrap.style.display = 'none';
+        btn.disabled = false;
+        showToast('URL to Ad 시나리오 완성!');
+      } catch(err) {
+        loadWrap.style.display = 'none';
+        btn.disabled = false;
+        clearOutput();
+        showToast('오류: ' + (err.message || 'API 오류'));
+        if (!isAdmin) { saveCredits(getCredits() + calcShortsCost()); refreshCredits(); }
+      }
+    }
+
+    /* ──── PRODUCT TO AD ──── */
+    async function doProductToAd() {
+      if (!isAdmin) {
+        if (getCredits() < calcShortsCost()) { showUpgrade(); return; }
+        saveCredits(getCredits() - calcShortsCost());
+        refreshCredits();
+      }
+      if (!productImageBase64P2A) { showToast('제품 이미지를 먼저 업로드하세요.'); return; }
+
+      const extra = document.getElementById('p2a-extra').value.trim();
+      const platform = document.querySelector('#platform-chips-p2a .chip.active')?.textContent.trim() || '릴스';
+      const ratio = document.querySelector('#ratio-chips-p2a .chip.active')?.textContent.trim() || '9:16';
+
+      const btn = document.getElementById('gen-btn-p2a');
+      const loadWrap = document.getElementById('loading-wrap-p2a');
+      btn.disabled = true;
+      loadWrap.style.display = 'flex';
+      document.getElementById('loading-msg-p2a').textContent = '광고 콘셉트 생성 중...';
+
+      document.getElementById('output-placeholder').style.display = 'none';
+      const scenarioEl = document.getElementById('scenario-text');
+      scenarioEl.style.display = 'block';
+      scenarioEl.textContent = '';
+
+      const base64Data = productImageBase64P2A.split(',')[1];
+      const mimeType = productImageBase64P2A.split(';')[0].split(':')[1];
+
+      let fullText = '';
+      try {
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Data}`, detail: 'low' } },
+                { type: 'text', text: `이 제품 이미지를 분석하여 Higgsfield Marketing Studio 스타일의 ${platform} 광고 영상 시나리오를 한국어로 작성해주세요. 비율: ${ratio}. 추가 지시: ${extra || '없음'}\n\n[컨셉], [인트로], [장면1], [장면2], [장면3], [아웃트로], [배경음악], [Seedance 2.0 AI 프롬프트] 형식으로 작성하세요.` }
+              ]
+            }],
+            stream: true, max_tokens: 900
+          })
+        });
+        if (!resp.ok) throw new Error('API 오류');
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const lines = decoder.decode(value).split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const d = line.slice(6).trim();
+              if (d === '[DONE]') continue;
+              try {
+                const delta = JSON.parse(d).choices?.[0]?.delta?.content;
+                if (delta) { fullText += delta; scenarioEl.textContent = fullText; }
+              } catch(e) {}
+            }
+          }
+        }
+
+        currentScenario = fullText;
+        parsedScenes = parseScenes(fullText);
+        document.getElementById('tl-fill').style.width = '100%';
+        loadWrap.style.display = 'none';
+        btn.disabled = false;
+        showToast('Product to Ad 콘셉트 생성 완료!');
+      } catch(err) {
+        loadWrap.style.display = 'none';
+        btn.disabled = false;
+        clearOutput();
+        showToast('오류: ' + (err.message || 'API 오류'));
+        if (!isAdmin) { saveCredits(getCredits() + calcShortsCost()); refreshCredits(); }
+      }
+    }
+
+    /* ──── STREAM HELPER ──── */
+    async function streamToOutput(resp) {
+      if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e.error?.message || 'API 오류'); }
+      document.getElementById('output-placeholder').style.display = 'none';
+      const scenarioEl = document.getElementById('scenario-text');
+      scenarioEl.style.display = 'block';
+      scenarioEl.textContent = '';
+      let fullText = '';
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const d = line.slice(6).trim();
+            if (d === '[DONE]') continue;
+            try {
+              const delta = JSON.parse(d).choices?.[0]?.delta?.content;
+              if (delta) { fullText += delta; scenarioEl.textContent = fullText; }
+            } catch(e) {}
+          }
+        }
+      }
+      currentScenario = fullText;
+      document.getElementById('tl-fill').style.width = '100%';
+    }
+
+    function showOutput(text, loading) {
+      document.getElementById('output-placeholder').style.display = 'none';
+      const el = document.getElementById('scenario-text');
+      el.style.display = 'block';
+      el.textContent = text;
+    }
+
+    /* ──── SCENE PARSER ──── */
+    function parseScenes(text) {
+      const scenes = [];
+      const re = /\[장면\s*\d+\][:\s]+([^\[\n]{15,})/g;
+      let m;
+      while ((m = re.exec(text)) !== null) scenes.push(m[1].trim().slice(0, 200));
+      if (scenes.length === 0) {
+        text.split('\n').filter(l => l.trim().length > 20).slice(0, 4).forEach(l =>
+          scenes.push(l.replace(/^\[.*?\]/, '').trim().slice(0, 200))
+        );
+      }
+      return scenes.slice(0, 4);
+    }
+
+    /* ──── STORYBOARD ──── */
+    async function doStoryboard() {
+      if (parsedScenes.length === 0) { showToast('먼저 시나리오를 생성해주세요.'); return; }
+
+      const sbBtn = document.getElementById('storyboard-btn');
+      const sbSection = document.getElementById('storyboard-section');
+      const sbRow = document.getElementById('storyboard-row');
+      const loadWrap = document.getElementById('loading-wrap');
+      const loadMsg = document.getElementById('loading-msg');
+
+      sbBtn.disabled = true;
+      sbSection.style.display = 'block';
+      sbRow.innerHTML = '';
+      loadWrap.style.display = 'flex';
+      loadMsg.textContent = `스토리보드 생성 중 (0/${parsedScenes.length})...`;
+
+      const platform = document.querySelector('#platform-chips .chip.active')?.textContent.trim() || '인스타 릴스';
+
+      for (let i = 0; i < parsedScenes.length; i++) {
+        loadMsg.textContent = `스토리보드 생성 중 (${i + 1}/${parsedScenes.length})...`;
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:72px;height:128px;background:rgba(0,200,215,.05);border:1px solid rgba(0,200,215,.18);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.58rem;color:rgba(0,200,215,.45);text-align:center;padding:4px;';
+        ph.textContent = `장면 ${i + 1}`;
+        sbRow.appendChild(ph);
+
+        const imgPrompt = `${currentEngine} marketing ad storyboard scene ${i + 1}: ${parsedScenes[i]}, vertical 9:16, ${FORMAT_LABELS[currentMode] || 'UGC'} style, professional commercial, Korean market, vibrant, cinematic lighting`;
+
+        try {
+          const imgResp = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+            body: JSON.stringify({ model: 'dall-e-3', prompt: imgPrompt, size: '1024x1792', quality: 'standard', n: 1 })
+          });
+          if (!imgResp.ok) { const e = await imgResp.json().catch(()=>({})); throw new Error(e.error?.message || 'DALL-E 오류'); }
+          const imgData = await imgResp.json();
+          const imgUrl = imgData.data[0].url;
+
+          ph.style.cssText = 'width:72px;height:128px;border-radius:6px;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;';
+          ph.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = imgUrl;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+          const lbl = document.createElement('div');
+          lbl.style.cssText = 'position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);font-size:.5rem;color:rgba(0,200,215,.8);padding:3px 4px;text-align:center;letter-spacing:.05em;';
+          lbl.textContent = `장면 ${i + 1}`;
+          ph.appendChild(img);
+          ph.appendChild(lbl);
+        } catch(e) {
+          ph.style.cssText = 'width:72px;height:128px;background:rgba(240,80,80,.05);border:1px solid rgba(240,80,80,.18);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.55rem;color:rgba(240,100,100,.45);text-align:center;padding:4px;';
+          ph.textContent = `장면 ${i + 1}\n오류`;
+        }
+      }
+
+      loadWrap.style.display = 'none';
+      sbBtn.disabled = false;
+      showToast('스토리보드 생성 완료!');
+    }
+
+    /* ──── UPGRADE / TOAST ──── */
+    function showUpgrade() { document.getElementById('upgrade-overlay').classList.add('visible'); }
+    function closeUpgrade() { document.getElementById('upgrade-overlay').classList.remove('visible'); }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    // ── ENGINE OPTIONS ────────────────────────────────────────────────────────
+    var ENGINE_OPTIONS_SHORTS = {
+      'Seedance 2.0': [
+        { type: 'chip', label: '전환 효과', key: 'transition', values: ['없음', '페이드', '슬라이드', '줌'], default: '없음' },
+        { type: 'toggle', label: 'BGM', key: 'bgm', default: true },
+        { type: 'toggle', label: '자막', key: 'subtitle', default: true },
+      ],
+      'Soul 2.0': [
+        { type: 'chip', label: '전환 효과', key: 'transition', values: ['없음', '페이드', '슬라이드', '줌'], default: '페이드' },
+        { type: 'toggle', label: 'BGM', key: 'bgm', default: true },
+        { type: 'toggle', label: '자막', key: 'subtitle', default: true },
+      ],
+      'Kling 3.0': [
+        { type: 'chip', label: '전환 효과', key: 'transition', values: ['없음', '페이드', '슬라이드', '줌'], default: '없음' },
+        { type: 'toggle', label: 'BGM', key: 'bgm', default: false },
+        { type: 'toggle', label: '자막', key: 'subtitle', default: true },
+      ],
+      'Cinema Studio 3.5': [
+        { type: 'chip', label: '전환 효과', key: 'transition', values: ['없음', '페이드', '슬라이드', '줌'], default: '페이드' },
+        { type: 'toggle', label: 'BGM', key: 'bgm', default: true },
+        { type: 'toggle', label: '자막', key: 'subtitle', default: false },
+      ],
+      'Runway Gen-3': [
+        { type: 'chip', label: '전환 효과', key: 'transition', values: ['없음', '페이드', '슬라이드', '줌'], default: '슬라이드' },
+        { type: 'toggle', label: 'BGM', key: 'bgm', default: true },
+        { type: 'toggle', label: '자막', key: 'subtitle', default: true },
+      ],
+      'Pika 2.0': [
+        { type: 'chip', label: '전환 효과', key: 'transition', values: ['없음', '페이드', '슬라이드', '줌'], default: '줌' },
+        { type: 'toggle', label: 'BGM', key: 'bgm', default: false },
+        { type: 'toggle', label: '자막', key: 'subtitle', default: true },
+      ],
+    };
+    var currentShortsEngOpts = {};
+
+    function renderEngineOptions(engineName) {
+      var panel = document.getElementById('engOptionsPanel');
+      var body = document.getElementById('engOptionsBody');
+      var titleEl = document.getElementById('engOptionsTitleText');
+      var opts = ENGINE_OPTIONS_SHORTS[engineName];
+      if (!opts || opts.length === 0) { panel.style.display = 'none'; return; }
+      panel.style.display = '';
+      titleEl.textContent = engineName + ' 설정';
+      body.innerHTML = '';
+      currentShortsEngOpts = {};
+      opts.forEach(function(opt) {
+        currentShortsEngOpts[opt.key] = opt.default !== undefined ? opt.default : (opt.values ? opt.values[0] : false);
+        var row = document.createElement('div');
+        row.className = 'opt-row';
+        if (opt.type === 'chip') {
+          row.innerHTML = '<span class="opt-label">' + opt.label + '</span><div class="opt-chips" data-key="' + opt.key + '"></div>';
+          body.appendChild(row);
+          var chipsEl = row.querySelector('.opt-chips');
+          opt.values.forEach(function(v) {
+            var btn = document.createElement('button');
+            btn.className = 'opt-chip' + (v === (opt.default || opt.values[0]) ? ' selected' : '');
+            btn.textContent = v;
+            (function(key, val, chips) {
+              btn.onclick = function() {
+                chips.querySelectorAll('.opt-chip').forEach(function(c) { c.classList.remove('selected'); });
+                btn.classList.add('selected');
+                currentShortsEngOpts[key] = val;
+              };
+            })(opt.key, v, chipsEl);
+            chipsEl.appendChild(btn);
+          });
+        } else if (opt.type === 'toggle') {
+          var id = 'opt_toggle_' + opt.key;
+          row.innerHTML = '<div class="opt-toggle-row"><span class="opt-toggle-label">' + opt.label + '</span><label class="opt-toggle"><input type="checkbox" id="' + id + '"' + (opt.default ? ' checked' : '') + '><span class="opt-toggle-track"></span><span class="opt-toggle-thumb"></span></label></div>';
+          body.appendChild(row);
+          (function(key) { row.querySelector('input').onchange = function() { currentShortsEngOpts[key] = this.checked; }; })(opt.key);
+        }
+      });
+    }
+
+    function toggleEngOptions() {
+      document.getElementById('engOptionsPanel').classList.toggle('collapsed');
+    }
+
+    function getEngineOptionsPromptShorts() {
+      var parts = [];
+      var labelMap = { transition: '전환효과', bgm: 'BGM', subtitle: '자막' };
+      Object.keys(currentShortsEngOpts).forEach(function(k) {
+        var v = currentShortsEngOpts[k];
+        var label = labelMap[k] || k;
+        if (typeof v === 'boolean') {
+          parts.push('[' + label + ': ' + (v ? 'ON' : 'OFF') + ']');
+        } else if (v !== '' && v !== null) {
+          parts.push('[' + label + ': ' + v + ']');
+        }
+      });
+      return parts.length ? ' ' + parts.join(' ') : '';
+    }
+
+    // Init default engine options
+    renderEngineOptions('Seedance 2.0');
+
+    // ── Engine Tier Lock ──────────────────────────────────────────────────────
+    (function initEngineLock() {
+      var TIER_ORDER = { free: 0, basic: 2, standard: 2, pro: 3, enterprise: 3 };
+      var plan = localStorage.getItem('dagaon_plan') || 'free';
+      var isAdmin = localStorage.getItem('dagaon_admin') === '1';
+      var userLevel = isAdmin ? 99 : (TIER_ORDER[plan] !== undefined ? TIER_ORDER[plan] : 0);
+      document.querySelectorAll('.eng-item, .model-item, .engine-item, .eng-sb-item').forEach(function(item) {
+        var tier = item.getAttribute('data-tier');
+        if (!tier) return;
+        var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+        if (userLevel < required) {
+          item.classList.add('locked');
+          var nameEl = item.querySelector('.eng-name, .model-name, .engine-name, .eng-sb-name');
+          if (nameEl && !nameEl.querySelector('.eng-lock')) {
+            var lockSpan = document.createElement('span');
+            lockSpan.className = 'eng-lock';
+            lockSpan.innerHTML = '<i class="fa-solid fa-lock"></i>';
+            nameEl.appendChild(lockSpan);
+          }
+          var descEl = item.querySelector('.eng-desc, .model-desc, .engine-desc');
+          if (descEl) {
+            descEl.textContent = (required >= 3) ? 'Pro 플랜부터' : 'Standard 플랜부터';
+          }
+        }
+      });
+      window._showEngLockToast = function(tier) {
+        var required = TIER_ORDER[tier] !== undefined ? TIER_ORDER[tier] : 0;
+        var msg = (required >= 3) ? '이 엔진은 Pro 플랜부터 사용 가능합니다' : '이 엔진은 Standard 플랜부터 사용 가능합니다';
+        var toast = document.getElementById('engLockToast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'engLockToast';
+          toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(184,151,90,.4);color:#d0c090;font-size:.78rem;padding:10px 22px;border-radius:6px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap;';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._t);
+        toast._t = setTimeout(function() { toast.style.opacity = '0'; }, 2500);
+      };
+    })();
+    // ── End Engine Tier Lock ──────────────────────────────────────────────────
+
+    // ─── SHORTS HISTORY (localStorage) ───────────────────────
+    var SHORTS_HISTORY_KEY = 'dagaon_shorts_history';
+
+    function loadShortsHistory() {
+      try { return JSON.parse(localStorage.getItem(SHORTS_HISTORY_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function saveShortsHistory(text, engine) {
+      var history = loadShortsHistory();
+      var productName = document.getElementById('product-name') ? document.getElementById('product-name').value.trim() : '';
+      var brandName = document.getElementById('brand-name') ? document.getElementById('brand-name').value.trim() : '';
+      var platform = document.querySelector('#platform-chips .chip.active') ? document.querySelector('#platform-chips .chip.active').textContent.trim() : '';
+      var length = document.querySelector('#length-chips .chip.active') ? document.querySelector('#length-chips .chip.active').textContent.trim() : '';
+      var title = (productName || brandName || platform || '숏폼');
+      var entry = { id: 'shrt_' + Date.now(), timestamp: Date.now(), engine: engine || '', title: title, platform: platform, length: length, result: text || '' };
+      history.unshift(entry);
+      if (history.length > 20) history = history.slice(0, 20);
+      localStorage.setItem(SHORTS_HISTORY_KEY, JSON.stringify(history));
+      renderShortsHistory();
+    }
+    function deleteShortsHistoryItem(id) {
+      var history = loadShortsHistory().filter(function(e) { return e.id !== id; });
+      localStorage.setItem(SHORTS_HISTORY_KEY, JSON.stringify(history));
+      renderShortsHistory();
+    }
+    function clearShortsHistory() {
+      if (!confirm('숏폼 생성 기록을 모두 삭제하시겠습니까?')) return;
+      localStorage.removeItem(SHORTS_HISTORY_KEY);
+      renderShortsHistory();
+    }
+    function renderShortsHistory() {
+      var history = loadShortsHistory();
+      var wrap = document.getElementById('shortsHistoryWrap');
+      if (!wrap) return;
+      if (history.length === 0) { wrap.style.display = 'none'; return; }
+      wrap.style.display = '';
+      var list = document.getElementById('shortsHistoryList');
+      if (!list) return;
+      list.innerHTML = '';
+      history.forEach(function(entry) {
+        var card = document.createElement('div');
+        card.style.cssText = 'border:1px solid rgba(201,168,76,.18);border-radius:5px;padding:9px 12px;background:rgba(255,255,255,.02);';
+        var ts = new Date(entry.timestamp).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+        var header = document.createElement('div');
+        header.style.cssText = 'display:flex;align-items:center;gap:5px;margin-bottom:4px;';
+        header.innerHTML = '<span style="font-size:.62rem;color:rgba(201,168,76,.8);">' + _escHtml(entry.engine) + '</span><span style="font-size:.6rem;color:rgba(200,200,204,.5);">' + _escHtml(entry.title) + '</span><span style="margin-left:auto;font-size:.58rem;color:rgba(200,200,204,.25);">' + ts + '</span>';
+        var delBtn = document.createElement('button');
+        delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        delBtn.style.cssText = 'background:none;border:none;color:rgba(200,200,204,.25);cursor:pointer;font-size:.65rem;padding:2px 4px;';
+        delBtn.onmouseover = function() { this.style.color='#f07070'; };
+        delBtn.onmouseout = function() { this.style.color='rgba(200,200,204,.25)'; };
+        (function(id) { delBtn.onclick = function() { deleteShortsHistoryItem(id); }; })(entry.id);
+        header.appendChild(delBtn);
+        card.appendChild(header);
+        var preview = document.createElement('div');
+        preview.style.cssText = 'font-size:.65rem;color:rgba(200,200,204,.35);max-height:36px;overflow:hidden;white-space:pre-wrap;word-break:break-all;margin-bottom:6px;';
+        preview.textContent = entry.result ? entry.result.slice(0,120) + '…' : '';
+        card.appendChild(preview);
+        var restoreBtn = document.createElement('button');
+        restoreBtn.textContent = '불러오기';
+        restoreBtn.style.cssText = 'background:none;border:1px solid rgba(201,168,76,.3);border-radius:3px;color:rgba(201,168,76,.7);font-size:.6rem;padding:3px 9px;cursor:pointer;font-family:var(--sans);';
+        (function(e) {
+          restoreBtn.onclick = function() {
+            var scenarioEl = document.getElementById('scenario-text');
+            if (scenarioEl) {
+              document.getElementById('output-placeholder').style.display = 'none';
+              scenarioEl.style.display = 'block';
+              scenarioEl.textContent = e.result;
+              document.getElementById('tl-fill').style.width = '100%';
+              document.getElementById('storyboard-btn').disabled = false;
+            }
+            showToast('이전 숏폼 시나리오를 불러왔습니다.');
+          };
+        })(entry);
+        card.appendChild(restoreBtn);
+        list.appendChild(card);
+      });
+    }
+    function _escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    renderShortsHistory();
+  </script>
+</body>
+</html>
